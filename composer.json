@@ -1,0 +1,22 @@
+{
+    "name": "webplatform/mediawiki-transformer",
+    "description": "Read MediaWiki WikiText and created structured object tree representation of the data",
+    "type": "library",
+    "keywords": ["mediawiki","wikitext"],
+    "license": "MIT",
+    "require-dev": {
+        "doctrine/annotations": "~1.2",
+        "phpunit/phpunit": "~4.7"
+    },
+    "authors": [
+        {
+            "name": "Renoir Boulanger",
+            "email": "renoir@w3.org"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "WebPlatform\\MediaWiki\\Transformer\\": "lib/"
+        }
+    }
+}
