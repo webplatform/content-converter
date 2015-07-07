@@ -1,12 +1,12 @@
 {
     "name": "webplatform/mediawiki-transformer",
-    "description": "Read MediaWiki WikiText and created structured object tree representation of the data",
+    "description": "Transform MediaWiki XML dumpBackup page entry into an object representation for further processing",
     "type": "library",
     "keywords": ["mediawiki","wikitext"],
     "license": "MIT",
     "require-dev": {
-        "doctrine/annotations": "~1.2",
-        "phpunit/phpunit": "~4.7"
+        "phpunit/phpunit": "~4.7",
+        "doctrine/annotations": "~1.2"
     },
     "authors": [
         {
