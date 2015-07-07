@@ -8,7 +8,7 @@ class PagesFixture {
 
   public function __construct() {
     if($this->data === null) {
-      $loop = $this->_hydrate();
+      $loop = (array)$this->getXml();
       foreach($loop as $entry) {
         $this->data[] = (array)$entry;
       }
@@ -21,7 +21,7 @@ class PagesFixture {
     return $this->data[1][0];
   }
 
-  protected function _hydrate() {
+  public function getXml() {
     $xmlString = <<<MWXML
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" xml:lang="en">
   <page>
@@ -492,6 +492,6 @@ While this parameter is officially optional, it may only be omitted in modern br
 </mediawiki>
 MWXML;
 
-    return (array)simplexml_load_string($xmlString);
+    return simplexml_load_string($xmlString);
   }
 }

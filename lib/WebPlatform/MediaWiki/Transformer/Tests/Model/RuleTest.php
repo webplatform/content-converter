@@ -15,10 +15,6 @@ class RuleTest extends \PHPUnit_Framework_TestCase {
 		$this->sample = <<<SAMPLE
 = With spaces =
 SAMPLE;
-
-    $this->expected = <<<EXPECTED
-# With spaces
-EXPECTED;
 	}
 
 	/**
