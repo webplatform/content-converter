@@ -50,5 +50,34 @@ Transform [MediaWiki XML dumpBackup][mw-dumpbackup] `<page/>` entry into an obje
     }
     ```
 
+## See also
+
+### PHP Modules in use
+
+* [lightncandy](https://github.com/zordius/lightncandy/blob/master/src/lightncandy.php)
+
+
+### Documentation
+
+* [ParserFunctions](https://www.mediawiki.org/wiki/Help:Extension:ParserFunctions)
+  * [Parser functions in templates](https://www.mediawiki.org/wiki/Help:Parser_functions_in_templates)
+  * [Substitution](https://en.wikipedia.org/wiki/Help:Substitution)
+* [Templates](https://meta.wikimedia.org/wiki/Help:Template) (in Meta) and [Templates](https://www.mediawiki.org/wiki/Help:Templates) (in Help)
+  * [Advanced templates](https://meta.wikimedia.org/wiki/Help:Advanced_templates)
+* [Labeled Section Transclusion](https://www.mediawiki.org/wiki/Extension:Labeled_Section_Transclusion)
+
+
+### In MediaWiki source code
+
+* File `mediawiki/includes/parser/Preprocessor.php` the `PPFrame` (Interface)
+* File `mediawiki/extensions/LabeledSectionTransclusion/LabeledSectionTransclusion.class.php` class
+* Notes in file `mediawiki/docs/contenthandler.txt` and `mediawiki/includes/content/ContentHandler.php` see `ContentHandler` abstract class
+* Notes in file `mediawiki/docs/globals.txt`
+* Content handling classes: `WikitextContent`, `WikitextContentHandler`, `TextContentHandler`
+* File `mediawiki/includes/parser/Parser.php`, at `parse()`
+* File `mediawiki/includes/parser/ParserOutput.php`
+* File `mediawiki/includes/content/AbstractContent.php` at `AbstractContent::getParserOutput()`
+* File `mediawiki/extensions/Flow/includes/TemplateHelper.php` (new, but need to look if its useful or another implementation)
+
   [mw-dumpbackup]: https://www.mediawiki.org/wiki/Manual:DumpBackup.php
   [mw-wikitext]: https://www.mediawiki.org/wiki/Help:Formatting
