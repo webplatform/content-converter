@@ -4,136 +4,119 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
 
 use \Exception;
 use \SimpleXMLElement;
-use \Serializable;
+use \SplDoublyLinkedList;
 
 /**
- * Models a MediaWiki article
+ * Models a MediaWiki page node from dumpBackupXml schema
+ *
+ * A page MUST have AT LEAST ONE revision.
+ *
+ * Here is a sample of a MediaWiki dumpBackupXml page node.
+ *
+ * <page>
+ *   <title>WPD:Contributor Agreement</title>
+ *   <ns>3000</ns>
+ *   <id>5</id>
+ *   <revision>
+ *     <id>39</id>
+ *     <parentid>10</parentid>
+ *     <timestamp>2012-06-20T04:42:18Z</timestamp>
+ *     <contributor>
+ *       <username>Shepazu</username>
+ *       <id>2</id>
+ *     </contributor>
+ *     <comment>removed warning</comment>
+ *     <model>wikitext</model>
+ *     <format>text/x-wiki</format>
+ *     <text xml:space="preserve" bytes="1">'''Wikitext''' text.</text>
+ *     <sha1>l37t3nh9pz0qgiakt2o6v11ofw812jd</sha1>
+ *   </revision>
+ * </page>
  */
-class WikiPage
-  implements Serializable {
+class WikiPage {
 
   /** @var string page Title, but in MW it ends up being an URL too */
   protected $title     = null;
 
-  /** @var string The page content */
-  protected $text      = null;
+  /** @var mixed string representation of the possible path or false if no redirect was specified */
+  protected $redirect = false;
 
-  /** @var string MediaWiki’s SHA1 string */
-  protected $sha1      = null;
+  /** @var string Where would the file be written */
+  protected $file_path = null;
 
-  /** @var string MediaWiki’s Content-Type format string name, e.g. "text/x-wiki" */
-  protected $format    = null;
-
-  /** @var string MediaWiki content model name, e.g. "wikitext" */
-  protected $model     = null;
-
-  /** @var \DateTime The page revision edition timestamp */
-  protected $timestamp = null;
-
-  /** @var SimpleXMLElement MediaWiki dumpBackup XML document <page/> node loaded using PHP builtin SimpleXML */
-  protected $pageNode;
+  /** @var \SplDoublyLinkedList of Revision objects */
+  protected $revisions = array();
 
   /**
    * Constructs a WikiPage object
    *
    * @param SimpleXMLElement $pageNode
    */
-  function __construct( SimpleXMLElement $pageNode = null ) {
-    $this->pageNode = $pageNode;
-    $this->title    = (string) $pageNode->title;
-    $this->text     = $this->getText( true );
-  }
+  public function __construct(SimpleXMLElement $pageNode) {
+    if (self::isMediaWikiDumpPageNode($pageNode) === true) {
+      $this->title     = (string) $pageNode->title;
+      $this->revisions = new SplDoublyLinkedList;
+      $revisions = $pageNode->revision;
+      $index = 0;
 
-  public function serialize( ) {
-    $pkg = array();
-    foreach([
-       'title'
-      ,'text'
-      ,'sha1'
-      ,'format'
-      ,'model'
-    ] as $property) {
-      $pkg[$property] = $this->{$property};
-    }
-    $pkg['pageNode'] = (string) $this->pageNode->asXML();
-    $pkg['timestamp'] = $this->timestamp->format('Y-m-d H:i:s.u T');
-
-    return serialize($pkg);
-  }
-
-  public function unserialize( $serialized ) {
-    $data = (array) unserialize($serialized);
-    foreach($data as $k => $property) {
-      if(property_exists($this, $k)) {
-        switch($k) {
-          case 'timestamp':
-            $this->timestamp = new \DateTime($property, new \DateTimeZone('Z'));
-          break;
-
-          case 'pageNode':
-            $this->pageNode = simplexml_load_string($property);
-          break;
-
-          default:
-            $this->{$k} = $property;
-          break;
-        }
+      foreach($revisions as $rev) {
+        $this->revisions->add($index++, new Revision($rev));
       }
+
+      if(count($pageNode->redirect) === 1){
+        $this->redirect = self::potentialFilePath((string)$pageNode->redirect);
+      }
+
+      $this->file_path = self::potentialFilePath($this->title);
+
+      return $this;
     }
+
+    throw new UnsupportedInputException;
   }
 
-  /**
-   * Returns the Wikitext of the page
-   * @return string of Wikitext
-   */
-  function __toString() {
-    return $this->text;
+  public static function isMediaWikiDumpPageNode(SimpleXMLElement $pageNode) {
+    $isValid = false;
+    $checks[] = $pageNode->getName() === 'page';
+    $checks[] = count($pageNode->revision) >= 1;
+    if(in_array(false, $checks) === false) {
+      // We have no failed tests, therefore we have all we need
+      return true;
+    }
+
+    return false;
   }
 
   /**
    * Returns the title of this page
    * @return string the title of this page
    */
-  function getTitle() {
+  public function getTitle() {
     return $this->title;
   }
 
-  function getSha1() {
-    return $this->sha1;
+  public function getDesiredFilePath() {
+    return $this->file_path;
   }
 
-  function getTimestamp() {
-    return $this->timestamp;
+  public function latest() {
+    return $this->revisions->offsetGet(0);
   }
 
-  function getText( $refresh = false ) {
+  public function revisions() {
+    return $this->revisions;
+  }
 
-    // Keeping the same method signature and behavior
-    // but removing completely work with RegExes.
-    if ( $refresh ) {
-      $page = (array)$this->pageNode;
-      $revision = (array)$page['revision'];
+  public static function potentialFilePath($title) {
+    // Replace MW Namespaces separator (":") to make a folder
+    $title = preg_replace('~[\:]+~u', DIRECTORY_SEPARATOR, $title);
 
-      if(!empty($revision['timestamp'])) {
-        // Format is: 2014-09-08T19:05:22Z so we know its in the Zulu Time Zone.
-        $this->timestamp = new \DateTime($revision['timestamp'], new \DateTimeZone('Z'));
-      }
+    $title = preg_replace('~[\s]+~u', '-', $title);
 
-      foreach([
-         'text'
-        ,'sha1'
-        ,'format'
-        ,'model'
-      ] as $property) {
-        if(!empty($revision[$property])) {
-          $this->{$property} = $revision[$property];
-        }
-      }
-      unset( $page, $revision );
-    }
+    // transliterate
+    $title = iconv('utf-8', 'us-ascii//TRANSLIT', $title);
 
-    return $this->text; // return the text in any case
-
+    return $title;
   }
 
 }

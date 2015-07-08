@@ -173,6 +173,49 @@ border-radius: 40% 60%;
 |HTML5Rocks_link=
 }}</text>
       <sha1>jpppht3ye4y0j07t8wcyl7xhswnt9sm</sha1>
+    </revision>    <revision>
+      <id>69320</id>
+      <parentid>69053</parentid>
+      <timestamp>2014-09-08T19:15:22Z</timestamp>
+      <contributor>
+        <username>Renoirb</username>
+        <id>10080</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="786">{{Page_Title}}
+{{Flags
+|State=Ready to Use
+|Editorial notes=
+|Checked_Out=No
+}}
+{{Standardization_Status|W3C Candidate Recommendation}}
+{{API_Name}}
+{{Summary_Section|The border-radius CSS property allows authors to round the corners of an element. The rounding can be different per-corner, and it could have different horizontal and vertical radii, to produce elliptical curves.}}
+{{CSS Property
+|Initial value=0
+|Applies to=All elements, except the table element when border-collapse is collapse
+|Inherited=No
+|Media=visual
+|Computed value=As specified by individual properties
+|Animatable=Yes
+|CSS object model property=borderRadius
+|CSS percentages=Refer to the corresponding dimension (width or height) of the border box.
+|Values={{CSS Property Value
+|Data Type=length
+|Description=Denotes the size of the circle radius or the horizontal and vertical radii, for elliptical curves. It can be expressed in any unit allowed in [[css/data_types/length|CSS &lt;length&gt; data types]]. em units are useful for controls that scale proportionally with the font-size. Viewport-relative units (vw, vh, vmin, vmax) can be useful for controls that scale with the viewport size. Negative values are invalid. You can specify a single length for all four corners, or two, three or four lengths to specify different lengths for different corners: see the syntax section for more details.
+}}{{CSS Property Value
+|Data Type=percentage
+|Description=Denotes the size of the corner radius, in percentages of the box’s border-box dimensions. Specifically, percentages for the horizontal axis refer to the width of the border-box, percentages for the vertical axis refer to the height of the border-box. Negative values are invalid. You can specify a single percentage for all four corners, or two, three or four percentages to specify different percentages for different corners: see the syntax section for more details.
+}}{{CSS Property Value
+|Data Type=length / length
+|Description=Specifying two sets of length values separated by a forward slash equates to specifying separate lengths for the X and Y radii of the corners, resulting in elliptical corners if the X and Y radii have different lengths. Each set can consist of one, two, three or four values.
+}}{{CSS Property Value
+|Data Type=percentage / percentage
+|Description=Specifying two sets of percentage values separated by a forward slash equates to specifying separate percentages for the X and Y radii of the corners, resulting in elliptical corners if the X and Y radii have percentages resulting in different computed values (depending on the width and height of the element, different percentages might result in the same computed values; see the remarks section for more). Each set can consist of one, two, three or four values.
+}}
+}}</text>
+      <sha1>foo</sha1>
     </revision>
   </page>
   <page>
