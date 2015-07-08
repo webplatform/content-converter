@@ -251,8 +251,7 @@ SAMPLE;
     // dumpBackupXml, and that the timestamp of the first item
     // is the following.
     $latestTimestamp = '2014-08-20T17:41:27Z';
-    $pageNode = $this->dumpBackupXml->page[0];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $objTimestamp = $obj->latest()->getTimestamp()->format('Y-m-d\TH:i:sT');
     $this->assertSame($latestTimestamp, $objTimestamp);
   }
@@ -261,8 +260,7 @@ SAMPLE;
    * @covers ::latest
    */
   public function testLatestRevision() {
-    $pageNode = $this->dumpBackupXml->page[0];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\WebPlatform\MediaWiki\Transformer\Model\Revision', $obj->latest());
   }
 
@@ -270,8 +268,7 @@ SAMPLE;
    * @covers ::latest
    */
   public function testLatestRevisionDateTime() {
-    $pageNode = $this->dumpBackupXml->page[0];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\DateTime', $obj->latest()->getTimestamp());
   }
 
@@ -279,8 +276,7 @@ SAMPLE;
    * @covers ::latest
    */
   public function testLatestRevisionRevisionsType() {
-    $pageNode = $this->dumpBackupXml->page[0];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\SplDoublyLinkedList', $obj->revisions());
   }
 
@@ -292,8 +288,7 @@ SAMPLE;
     // dumpBackupXml, and that the the contributors usernames
     // are in order.
     $hardcodedContributors = 'Dgash,Shepazu';
-    $pageNode = $this->dumpBackupXml->page[0];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $stack = $obj->revisions();
     $stack->rewind();
     $contributors = array();
@@ -311,8 +306,7 @@ SAMPLE;
   public function testGetFilePath(){
     // Title is  "WPD:Doc Sprints"
     // ... into  "WPD/Doc-Sprints"
-    $pageNode = $this->dumpBackupXml->page[1];
-    $obj = new WikiPage($pageNode);
+    $obj = new WikiPage($this->dumpBackupXml->page[1]);
 
     $this->assertSame($obj->getDesiredFilePath(), "WPD/Doc-Sprints");
   }
@@ -328,6 +322,34 @@ SAMPLE;
 
     $this->assertSame($expected1,$methodCall1);
     $this->assertSame($expected2,$methodCall2);
+  }
+
+  /**
+   * @covers ::hasRedirect
+   */
+  public function testHasRedirect(){
+    $pageNode = $this->dumpBackupXml->page;
+
+    // We know that only the page[3] has a redirect
+    $non_redir = new WikiPage($pageNode[1]);
+    $redirected = new WikiPage($pageNode[3]);
+
+    $this->assertFalse($non_redir->hasRedirect());
+    $this->assertTrue($redirected->hasRedirect());
+  }
+
+  /**
+   * @covers ::getRedirect
+   *
+   * We want to get the potential name of the redirect
+   * so we know which file to refer to.
+   */
+  public function testGetRedirect(){
+    // pageNode[3] has <redirect title="WPD:Example Pages/CSS" />
+    // lets expect we get a string similar to "WPD/Example-Pages/CSS"
+    $redirected = new WikiPage($this->dumpBackupXml->page[3]);
+
+    $this->assertSame($redirected->getRedirect(), "WPD/Example-Pages/CSS");
   }
 
  }

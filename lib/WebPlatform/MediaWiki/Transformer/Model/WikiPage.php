@@ -63,8 +63,9 @@ class WikiPage {
         $this->revisions->add($index++, new Revision($rev));
       }
 
-      if(count($pageNode->redirect) === 1){
-        $this->redirect = self::potentialFilePath((string)$pageNode->redirect);
+      $redirect = (string) $pageNode->redirect['title'];
+      if(strlen($redirect) > 1){
+        $this->redirect = self::potentialFilePath($redirect);
       }
 
       $this->file_path = self::potentialFilePath($this->title);
@@ -97,6 +98,14 @@ class WikiPage {
 
   public function getDesiredFilePath() {
     return $this->file_path;
+  }
+
+  public function hasRedirect() {
+    return !!$this->redirect;
+  }
+
+  public function getRedirect() {
+    return (!!$this->redirect)?self::potentialFilePath($this->redirect):false;
   }
 
   public function latest() {
