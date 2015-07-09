@@ -9,6 +9,17 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
 /**
  * Wiki Page to Markdown Formatter.
  *
+ * This class handles the Wikimedia Wikitext filtering.
+ *
+ * You can do multiple passes, you’ll notice that we have an array
+ * of patterns and replacement, each of them will be passed in the
+ * order they’ve been defined. That way can incrementally adjust
+ * broken and fix it up in the following pass.
+ *
+ * Contents here is specific to WebPlatform Docs wiki contents
+ * but you would can make your own and implement this library’s
+ * TransformerFormatterInterface interface to use your own rules.
+ *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
 class MarkdownFormatter implements TransformerFormatterInterface
