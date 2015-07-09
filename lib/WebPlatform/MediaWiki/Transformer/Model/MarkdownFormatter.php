@@ -16,9 +16,17 @@ class MarkdownFormatter implements TransformerFormatterInterface
     private $patterns = array();
     private $replacements = array();
 
-    public function __construct($analyze = false)
+    protected function helperExternlinks($matches)
     {
-        $this->patterns[0] = array(
+        $target = $matches[1];
+        $text = empty($matches[2])?$matches[1]:$matches[2];
+
+        return sprintf("[%s](%s)", $text, '/' . $target);
+    }
+
+    public function __construct()
+    {
+        $this->patterns[] = array(
           "/\r\n/",
 
           // Headings
@@ -26,6 +34,8 @@ class MarkdownFormatter implements TransformerFormatterInterface
           "/^=== (.+?) ===$/m",
           "/^== (.+?) ==$/m",
           "/^\{\{Page_Title\}\}.*$/im",
+          "/^\{\{Compatibility_Section/im",
+          "/^\{\{Notes_Section\n\|Notes\=/im",
 
           //
           // Delete things we won’t use anymore
@@ -93,6 +103,8 @@ class MarkdownFormatter implements TransformerFormatterInterface
             ."|Imported_tables"                     # "|Imported_tables=" ^
             ."|Desktop_rows"                        # "|Desktop_rows={{Compatibility Table Desktop Row" ^
             ."|Mobile_rows"                         # "|Mobile_rows={{Compatibility Table Mobile Row" ^
+            ."|Browser"
+            ."|Version"
           .").*\n/im",
 
           // Harmonize code fencing discrepancies.
@@ -100,17 +112,17 @@ class MarkdownFormatter implements TransformerFormatterInterface
           // We’ll rewrite them after that pass.
           "/^<\/?source.*$/im",
           "/<\/?pre>/im",
+          "/^\|Language\=.*\n/im",
 
           // Kitchensink
-          "/^\|LiveURL\=(.*)\s?$/mu",  # in "|Examples={{Single Example" initiated block. Word seemed unique enough to be expressed that way.
+          "/^\|LiveURL\=(.*)\s?$/m",  # in "|Examples={{Single Example" initiated block. Word seemed unique enough to be expressed that way.
+          "/^#(\w)/im",
 
-          // Pattern sensitive rewrites.
+          // Pattern sensitive rewrite #1
           //
           // The ones we rely on ordering, crossing fingers they remain consistent everywhere.
           // Try to make this list illustrate the order dependency.
           //
-          // e.g.
-
           // {{Related_Specifications_Section
           // |Name=DOM Level 3 Events
           // |URL=http://www.w3.org/TR/DOM-Level-3-Events/
@@ -125,14 +137,38 @@ class MarkdownFormatter implements TransformerFormatterInterface
           // * **Status**: Working Draft
           // * **Relevant_changes**: Section 4.3
           //
+          // Cannot do better than this, "Name", "Status" are likely to appear
+          // in other contexts :(
+          //
           "/^\{\{Related_Specifications_Section\s?$/mi",
           "/^\|URL\=(.*)$/mu",
-          "/^\|Name\=(.*)\n/mu", # Gotta improve that one, lots of thing can match this!!
-          "/^\|(Status|Relevant_changes)\=(.*)/mu",
+
+          // Cross context safe key-value rewrite
+          // Ones we can’t use here:
+          //   - State: In Readiness markers, within "{{Flags"
+          //   - Description: In Method Parameter
+          "/^\|(Name|Status|Relevant_changes|Optional|Data\ type|Index)\=(.*)$/im",
+
+          // API Object Method
+          "/^\{\{API_Object_Method(.*)$/im",
+          "/^\|Parameters\=\{\{Method\ Parameter/im",
+          "/^\}\}\{\{Method\ Parameter$/im",
+          //"/^\|Description=/im", # Breaks Examples_Section
+          "/^\|(Method_applies_to|Example_object_name|Javascript_data_type)\=/im",
+
+          // Explicit delete
+          "/^\{\{(See_Also_Section|API_Name)\}\}/im",
+
+          // Explicit rewrites
+          "/^\{\{See_Also_Section/im",
+
+          // Hopefully not too far-reaching
+          "/^\|Notes_rows\=\{\{Compatibility\ (.*)\n/im", # Match "|Notes_rows={{Compatibility Notes Row"
+          "/^\|Note\=/im",                              # Match "|Note=Use a legacy propri..."
 
         );
 
-        $this->replacements[0] = array(
+        $this->replacements[] = array(
           "\n",
 
           // Headings
@@ -140,6 +176,8 @@ class MarkdownFormatter implements TransformerFormatterInterface
           "## $1",
           "# $1",
           "",
+          "\n\n## Compatibility",
+          "\n\n## Notes\n",
 
           // Delete things we won’t use anymore
           "",
@@ -147,20 +185,117 @@ class MarkdownFormatter implements TransformerFormatterInterface
           // Harmonize code fencing discrepancies.
           "```",
           "\n```\n",
+          "",
 
           // Kitchensink
           "```\n* [Live example]($1)\n",
+          "1. $1",
 
-          // Pattern sensitive rewrites
-          "\n## Related specifications\n",
-          "($1)",
-          "* [$1]",
+          // Pattern sensitive rewrite #1
+          "\n\n## Related specifications\n",
+          "* **Link**: $1",
+
+          // Cross context safe key-value rewrite
           "* **$1**: $2",
+
+          // API Object Method
+          "\n\n\n## API Object Method",
+          "\n### Method parameter",
+          "\n### Method parameter",
+          //"\n", # Breaks Examples_Section
+          "* **$1**: ",
+
+          // Explicit delete
+          "",
+
+          // Explicit rewrites
+          "\n### See Also",
+
+          // Hopefully not too far-reaching
+          "",
+          "",
         );
 
-        if (!!$analyze) {
-            foreach ($this->patterns as $k => $v) {
-                $this->patterns[$k] .= 'uS';
+        $this->patterns[] = array(
+
+          "/\'\'\'\'\'(.+?)\'\'\'\'\'/s",
+          "/\'\'\'(.+?)\'\'\'/s",
+          "/\'\'(.+?)\'\'/s",
+          "/<code>/",
+          "/<\/code>/",
+          "/<strong>/",
+          "/<\/strong>/",
+          "/<pre>/",
+          "/<\/pre>/",
+
+        );
+
+        $this->replacements[] = array(
+
+          "**$1**",
+          "**$1**",
+          "*$1*",
+          "`",
+          "`",
+          "**",
+          "**",
+          "```\n",
+          "\n```",
+
+        );
+
+        /*
+         * Work with links
+         *
+         * We should know most common link patterns variations to harmonize
+         * lets do that soon.
+         *
+        $this->patterns[] = array(
+
+          "/\[((news|(ht|f)tp(s?)|irc):\/\/(.+?))( (.+))\]/i", //,'<a href="$1">$7</a>',$html);
+          "/\[((news|(ht|f)tp(s?)|irc):\/\/(.+?))\]/i", //,'<a href="$1">$1</a>',$html);
+
+        );
+
+        $this->replacements[] = array(
+
+          '[$7]($1)<a href="$1">$7</a>',
+          '$1',
+
+        );
+        */
+
+        /*
+         * Lets attempt a different approach for the last bit.
+         *
+         * Since the biggest bit is done, let’s keep some sections
+         * to use a {{Template|A=A value}} handler.
+         *
+         * Previous tests were not good, but maybe with much less
+         * cluttered input, we might get something working now.
+         *
+         * This block would remove ALL '}}' elements, breaking that
+         * proposed pass.
+         *
+        $this->patterns[] = array(
+
+          "/^\}\}\n/m",
+          "/^\}\}$/m",
+
+        );
+
+        $this->replacements[] = array(
+
+          "",
+          "",
+
+        );
+        */
+
+        for ($pass=0; $pass < count($this->patterns); $pass++) {
+            foreach ($this->patterns[$pass] as $k => $v) {
+                // Apply common filters
+                $this->patterns[$pass][$k] .= 'uS';
             }
         }
     }
@@ -171,6 +306,9 @@ class MarkdownFormatter implements TransformerFormatterInterface
         for ($pass=0; $pass < count($this->patterns); $pass++) {
             $this->text_cache = preg_replace($this->patterns[$pass], $this->replacements[$pass], $this->text_cache);
         }
+
+        $this->text_cache = preg_replace_callback('/\[([^\[\]\|\n\': ]+)\]/', array($this, 'helperExternlinks'), $this->text_cache);
+        $this->text_cache = preg_replace_callback('/\[?\[([^\[\]\|\n\' ]+)[\| ]([^\]\']+)\]\]?/', array($this, 'helperExternlinks'), $this->text_cache);
 
         return $this->text_cache;
     }
