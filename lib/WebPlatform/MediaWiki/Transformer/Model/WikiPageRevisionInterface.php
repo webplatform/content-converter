@@ -6,14 +6,12 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
-use \Exception;
-
 /**
- * Rule replacement has to be a string.
+ * Wiki Page Revision Interface.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class UnsupportedInputException extends \Exception
+interface WikiPageRevisionInterface
 {
-  protected $message = 'Rule replacement input MUST be a string';
+  public function getText();
 }

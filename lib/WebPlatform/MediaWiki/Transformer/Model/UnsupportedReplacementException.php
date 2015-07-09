@@ -10,6 +10,8 @@ use \Exception;
 
 /**
  * Replacement string MUST be compatible with PHP preg_replace.
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
 class UnsupportedReplacementException extends \Exception
 {

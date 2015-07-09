@@ -11,7 +11,7 @@ use \ArrayIterator;
 /**
  * Wikitext Data Transformer Descriptor.
  *
- * Describe a transformation
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
 class Rule
 {

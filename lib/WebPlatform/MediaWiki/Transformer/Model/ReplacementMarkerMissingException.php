@@ -10,6 +10,8 @@ use \Exception;
 
 /**
  * Replacement marker not found in Rule.
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
 class ReplacementMarkerMissingException extends \Exception
 {

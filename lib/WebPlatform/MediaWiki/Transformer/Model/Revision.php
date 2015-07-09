@@ -41,6 +41,7 @@ use \SimpleXMLElement;
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
 class Revision
+  implements WikiPageRevisionInterface
 {
   /* String used in MediaWiki dumpBackup format node in a revision entry  */
   const FORMAT_WIKI = "text/x-wiki";
