@@ -48,7 +48,11 @@ class Contributor
     /**
      * user_id value in MediaWiki database
      *
-     * ... not really useful, if you merge multiple wikis though.
+     * ... not really useful if you merge multiple wikis though.
+     *
+     * If you want to migrate both users and wiki contents from the
+     * same MediaWiki instance, the id field should match the Contributor id
+     * node within dumpBackup XML file.
      *
      * @var integer MediaWiki database user table id key
      */
