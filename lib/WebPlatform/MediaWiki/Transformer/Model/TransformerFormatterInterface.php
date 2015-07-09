@@ -13,10 +13,10 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  */
 interface TransformerFormatterInterface
 {
-  /**
-   * Apply text rewrites
-   *
-   * @return string
-   */
-  public function apply(WikiPageRevisionInterface $input);
+    /**
+     * Apply text rewrites
+     *
+     * @return string
+     */
+    public function apply(WikiPageRevisionInterface $input);
 }

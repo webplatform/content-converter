@@ -13,30 +13,30 @@ namespace WebPlatform\MediaWiki\Transformer\Tests;
  */
 class PagesFixture
 {
-  // List namespaces
-  public static $NAMESPACE_PREFIXES = array("10"=>"Template:","102"=>"Property:","15"=>"Category:","3000"=>"WPD:","3020"=>"Meta:");
+    // List namespaces
+    public static $NAMESPACE_PREFIXES = array("10"=>"Template:","102"=>"Property:","15"=>"Category:","3000"=>"WPD:","3020"=>"Meta:");
 
-  /** @var SimpleXMLElement obje */
-  protected $data = null;
+    /** @var SimpleXMLElement obje */
+    protected $data = null;
 
-  public function __construct()
-  {
-    $this->data = $this->getXml();
+    public function __construct()
+    {
+        $this->data = $this->getXml();
 
-    return $this;
-  }
-
-  public function getOne()
-  {
-    return $this->data->page[0];
-  }
-
-  public function getXml()
-  {
-    if ($this->data instanceof SimpleXMLElement) {
-      return $this->data;
+        return $this;
     }
-    $xmlString = <<<'MWXML'
+
+    public function getOne()
+    {
+        return $this->data->page[0];
+    }
+
+    public function getXml()
+    {
+        if ($this->data instanceof SimpleXMLElement) {
+            return $this->data;
+        }
+        $xmlString = <<<'MWXML'
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" xml:lang="en">
   <page>
     <title>css/properties/border-radius</title>
@@ -1036,9 +1036,1431 @@ if (country) {
       <sha1>2q4w9k2zrrdf3rscx5u54ba3utmjib0k</sha1>
     </revision>
   </page>
+  <page>
+    <title>tutorials/html5 form features</title>
+    <ns>0</ns>
+    <id>739</id>
+    <revision>
+      <id>101073</id>
+      <parentid>70709</parentid>
+      <timestamp>2015-03-02T21:55:26Z</timestamp>
+      <contributor>
+        <username>Awwright</username>
+        <id>42430</id>
+      </contributor>
+      <comment>Fix HTML snippets</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="45367">{{Page_Title|HTML5 form features}}
+{{Flags
+|State=Ready to Use
+|Editorial notes=
+|Checked_Out=No
+}}
+{{Byline
+|Name=
+|URL=
+|Published=
+}}
+{{Summary_Section|In this tutorial we will take you through the new HTML5 form features.}}
+{{Guide
+|Content=== Introduction ==
+
+HTML5 includes many new features that make web forms much easier to write, and more powerful and consistent across the Web.
+This article gives a brief overview of some of the new form controls and functionalities that have been introduced.
+
+== Why did we need new form features? ==
+
+Let's face it, HTML forms have always been a pain. They are not much fun to mark up and they can be difficult to style &amp;mdash; especially if you want
+them to be consistent across browsers and fit in with the overall look and feel of your site. And they can be frustrating for your end users to fill
+out, even if you create them with care and consideration to make them as usable and accessible as possible. Creating a good form is more about damage
+limitation than pleasurable user experiences.
+
+Back when HTML 4.01 became a stable recommendation, the web was a mostly static place. Yes, there was the odd comment form or guest book script, but
+generally web sites were just there for visitors to read. Since then, the web has evolved. For many people, the browser has already become a window
+into a world of complex, web-based applications that bring them an almost desktop-like experience.
+
+[[Image:html5formfig1.png|Some complicated non-native form controls, faked with JavaScript]]
+
+''Figure 1: Some complicated non-native form controls, faked with JavaScript.''
+
+To fill the need for the more sophisticated controls required for such applications, developers have been taking advantage of JavaScript libraries
+and frameworks such as jQueryUI and YUI. These solutions have certainly matured over the years, but essentially they're a workaround to compensate
+for the limited form controls available in HTML. They &quot;fake&quot; the more complex widgets like date pickers and sliders by layering additional
+(but not always semantic) markup and lots of JavaScript on top of pages.
+
+HTML5 aims to standardise some of the most common rich form controls, making them render natively in the browser and obviating the need for these
+script-heavy workarounds.
+
+== Introducing our example ==
+
+To illustrate some of the new features, this article builds a basic HTML5 forms example. It's not meant to represent a &quot;real&quot; form (as you'd be
+hard-pressed to find a situation where you need all the new features in a single form), but it should give you an idea of how the various new
+aspects look and behave.
+
+Note: The look and feel of the new form controls and validation messages differs from brower to browser, so styling your forms to look reasonably
+consistent across browsers still needs careful consideration.
+
+== New form controls ==
+
+As forms are the main tool for data input in web applications, and as the data we want to collect has become more complex, it has been necessary
+to create an input element with more capabilities, to collect the data with more semantics and better definition, and to allow for easier, more
+effective validation and error management.
+
+=== &amp;lt;input type=&quot;number&quot;/&amp;gt; ===
+
+The first new input type we'll discuss is &lt;code&gt;type=&quot;number&quot;&lt;/code&gt;:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;number&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+This input type creates a special kind of input field for number entry &amp;mdash; in most supporting browsers this appears as a text entry field with
+a &quot;spinner&quot; control, which allows you to increment and decrement its value.
+
+[[Image:html5formfig2.png|A number input type]]
+
+''Figure 2: A &lt;code&gt;number&lt;/code&gt; input type.''
+
+=== &amp;lt;input type=&quot;range&quot;/&amp;gt; ===
+
+Creating a slider control to allow you to choose among a range of values used to be a complicated, semantically dubious proposition,
+but with HTML5 it is easy &amp;mdash; you just use the &lt;code&gt;range&lt;/code&gt; input type:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;range&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+[[Image:html5formfig3.png|A range input type]]
+
+''Figure 3: A &lt;code&gt;range&lt;/code&gt; input type.''
+
+Note that, by default, this input does not generally show the currently selected value, or even the range of values it covers. Authors must
+provide these through other means; for instance, to display the current value, we could use an &lt;code&gt;&amp;lt;output&amp;gt;&lt;/code&gt; element together
+with some JavaScript to update its display whenever the user interacts with the form:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;form oninput=&quot;output.value = weight.value&quot;&gt;
+    &lt;input type=&quot;range&quot; id=&quot;weight&quot;/&gt;
+    &lt;output id=&quot;output&quot;&gt;&lt;/output&gt;
+&lt;/form&gt;&lt;/syntaxhighlight&gt;
+
+=== &amp;lt;input type=&quot;date&quot;/&amp;gt; and other date/time controls ===
+
+HTML5 has a number of different input types for creating complicated date/time pickers, like the kind of you see featured on most
+flight/train booking sites. These used to be created using unsemantic kludges, so it is great that we now have standardized, easy ways
+to do this. For example:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;date&quot;/&gt;
+&lt;input type=&quot;time&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+Respectively, these create a fully functioning date picker, and a text input containing a separator for hours, minutes, and seconds
+(depending on the &lt;code&gt;step&lt;/code&gt; attribute specified) that only allows you to input a time value.
+
+[[Image:html5formfig4.png|date and time input types]]
+
+''Figure 4: &lt;code&gt;date&lt;/code&gt; and &lt;code&gt;time&lt;/code&gt; input types.''
+
+But it doesn't end here &amp;mdash; there are a number of other related input types available:
+
+* &lt;code&gt;datetime&lt;/code&gt;: combines the functionality of the two we looked at above, allowing you to choose a date and a time.
+* &lt;code&gt;month&lt;/code&gt;: allows you to choose a month, stored internally as a number between 1-12, although different browsers may provide you with more elaborate choosing mechanisms, like a scrolling list of the month names.
+* &lt;code&gt;week&lt;/code&gt;: allows you to choose a week, stored internally in the format 2010-W37 (week 37 of the year 2010), and chosen using a similar datepicker to the ones we have seen already.
+
+=== &amp;lt;input type=&quot;color&quot;/&amp;gt; ===
+
+This input type brings up a color picker. Opera's implementation allows the user to pick from a selection of colors, enter hexadecimal values
+directly in a text field, or invoke the operating system's native color picker.
+
+[[Image:html5formfig5.png|a color input, and the native color pickers on Windows and OS X]]
+
+''Figure 5: a &lt;code&gt;color&lt;/code&gt; input, and the native color pickers on Windows and OS X.''
+
+=== &lt;input type=&quot;search&quot;/&gt; ===
+
+This input type is arguably nothing more than a differently-styled text input. Browsers are meant to style these inputs the same way as any
+OS-specific search functionality. Beyond this purely aesthetic consideration, though, it's still important to note that marking up search fields
+explicitly opens up the possibility for browsers, assistive technologies, or automated crawlers to do something clever with these inputs
+in the future. For instance, a browser could conceivably offer the user a choice to automatically create a custom search for a specific site.
+
+[[Image:html5formfig6.png|A search input as it appears in Opera on OS X]]
+
+''Figure 6: A &lt;code&gt;search&lt;/code&gt; input as it appears in Opera on OS X.''
+
+=== The &amp;lt;datalist&amp;gt; element and list attribute ===
+
+So far we have been used to using &lt;code&gt;&amp;lt;select&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;option&amp;gt;&lt;/code&gt; elements to create dropdown lists of options for our
+users to choose from. But what if we wanted to create a list that allowed users to choose from a list of suggested options, as well as being able to
+type in their own? That used to require a lot of fiddly scripting, but now you can simply use the &lt;code&gt;list&lt;/code&gt; attribute to connect an ordinary
+input to a list of options, defined inside a &lt;code&gt;&amp;lt;datalist&amp;gt;&lt;/code&gt; element.
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;text&quot; list=&quot;mydata&quot;/&gt;
+&lt;datalist id=&quot;mydata&quot;&gt;
+    &lt;option label=&quot;Mr&quot; value=&quot;Mister&quot;/&gt;
+    &lt;option label=&quot;Mrs&quot; value=&quot;Mistress&quot;/&gt;
+    &lt;option label=&quot;Ms&quot; value=&quot;Miss&quot;/&gt;
+&lt;/datalist&gt;&lt;/syntaxhighlight&gt;
+
+[[Image:html5formfig7.png|Creating an input element with preset options using datalist]]
+
+''Figure 7: Creating an input element with suggestions using &lt;code&gt;datalist&lt;/code&gt;.''
+
+=== &amp;lt;input type=&quot;tel&quot;/&amp;gt;, &amp;lt;input type=&quot;email&quot;/&amp;gt; and &amp;lt;input type=&quot;url&quot;/&amp;gt; ===
+
+As their names imply, these new input types relate to telephone numbers, email addresses, and URLs (here including URIs and IRIs). Browsers will render these as normal text inputs,
+but explicitly stating what kind of text we're expecting in these fields plays an important role in client-side form validation. Additionally, on
+certain mobile devices the browser will switch from its regular text entry on-screen keyboard to the more context-relevant variants. Again, it's
+conceivable that in the future browsers will take further advantage of these explicitly marked-up inputs to offer additional functionality, such as
+autocompleting email addresses and telephone numbers based on the user's contacts list or address book.
+
+== New attributes ==
+
+In addition to the explicit new input types, HTML5 defines a series of new attributes for form controls that help simplify some common tasks and
+further specify the expected values for certain entry fields.
+
+=== placeholder ===
+
+A common usability trick in web forms is to have placeholder content in text entry fields &amp;mdash; for instance, to give more information about the
+expected type of information we want the user to enter &amp;mdash; which disappears when a user starts entering a value or when the form control gets
+focus. While this used to require some JavaScript (clearing the contents of the form field on focus and resetting it to the default text if the user
+left the field without entering anything), we can now simply use the &lt;code&gt;placeholder&lt;/code&gt; attribute:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;text&quot; placeholder=&quot;John Doe&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+[[Image:html5formfig8.png|A text input with placeholder text]]
+
+''Figure 8: A text input with &lt;code&gt;placeholder&lt;/code&gt; text.''
+
+=== autofocus ===
+
+Another common feature that previously had to rely on scripting is having a form field automatically focused when a page is loaded. This can now be
+achieved very simply with the &lt;code&gt;autofocus&lt;/code&gt; attribute:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;text&quot; autofocus=&quot;&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+Keep in mind that you shouldn't have more than one &lt;code&gt;autofocus&lt;/code&gt; form control on a single page. You should also use this sort of
+functionality with caution, especially in situations where a form represents the main area of interest in a page. A search page is a good example
+&amp;mdash; provided that there isn't a lot of content and explanatory text, it makes sense to set the focus automatically to the text input of the
+search form.
+
+=== min and max ===
+
+As their names suggest, this pair of attributes allows you to set a lower and upper bound for the values that can be entered into a numerical form
+field, like a number, range, time or date input types. Yes, you can even use it to set upper and lower bounds for dates &amp;mdash; for instance, on a
+travel booking form you could limit the datepicker to only allow the user to select future dates. For &lt;code&gt;range&lt;/code&gt; inputs, &lt;code&gt;min&lt;/code&gt;
+and &lt;code&gt;max&lt;/code&gt; are actually necessary to define what values are returned when the form is submitted. The code is pretty simple and
+self-explanatory:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;number&quot; min=&quot;1&quot; max=&quot;10&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+=== step ===
+
+The &lt;code&gt;step&lt;/code&gt; attribute can be used with a numerical input value to dictate how granular the values you can input can be.
+For example, you might want users to enter a particular time, but only in 30 minute increments. In this case, we can use the &lt;code&gt;step&lt;/code&gt;
+attribute, keeping in mind that for &lt;code&gt;time&lt;/code&gt; inputs the value of the attribute is in seconds:
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;time&quot; step=&quot;1800&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+== New output mechanisms ==
+
+Beyond the new form controls that users can interact with, HTML5 defines a series of new elements specifically meant to display and visualise
+information to the user.
+
+=== &amp;lt;output&amp;gt; ===
+
+We already mentioned the &lt;code&gt;&amp;lt;output&amp;gt;&lt;/code&gt; element when talking about the &lt;code&gt;range&lt;/code&gt; input type &amp;mdash; this element serves
+as a way to display the result of a calculation or, more generally, to provide an explicitly identified output of a script (rather than simply
+pushing some text into in a random &lt;code&gt;span&lt;/code&gt; or &lt;code&gt;div&lt;/code&gt;). To make it even more explicit what particular form controls the
+&lt;code&gt;&amp;lt;output&amp;gt;&lt;/code&gt; relates to, we can (in a similar way to &lt;code&gt;&amp;lt;label&amp;gt;&lt;/code&gt;) pass a list of &lt;code&gt;ID&lt;/code&gt;s in the element's
+optional &lt;code&gt;for&lt;/code&gt; attribute.
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;range&quot; id=&quot;rangeexample&quot;/&gt;
+&lt;output onforminput=&quot;value=rangeexample.value&quot; for=&quot;rangeexample&quot;&gt;&lt;/output&gt;&lt;/syntaxhighlight&gt;
+
+=== &amp;lt;progress&amp;gt; and &amp;lt;meter&amp;gt; ===
+
+These two new elements are very similar, both resulting in a gauge/bar being presented to the user. Their distinction is in their intended purpose.
+As the name suggests, &lt;code&gt;progress&lt;/code&gt; is meant to represent a progress bar, to indicate the percentage of completion of a particular task,
+while meter is a more generic indicator of a scalar measurement or fractional value.
+
+[[Image:html5formfig9.png|A progress indicator bar]]
+
+''Figure 9: A progress indicator bar.''
+
+== Validation ==
+
+Form validation is very important on both client- and server-side, to help legitimate users avoid and correct mistakes, and to prevent malicious
+users from submitting data that could cause damage to the application. As browsers can now get an idea of what types of values are expected from
+the various form controls (be it their &lt;code&gt;type&lt;/code&gt;, or any upper/lower bounds set on numerical values, dates and times), they can also offer
+native form validation &amp;mdash; another tedious task that, up to now, required authors to write reams of JavaScript or use some ready-made
+validation script or library.
+
+Note: For form controls to be validated, they must have a &lt;code&gt;name&lt;/code&gt; attribute, as without it they wouldn't be submitted as part of the
+form anyway.
+
+=== required ===
+
+One of the most common aspects of form validation is the enforcement of required fields &amp;mdash; not allowing a form to be submitted until certain
+pieces of information have been entered. This can now simply be achieved by adding the &lt;code&gt;required&lt;/code&gt; attribute to an &lt;code&gt;input&lt;/code&gt;,
+&lt;code&gt;select&lt;/code&gt; or &lt;code&gt;textarea&lt;/code&gt; element.
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;text&quot; required=&quot;&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+[[Image:html5formfig10.png|Opera's client-side validation in action, showing an error for a required field that was left empty]]
+
+''Figure 10: Opera's client-side validation in action, showing an error for a required field that was left empty.''
+
+=== type and pattern ===
+
+As we've seen, authors can now specify the kinds of entries they expect from their form fields. Rather than simply defining text inputs,
+authors can explicitly create inputs for things like numbers, email addresses, and URLs. As part of their client-side validation, browsers can now
+check that what the user entered in these more specific fields matches the expected structure. In essence, browsers can evaluate the input values
+against a built-in pattern that defines what valid entries in those types of inputs look like, and can warn a user when their entry doesn't meet
+the criteria.
+
+[[Image:html5formfig11.png|Opera's error message for invalid email addresses in an email input]]
+
+''Figure 11: Opera's error message for invalid email addresses in an &lt;code&gt;email&lt;/code&gt; input.''
+
+For other text entry fields that nonetheless need to follow a certain structure (for instance, login forms where the usernames can only contain a
+specific sequence of lowercase letters and numbers), authors can use the &lt;code&gt;pattern&lt;/code&gt; attribute to specify their own custom regular
+expression.
+
+&lt;syntaxhighlight lang=&quot;html5&quot;&gt;&lt;input type=&quot;text&quot; pattern=&quot;[a-z]{3}[0-9]{3}&quot;/&gt;&lt;/syntaxhighlight&gt;
+
+== Browser support ==
+
+On the desktop, [[http://www.opera.com Opera]] currently has the most complete implementation of new input types and native client-side validation,
+but support is on the way for all other major browsers as well, so it won't be long before we can take advantage of these new powerful tools in our
+projects. But what about older browser versions?
+
+By design, browsers that don't understand the new input types like &lt;code&gt;date&lt;/code&gt; or &lt;code&gt;number&lt;/code&gt; will simply fall back to treating
+them as standard text inputs &amp;mdash; not as user-friendly as their advanced HTML5 counterparts, but at the very least they allow for a form to
+be filled in.
+
+==Conclusion==
+In this article, you've seen the new HTML5 form elements and attributes and learned how to use them. For a more general treatment of
+standard HTML forms, please see the previous article [[guides/html_forms_basics|HTML forms basics]].
+}}
+{{Notes_Section
+|Usage=
+|Notes=
+|Import_Notes=
+}}
+{{Compatibility_Section
+|Not_required=No
+|Imported_tables=
+|Desktop_rows={{Compatibility Table Desktop Row
+|Feature=autofocus
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.6
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.0
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=&lt;datalist&gt;
+|Chrome_supported=Yes
+|Chrome_version=20.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.5
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=No
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=&lt;meter&gt;
+|Chrome_supported=Yes
+|Chrome_version=8.0
+|Chrome_prefixed_supported=Unknown
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=16.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=No
+|Internet_explorer_version=
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=15.0
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.2
+|Safari_prefixed_supported=Unknown
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=min, max and step
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=No
+|Firefox_version=
+|Firefox_prefixed_supported=Unknown
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=10.6
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.0
+|Safari_prefixed_supported=Unknown
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=&lt;output&gt;
+|Chrome_supported=Yes
+|Chrome_version=13.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=6.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10.0
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.2
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.1
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=pattern
+|Chrome_supported=Yes
+|Chrome_version=10
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=11.01
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=No
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=placeholder
+|Chrome_supported=Yes
+|Chrome_version=4.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=11.6
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=&lt;progress&gt;
+|Chrome_supported=Yes
+|Chrome_version=6.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=6.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=10.6
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.2
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=required
+|Chrome_supported=Yes
+|Chrome_version=6.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.6
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=No
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;color&quot;
+|Chrome_supported=Yes
+|Chrome_version=20.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=No
+|Firefox_version=
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=No
+|Internet_explorer_version=
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=11.0
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=No
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;date&quot;
+|Chrome_supported=No
+|Chrome_version=
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=No
+|Firefox_version=
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=No
+|Internet_explorer_version=
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.5
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=No
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;email&quot;
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=10.62
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Unknown
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;number&quot;
+|Chrome_supported=Yes
+|Chrome_version=7.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=No
+|Firefox_version=
+|Firefox_prefixed_supported=Unknown
+|Firefox_prefixed_version=
+|Internet_explorer_supported=No
+|Internet_explorer_version=
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.5
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=5.0
+|Safari_prefixed_supported=Unknown
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;range&quot;
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=23
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=9.5
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=3.1
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;search&quot;
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=11.01
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Yes
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;tel&quot;
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=11.01
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Unknown
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}{{Compatibility Table Desktop Row
+|Feature=type=&quot;url&quot;
+|Chrome_supported=Yes
+|Chrome_version=5.0
+|Chrome_prefixed_supported=No
+|Chrome_prefixed_version=
+|Firefox_supported=Yes
+|Firefox_version=4.0
+|Firefox_prefixed_supported=No
+|Firefox_prefixed_version=
+|Internet_explorer_supported=Yes
+|Internet_explorer_version=10
+|Internet_explorer_prefixed_supported=No
+|Internet_explorer_prefixed_version=
+|Opera_supported=Yes
+|Opera_version=10.62
+|Opera_prefixed_supported=No
+|Opera_prefixed_version=
+|Safari_supported=Unknown
+|Safari_version=
+|Safari_prefixed_supported=No
+|Safari_prefixed_version=
+}}
+|Mobile_rows={{Compatibility Table Mobile Row
+|Feature=autofocus
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=Unknown
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=No
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=&lt;datalist&gt;
+|Android_supported=Unknown
+|Android_version=
+|Android_prefixed_supported=Unknown
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=No
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=15.0
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Yes
+|Opera_mobile_version=10.0
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Unknown
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=Unknown
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=&lt;meter&gt;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=Unknown
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Yes
+|Opera_mobile_version=11.0
+|Opera_mobile_prefixed_supported=Unknown
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Unknown
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=Unknown
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=min, max and step
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Unknown
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=Unknown
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=No
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=&lt;output&gt;
+|Android_supported=Yes
+|Android_version=2.1
+|Android_prefixed_supported=Unknown
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=4.0
+|Firefox_mobile_prefixed_supported=Unknown
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=Unknown
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=5
+|Safari_mobile_prefixed_supported=Unknown
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=pattern
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=Unknown
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=placeholder
+|Android_supported=Yes
+|Android_version=3.2
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=Unknown
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=2.1
+|Safari_mobile_prefixed_supported=Unknown
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=&lt;progress&gt;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=6.0
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Yes
+|Opera_mobile_version=11
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=required
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=Unknown
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=Unknown
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;color&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=No
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=No
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;date&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=18
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=No
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=5.0
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;email&quot;
+|Android_supported=Yes
+|Android_version=3.1
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=15.0
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=3.1
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;number&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;range&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=No
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=5.0
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;search&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=No
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;tel&quot;
+|Android_supported=Yes
+|Android_version=3.1
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=15.0
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Unknown
+|Opera_mobile_version=
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=Yes
+|Safari_mobile_version=3.1
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}{{Compatibility Table Mobile Row
+|Feature=type=&quot;url&quot;
+|Android_supported=No
+|Android_version=
+|Android_prefixed_supported=No
+|Android_prefixed_version=
+|Blackberry_supported=Unknown
+|Blackberry_version=
+|Blackberry_prefixed_supported=Unknown
+|Blackberry_prefixed_version=
+|Chrome_mobile_supported=Yes
+|Chrome_mobile_version=
+|Chrome_mobile_prefixed_supported=No
+|Chrome_mobile_prefixed_version=
+|Firefox_mobile_supported=Yes
+|Firefox_mobile_version=15
+|Firefox_mobile_prefixed_supported=No
+|Firefox_mobile_prefixed_version=
+|IE_mobile_supported=Unknown
+|IE_mobile_version=
+|IE_mobile_prefixed_supported=Unknown
+|IE_mobile_prefixed_version=
+|Opera_mobile_supported=Yes
+|Opera_mobile_version=12
+|Opera_mobile_prefixed_supported=No
+|Opera_mobile_prefixed_version=
+|Opera_mini_supported=Unknown
+|Opera_mini_version=
+|Opera_mini_prefixed_supported=Unknown
+|Opera_mini_prefixed_version=
+|Safari_mobile_supported=No
+|Safari_mobile_version=
+|Safari_mobile_prefixed_supported=No
+|Safari_mobile_prefixed_version=
+}}
+|Notes_rows=
+}}
+{{See_Also_Section
+|Manual_links=
+|External_links=
+|Manual_sections==== Exercise Questions ===
+
+* Why is it a good idea to mark up menus as lists?
+* When you design a navigation menu, what do you need to plan for in the future?
+* What are the benefits of using &lt;code&gt;&amp;lt;select&amp;gt;&lt;/code&gt; elements for menus, and what are the problems?
+* What do you define with &lt;code&gt;&amp;lt;area&amp;gt;&lt;/code&gt; elements, and what is the &lt;code&gt;nohref&lt;/code&gt; attribute of an area element for (this is not in here, you'd need to do some online research)
+* What are the benefits of skip links?
+}}
+{{Topics|HTML}}
+{{External_Attribution
+|Is_CC-BY-SA=No
+|MDN_link=
+|MSDN_link=
+|HTML5Rocks_link=
+}}</text>
+      <sha1>ncm7t9f1bh3bruk22gt4uhok2h1kjte</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>concepts/programming/javascript/overview</title>
+    <ns>0</ns>
+    <id>786</id>
+    <revision>
+      <id>58596</id>
+      <parentid>12944</parentid>
+      <timestamp>2014-06-24T13:02:49Z</timestamp>
+      <contributor>
+        <username>Paulv</username>
+        <id>9756</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="10202">{{Page_Title|Overview}}
+{{Flags
+|State=Not Ready
+|Content=Outdated
+|Compatibility=Outdated, Incomplete
+}}
+{{Byline}}
+{{Summary_Section|This chapter introduces JavaScript and discusses some of its fundamental concepts.}}
+=What is JavaScript?=
+
+JavaScript is a cross-platform, object-oriented scripting language. JavaScript is a small, lightweight language; it is not useful as a standalone language, but is designed for easy embedding in other products and applications, such as web browsers. Inside a host environment, JavaScript can be connected to the objects of its environment to provide programmatic control over them.
+
+Core JavaScript contains a core set of objects, such as Array, Date, and Math, and a core set of language elements such as operators, control structures, and statements. Core JavaScript can be extended for a variety of purposes by supplementing it with additional objects; for example:
+
+* ''Client-side JavaScript'' extends the core language by supplying objects to control a browser (Navigator or another web browser) and its Document Object Model (DOM). For example, client-side extensions allow an application to place elements on an HTML form and respond to user events such as mouse clicks, form input, and page navigation.
+* ''Server-side JavaScript'' extends the core language by supplying objects relevant to running JavaScript on a server. For example, server-side extensions allow an application to communicate with a relational database, provide continuity of information from one invocation to another of the application, or perform file manipulations on a server.
+
+Through JavaScript's LiveConnect functionality, you can let Java and JavaScript code communicate with each other. From JavaScript, you can instantiate Java objects and access their public methods and fields. From Java, you can access JavaScript objects, properties, and methods.
+
+Netscape invented JavaScript, and JavaScript was first used in Netscape browsers.
+
+=JavaScript and Java=
+
+JavaScript and Java are similar in some ways but fundamentally different in some others. The JavaScript language resembles Java but does not have Java's static typing and strong type checking. JavaScript follows most Java expression syntax, naming conventions and basic control-flow constructs which was the reason why it was renamed from LiveScript to JavaScript.
+
+In contrast to Java's compile-time system of classes built by declarations, JavaScript supports a runtime system based on a small number of data types representing numeric, Boolean, and string values. JavaScript has a prototype-based object model instead of the more common class-based object model. The prototype-based model provides dynamic inheritance; that is, what is inherited can vary for individual objects. JavaScript also supports functions without any special declarative requirements. Functions can be properties of objects, executing as loosely typed methods.
+
+JavaScript is a very free-form language compared to Java. You do not have to declare all variables, classes, and methods. You do not have to be concerned with whether methods are public, private, or protected, and you do not have to implement interfaces. Variables, parameters, and function return types are not explicitly typed.
+
+Java is a class-based programming language designed for fast execution and type safety. Type safety means, for instance, that you can't cast a Java integer into an object reference or access private memory by corrupting Java bytecodes. Java's class-based model means that programs consist exclusively of classes and their methods. Java's class inheritance and strong typing generally require tightly coupled object hierarchies. These requirements make Java programming more complex than JavaScript programming.
+
+In contrast, JavaScript descends in spirit from a line of smaller, dynamically typed languages such as HyperTalk and dBASE. These scripting languages offer programming tools to a much wider audience because of their easier syntax, specialized built-in functionality, and minimal requirements for object creation.
+
+'''Table 1.1 JavaScript compared to Java'''
+{{{!}}
+! JavaScript
+! Java
+{{!}}-
+{{!}} Object-oriented. No distinction between types of objects. Inheritance is through the prototype mechanism, and properties and methods can be added to any object dynamically.
+{{!}} Class-based. Objects are divided into classes and instances with all inheritance through the class hierarchy. Classes and instances cannot have properties or methods added dynamically.
+{{!}}-
+{{!}} Variable data types are not declared (dynamic typing).
+{{!}} Variable data types must be declared (static typing).
+{{!}}-
+{{!}} Cannot automatically write to hard disk.
+{{!}} Cannot automatically write to hard disk.
+{{!}}}
+
+
+For more information on the differences between JavaScript and Java, see the chapter [[/guides/JavaScript/About_the_object_model|About the object model]].
+
+=JavaScript and the ECMAScript Specification=
+
+Netscape invented JavaScript, and JavaScript was first used in Netscape browsers. However, Netscape is working with Ecma International — the European association for standardizing information and communication systems (ECMA was formerly an acronym for the European Computer Manufacturers Association) to deliver a standardized, international programming language based on core JavaScript. This standardized version of JavaScript, called ECMAScript, behaves the same way in all applications that support the standard. Companies can use the open standard language to develop their implementation of JavaScript. The ECMAScript standard is documented in the ECMA-262 specification.
+
+The ECMA-262 standard is also approved by the ISO (International Organization for Standardization) as ISO-16262. You can find a PDF version of ECMA-262 (outdated version) at the Mozilla website. You can also find the specification on the Ecma International website. The ECMAScript specification does not describe the Document Object Model (DOM), which is standardized by the World Wide Web Consortium (W3C). The DOM defines the way in which HTML document objects are exposed to your script.
+
+==Relationship between JavaScript Versions and ECMAScript Editions==
+
+Netscape worked closely with Ecma International to produce the ECMAScript Specification (ECMA-262). The following table describes the relationship between JavaScript versions and ECMAScript editions.
+
+'''Table 1.2 JavaScript versions and ECMAScript editions'''
+{{{!}}
+! JavaScript version
+! Relationship to ECMAScript edition
+{{!}}-
+{{!}} JavaScript 1.1
+{{!}} ECMA-262, Edition 1 is based on JavaScript 1.1.
+{{!}}-
+{{!}} JavaScript 1.2
+{{!}} ECMA-262 was not complete when JavaScript 1.2 was released. JavaScript 1.2 is not fully compatible with ECMA-262, Edition 1, for the following reasons: &lt;br&gt;(1) Netscape developed additional features in JavaScript 1.2 that were not considered for ECMA-262.
+&lt;br&gt;(2) ECMA-262 adds two new features: internationalization using Unicode, and uniform behavior across all platforms. Several features of JavaScript 1.2, such as the Date object, were platform-dependent and used platform-specific behavior.
+{{!}}-
+{{!}} JavaScript 1.3
+{{!}} JavaScript 1.3 is fully compatible with ECMA-262, Edition 1. &lt;br&gt;JavaScript 1.3 resolved the inconsistencies that JavaScript 1.2 had with ECMA-262, while keeping all the additional features of JavaScript 1.2 except == and !=, which were changed to conform with ECMA-262.
+{{!}}-
+{{!}} JavaScript 1.4
+{{!}} JavaScript 1.4 is fully compatible with ECMA-262, Edition 1.&lt;br&gt;The third version of the ECMAScript specification was not finalized when JavaScript 1.4 was released.
+{{!}}-
+{{!}} JavaScript 1.5
+{{!}} JavaScript 1.5 is fully compatible with ECMA-262, Edition 3.
+{{!}}}
+
+{{Note|ECMA-262, Edition 2 consisted of minor editorial changes and bug fixes to the Edition 1 specification. The  current release by the TC39 working group of Ecma International is ECMAScript Edition 5.1}}
+
+The [[/js|JavaScript Reference]] indicates which features of the language are ECMAScript-compliant.
+
+JavaScript will always include features that are not part of the ECMAScript Specification; JavaScript is compatible with ECMAScript, while providing additional features.
+
+==JavaScript Documentation versus the ECMAScript Specification==
+
+The ECMAScript specification is a set of requirements for implementing ECMAScript; it is useful if you want to determine whether a JavaScript feature is supported in other ECMAScript implementations. If you plan to write JavaScript code that uses only features supported by ECMAScript, then you may need to review the ECMAScript specification.
+
+The ECMAScript document is not intended to help script programmers; use the JavaScript documentation for information on writing scripts.
+
+==JavaScript and ECMAScript Terminology==
+
+The ECMAScript specification uses terminology and syntax that may be unfamiliar to a JavaScript programmer. Although the description of the language may differ in ECMAScript, the language itself remains the same. JavaScript supports all functionality outlined in the ECMAScript specification.
+
+The JavaScript documentation describes aspects of the language that are appropriate for a JavaScript programmer. For example:
+
+* The Global Object is not discussed in the JavaScript documentation because you do not use it directly. The methods and properties of the Global Object, which you do use, are discussed in the JavaScript documentation but are called top-level functions and properties.
+* The no parameter (zero-argument) constructor with the &lt;code&gt;Number&lt;/code&gt; and &lt;code&gt;String&lt;/code&gt; objects is not discussed in the JavaScript documentation, because what is generated is of little use. A &lt;code&gt;Number&lt;/code&gt; constructor without an argument returns +0, and a &lt;code&gt;String&lt;/code&gt; constructor without an argument returns &quot;&quot; (an empty string).
+
+{{Compatibility_Section
+|Not_required=No
+|Desktop_rows=
+|Mobile_rows=
+|Notes_rows=
+}}
+{{See_Also_Section}}
+{{Topics|JavaScript}}
+{{External_Attribution
+|Is_CC-BY-SA=Yes
+|Sources=MDN
+|MDN_link=https://developer.mozilla.org/en-US/docs/JavaScript/Guide/JavaScript_Overview
+|MSDN_link=
+|HTML5Rocks_link=
+}}</text>
+      <sha1>9iyp3jvjla2r3m8yctm3ltd6tps1g9w</sha1>
+    </revision>
+  </page>
 </mediawiki>
 MWXML;
 
-    return new \SimpleXMLElement($xmlString);
-  }
+        return new \SimpleXMLElement($xmlString);
+    }
 }

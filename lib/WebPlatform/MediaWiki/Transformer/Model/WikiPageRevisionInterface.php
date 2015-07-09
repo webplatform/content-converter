@@ -13,5 +13,5 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  */
 interface WikiPageRevisionInterface
 {
-  public function getText();
+    public function getText();
 }

@@ -26,6 +26,58 @@ class MarkdownFormatter implements TransformerFormatterInterface
 
     public function __construct()
     {
+
+        /**
+         * MediaWiki markup caveats that has to be fixed first
+         */
+        $this->patterns[] = array(
+
+          // Has to match something like; "|Manual_sections==== 練習問題 ==="
+          // in a case where key-value is mingled with a section title, containing a one-too-many equal sign
+          "/^\|([a-z_]+)\=(\=\=)\ (.*)\ (\=\=)/im",
+          "/^\|([a-z_]+)\=(\=\=\=)\ (.*)\ (\=\=\=)/im",
+          "/^\|([a-z_]+)\=(\=\=\=\=)\ (.*)\ (\=\=\=\=)/im",
+
+          "/^\=[^\s](.*)[^\s]\=/im",
+          "/^\=\=[^\s](.*)[^\s]\=\=/im",
+          "/^\=\=\=[^\s](.*)[^\s]\=\=\=/im",
+
+          // Explicit delete of empty stuff
+          "/^\|("
+            ."Manual_links"
+            ."|External_links"
+            ."|Manual_sections"
+            ."|Usage"
+            ."|Notes"
+            ."|Import_Notes"
+            ."|Notes_rows"
+          .")\=\s?\n/im",
+
+          "/^\{\{("
+            ."Notes_Section"
+          .")\n\}\}/im",
+
+          "/^<syntaxhighlight(?:\ lang=\"?(\w)\"?)?>/im",
+
+        );
+
+        $this->replacements[] = array(
+
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+
+          "= $1 =",
+          "== $1 ==",
+          "=== $1 ===",
+
+          "",
+          "",
+
+          "```$1\n",
+
+        );
+
         $this->patterns[] = array(
           "/\r\n/",
 
@@ -33,6 +85,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
           "/^==== (.+?) ====$/m",
           "/^=== (.+?) ===$/m",
           "/^== (.+?) ==$/m",
+          "/^= (.+?) =$/m",
           "/^\{\{Page_Title\}\}.*$/im",
           "/^\{\{Compatibility_Section/im",
           "/^\{\{Notes_Section\n\|Notes\=/im",
@@ -105,6 +158,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
             ."|Mobile_rows"                         # "|Mobile_rows={{Compatibility Table Mobile Row" ^
             ."|Browser"
             ."|Version"
+            ."|Feature"
           .").*\n/im",
 
           // Harmonize code fencing discrepancies.
@@ -158,6 +212,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
 
           // Explicit delete
           "/^\{\{(See_Also_Section|API_Name)\}\}/im",
+          "/^\}\}\\{\{Compatibility\ (.*)\n/im",
 
           // Explicit rewrites
           "/^\{\{See_Also_Section/im",
@@ -172,6 +227,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
           "\n",
 
           // Headings
+          "#### $1",
           "### $1",
           "## $1",
           "# $1",
@@ -207,9 +263,11 @@ class MarkdownFormatter implements TransformerFormatterInterface
 
           // Explicit delete
           "",
+          "",
+          "",
 
           // Explicit rewrites
-          "\n### See Also",
+          "\n## See Also",
 
           // Hopefully not too far-reaching
           "",

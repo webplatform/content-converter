@@ -15,5 +15,5 @@ use \Exception;
  */
 class UnsupportedInputException extends \Exception
 {
-  protected $message = 'Rule replacement input MUST be a string';
+    protected $message = 'Rule replacement input MUST be a string';
 }
