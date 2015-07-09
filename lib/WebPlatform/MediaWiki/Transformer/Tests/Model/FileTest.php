@@ -3,6 +3,7 @@
 namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
 
 use WebPlatform\MediaWiki\Transformer\Model\File;
+use WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
 
 /**
  * File test suite
@@ -13,53 +14,11 @@ class FileTest extends \PHPUnit_Framework_TestCase {
 
   /** @var SimpleXML Object representation of a typical MediaWiki dumpBackup XML file */
   protected $dumpBackupXml;
+  protected $fixtureInstance;
 
   public function setUp() {
-    $dumpBackupXml = <<<SAMPLE
-<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" xml:lang="en">
-  <page>
-    <title>WPD:Content List/Topic Pages</title>
-    <ns>3000</ns>
-    <id>1324</id>
-    <redirect title="WPD:Content/Topic Pages" />
-    <revision>
-      <id>34321</id>
-      <parentid>46134</parentid>
-      <timestamp>2014-05-20T13:11:27Z</timestamp>
-      <contributor>
-        <username>Tyriar</username>
-        <id>10768</id>
-      </contributor>
-      <minor/>
-      <comment>Fixing double redirect</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve" bytes="37">#REDIRECT [[WPD:Content/Topic Pages]]</text>
-      <sha1>2q4w9k2zrrdf3rscx5u54ba3utmjib0k</sha1>
-    </revision>
-  </page>
-  <page>
-    <title>tutorials/what is css</title>
-    <ns>0</ns>
-    <id>1709</id>
-    <redirect title="tutorials/learning what css is" />
-    <revision>
-      <id>6048</id>
-      <timestamp>2012-10-02T15:39:44Z</timestamp>
-      <contributor>
-        <username>Cmills</username>
-        <id>11</id>
-      </contributor>
-      <comment>Cmills moved page [[tutorials/what is css]] to [[tutorials/learning what css is]]</comment>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text xml:space="preserve" bytes="44">#REDIRECT [[tutorials/learning what css is]]</text>
-      <sha1>kga6mkzkwxmaibhcopxb9awb5sgufz3</sha1>
-    </revision>
-  </page>
-</mediawiki>
-SAMPLE;
-    $this->dumpBackupXml = simplexml_load_string($dumpBackupXml);
+    $xml = new PagesFixture;
+    $this->dumpBackupXml = $xml->getXml();
   }
 
   /**

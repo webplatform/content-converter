@@ -91,7 +91,7 @@ class WikiPage {
   }
 
   public function hasRedirect() {
-    return !!$this->redirect;
+    return !! $this->redirect;
   }
 
   public function getLatest() {

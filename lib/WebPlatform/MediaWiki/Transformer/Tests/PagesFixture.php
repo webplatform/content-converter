@@ -7,24 +7,23 @@ class PagesFixture {
   // List namespaces
   public static $NAMESPACE_PREFIXES = array("10"=>"Template:","102"=>"Property:","15"=>"Category:","3000"=>"WPD:","3020"=>"Meta:");
 
+  /** @var SimpleXMLElement obje */
   protected $data = null;
 
   public function __construct() {
-    if($this->data === null) {
-      $loop = (array)$this->getXml();
-      foreach($loop as $entry) {
-        $this->data[] = (array)$entry;
-      }
-    }
+    $this->data = $this->getXml();
 
     return $this;
   }
 
   public function getOne() {
-    return $this->data[1][0];
+    return $this->data->page[0];
   }
 
   public function getXml() {
+    if($this->data instanceof SimpleXMLElement) {
+      return $this->data;
+    }
     $xmlString = <<<'MWXML'
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.10/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.10/ http://www.mediawiki.org/xml/export-0.10.xsd" version="0.10" xml:lang="en">
   <page>
@@ -36,8 +35,8 @@ class PagesFixture {
       <parentid>69053</parentid>
       <timestamp>2014-09-08T19:05:22Z</timestamp>
       <contributor>
-        <username>Renoirb</username>
-        <id>10080</id>
+        <username>Dgash</username>
+        <id>50</id>
       </contributor>
       <model>wikitext</model>
       <format>text/x-wiki</format>
@@ -176,13 +175,14 @@ border-radius: 40% 60%;
 |HTML5Rocks_link=
 }}</text>
       <sha1>jpppht3ye4y0j07t8wcyl7xhswnt9sm</sha1>
-    </revision>    <revision>
+    </revision>
+    <revision>
       <id>69320</id>
       <parentid>69053</parentid>
       <timestamp>2014-09-08T19:15:22Z</timestamp>
       <contributor>
-        <username>Renoirb</username>
-        <id>10080</id>
+        <username>Shepazu</username>
+        <id>2</id>
       </contributor>
       <model>wikitext</model>
       <format>text/x-wiki</format>
@@ -219,6 +219,25 @@ border-radius: 40% 60%;
 }}
 }}</text>
       <sha1>foo</sha1>
+    </revision>
+  </page>
+  <page>
+    <title>tutorials/what is css</title>
+    <ns>0</ns>
+    <id>1709</id>
+    <redirect title="tutorials/learning what css is" />
+    <revision>
+      <id>6048</id>
+      <timestamp>2012-10-02T15:39:44Z</timestamp>
+      <contributor>
+        <username>Cmills</username>
+        <id>11</id>
+      </contributor>
+      <comment>Cmills moved page [[tutorials/what is css]] to [[tutorials/learning what css is]]</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="44">#REDIRECT [[tutorials/learning what css is]]</text>
+      <sha1>kga6mkzkwxmaibhcopxb9awb5sgufz3</sha1>
     </revision>
   </page>
   <page>
@@ -984,9 +1003,30 @@ if (country) {
       <sha1>m9xkydrui614if4x6gq4a7v3dfep5w8</sha1>
     </revision>
   </page>
+  <page>
+    <title>WPD:Content List/Topic Pages</title>
+    <ns>3000</ns>
+    <id>1324</id>
+    <redirect title="WPD:Content/Topic Pages" />
+    <revision>
+      <id>34321</id>
+      <parentid>46134</parentid>
+      <timestamp>2014-05-20T13:11:27Z</timestamp>
+      <contributor>
+        <username>Tyriar</username>
+        <id>10768</id>
+      </contributor>
+      <minor/>
+      <comment>Fixing double redirect</comment>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve" bytes="37">#REDIRECT [[WPD:Content/Topic Pages]]</text>
+      <sha1>2q4w9k2zrrdf3rscx5u54ba3utmjib0k</sha1>
+    </revision>
+  </page>
 </mediawiki>
 MWXML;
 
-    return simplexml_load_string($xmlString);
+    return new \SimpleXMLElement($xmlString);
   }
 }

@@ -13,7 +13,7 @@ class File {
 
   public static function formatPath($title) {
 
-    // Replace with dash spaces
+    // Replace spaces underscore; Like MediaWiki does
     $title = preg_replace('~[\s]+~u', '_', $title);
 
 
@@ -32,7 +32,7 @@ class File {
     //
     // Note that this wasn’t tested on Microsoft Windows, but we have the constant, lets use it.
     //
-    foreach($namespaces as $nskey => $nsname) {
+    foreach($namespaces as $nsname) {
       if(strpos($title, $nsname) === 0) {
           $title = str_replace($nsname, str_replace(':', DIRECTORY_SEPARATOR, $nsname), $title);
           break;
