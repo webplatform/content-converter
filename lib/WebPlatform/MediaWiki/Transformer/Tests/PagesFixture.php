@@ -1,27 +1,39 @@
 <?php
 
+/**
+ * WebPlatform MediaWiki Transformer.
+ */
+
 namespace WebPlatform\MediaWiki\Transformer\Tests;
 
-class PagesFixture {
-
+/**
+ * Tests Fixtures.
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
+ */
+class PagesFixture
+{
   // List namespaces
   public static $NAMESPACE_PREFIXES = array("10"=>"Template:","102"=>"Property:","15"=>"Category:","3000"=>"WPD:","3020"=>"Meta:");
 
   /** @var SimpleXMLElement obje */
   protected $data = null;
 
-  public function __construct() {
+  public function __construct()
+  {
     $this->data = $this->getXml();
 
     return $this;
   }
 
-  public function getOne() {
+  public function getOne()
+  {
     return $this->data->page[0];
   }
 
-  public function getXml() {
-    if($this->data instanceof SimpleXMLElement) {
+  public function getXml()
+  {
+    if ($this->data instanceof SimpleXMLElement) {
       return $this->data;
     }
     $xmlString = <<<'MWXML'
@@ -711,7 +723,7 @@ var fahrenheit = 123,
 
 ==== ブール型(boolean) ====
 
-ブール型(boolean)の値は、「イエスかノーか」という単純な定義になっています。具体的には、&lt;code&gt;true&lt;/code&gt;か&lt;code&gt;false&lt;/code&gt;のどちらかのキーワードが値として代入されます。
+ブール型(boolean) の値は、「イエスかノーか」という単純な定義になっています。具体的には、&lt;code&gt;true&lt;/code&gt;か&lt;code&gt;false&lt;/code&gt;のどちらかのキーワードが値として代入されます。
 
 &lt;source lang=&quot;javascript&quot;&gt;
 &lt;script&gt;
@@ -901,7 +913,7 @@ if (country) {
 
 &lt;pre&gt;&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
   var umbrellaMandatory;
-  if(country == 'England'){
+  if (country == 'England') {
     umbrellaMandatory = true;
   } else {
     umbrellaMandatory = false;
@@ -913,19 +925,19 @@ if (country) {
 &lt;pre&gt;&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
   var names = new Array('Chris','Dion','Ben','Brendan');
   var all = names.length;
-  if(all == 1){
+  if (all == 1) {
     names[0] = '&amp;lt;p&amp;gt;' + names[0] + '&amp;lt;/p&amp;gt;';
   }
-  if(all == 2){
+  if (all == 2) {
     names[0] = '&amp;lt;p&amp;gt;' + names[0] + '&amp;lt;/p&amp;gt;';
     names[1] = '&amp;lt;p&amp;gt;' + names[1] + '&amp;lt;/p&amp;gt;';
   }
-  if(all == 3){
+  if (all == 3) {
     names[0] = '&amp;lt;p&amp;gt;' + names[0] + '&amp;lt;/p&amp;gt;';
     names[1] = '&amp;lt;p&amp;gt;' + names[1] + '&amp;lt;/p&amp;gt;';
     names[2] = '&amp;lt;p&amp;gt;' + names[2] + '&amp;lt;/p&amp;gt;';
   }
-  if(all == 4){
+  if (all == 4) {
     names[0] = '&amp;lt;p&amp;gt;' + names[0] + '&amp;lt;/p&amp;gt;';
     names[1] = '&amp;lt;p&amp;gt;' + names[1] + '&amp;lt;/p&amp;gt;';
     names[2] = '&amp;lt;p&amp;gt;' + names[2] + '&amp;lt;/p&amp;gt;';
@@ -941,14 +953,14 @@ if (country) {
 
 繰り返し処理では、一つの変数の値を変化させながら、同じ条件式を繰り返し判定します。最も簡単な繰り返しとして&lt;code&gt;for&lt;/code&gt;文があります。構文は&lt;code&gt;if&lt;/code&gt;文に似ていますが、2つのオプションが付け加わります。
 
-&lt;pre&gt;for(条件文;終了条件文;更新){
+&lt;pre&gt;for (条件文;終了条件文;更新) {
   // do it, do it now
 }&lt;/pre&gt;
 
 &lt;code&gt;for&lt;/code&gt;を使って繰り返し処理を行うには、通常は繰り返して実行したいコードを中括弧({})で囲みます。ここで、反復して用いる変数を定義して、繰り返し処理の中で値を変化させ続けて、その値が終了条件文に合致するまで繰り返すようにします(合致したとき、インタプリタは繰り返し処理から抜け出して、繰り返し処理の次に記述されたコードから実行するように移ります)。次に例を示します。
 
 &lt;pre&gt;&amp;lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&amp;gt;
-  for(var i = 0;i &amp;lt; 11;i = i + 1){
+  for (var i = 0;i &amp;lt; 11;i = i + 1) {
     // do it, do it now
   }
 &amp;lt;/script&amp;gt;&lt;/pre&gt;
@@ -956,7 +968,7 @@ if (country) {
 この例では、変数&lt;code&gt;i&lt;/code&gt;の値を最初に0として、11になるまで(すなわち11より小さいうちは)その値を確かめるように処理を定義しています。更新を行う代入式 − &lt;code&gt;i = i + 1&lt;/code&gt; − では、変数&lt;code&gt;i&lt;/code&gt;の値を1増加させて、その上で繰り返し処理を継続して反復していきます。すなわち、これによって11回の繰り返しが行われます。もし&lt;code&gt;i&lt;/code&gt;の値を2増加させるのであれば、繰り返しは6回となります。
 
 &lt;pre&gt;&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
-  for(var i = 0;i &amp;lt; 11;i = i + 2){
+  for (var i = 0;i &amp;lt; 11;i = i + 2) {
     // do it, do it now
   }
 &amp;lt;/script&amp;gt;&lt;/pre&gt;
@@ -966,7 +978,7 @@ if (country) {
 &lt;pre&gt;&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
   var names = new Array('Chris','Dion','Ben','Brendan');
   var all = names.length;
-  for(var i=0;i&amp;lt;all;i=i+1){
+  for (var i=0;i&amp;lt;all;i=i+1) {
     names[i] = '&amp;lt;p&amp;gt;' + names[i] + '&amp;lt;/p&amp;gt;';
   }
 &amp;lt;/script&amp;gt;&lt;/pre&gt;

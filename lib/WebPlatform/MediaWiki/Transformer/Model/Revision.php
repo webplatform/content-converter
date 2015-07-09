@@ -1,11 +1,15 @@
 <?php
 
+/**
+ * WebPlatform MediaWiki Transformer.
+ */
+
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
 use \SimpleXMLElement;
 
 /**
- * Models a MediaWiki WikiPage Revision
+ * Models a MediaWiki WikiPage Revision.
  *
  * Represent one revision from a page node.
  *
@@ -33,9 +37,11 @@ use \SimpleXMLElement;
  *     <sha1>l37t3nh9pz0qgiakt2o6v11ofw812jd</sha1>
  *   </revision>
  * </page>
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class Revision {
-
+class Revision
+{
   /* String used in MediaWiki dumpBackup format node in a revision entry  */
   const FORMAT_WIKI = "text/x-wiki";
 
@@ -68,16 +74,17 @@ class Revision {
    *
    * @param SimpleXMLElement $revisionNode
    */
-  public function __construct(SimpleXMLElement $revisionNode) {
+  public function __construct(SimpleXMLElement $revisionNode)
+  {
     if (self::isMediaWikiDumpRevisionNode($revisionNode) === true) {
 
-      foreach([
+      foreach ([
          'text'
         ,'format'
         ,'model'
         ,'comment'
       ] as $property) {
-        if(!empty($revisionNode->{$property})) {
+        if (!empty($revisionNode->{$property})) {
           $this->{$property} = (string) $revisionNode->{$property};
         }
       }
@@ -110,13 +117,14 @@ class Revision {
    *
    * @return boolean                        [description]
    */
-  public static function isMediaWikiDumpRevisionNode(SimpleXMLElement $revisionNode) {
+  public static function isMediaWikiDumpRevisionNode(SimpleXMLElement $revisionNode)
+  {
     $checks[] = $revisionNode->getName() === 'revision';
     $checks[] = count($revisionNode->timestamp) == 1;
     $checks[] = count($revisionNode->contributor) >= 1;
     $checks[] = count($revisionNode->contributor[0]->username) >= 1;
     $checks[] = count($revisionNode->text) == 1;
-    if(in_array(false, $checks) === false) {
+    if (in_array(false, $checks) === false) {
       // We have no failed tests, therefore we have all we need
       return true;
     }
@@ -128,31 +136,38 @@ class Revision {
    * Returns the Wikitext of the page
    * @return string of Wikitext
    */
-  public function __toString() {
+  public function __toString()
+  {
     return $this->text;
   }
 
-  public function getContributor() {
+  public function getContributor()
+  {
     return $this->contributor;
   }
 
-  public function getTimestamp() {
+  public function getTimestamp()
+  {
     return $this->timestamp;
   }
 
-  public function getText() {
+  public function getText()
+  {
     return $this->text;
   }
 
-  public function getFormat() {
+  public function getFormat()
+  {
     return $this->format;
   }
 
-  public function getModel() {
+  public function getModel()
+  {
     return $this->model;
   }
 
-  public function getComment() {
+  public function getComment()
+  {
     return $this->comment;
   }
 }

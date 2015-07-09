@@ -1,36 +1,43 @@
 <?php
 
-namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
+/**
+ * WebPlatform MediaWiki Transformer.
+ */
 
+namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
 
 use WebPlatform\MediaWiki\Transformer\Model\WikiPage;
 use WebPlatform\MediaWiki\Transformer\Model\Revision;
 use WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
-use \SimpleXMLElement;
 
 /**
- * WikiPage test suite
+ * WikiPage test suite.
  *
  * @coversDefaultClass \WebPlatform\MediaWiki\Transformer\Model\WikiPage
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class WikiPageTest extends \PHPUnit_Framework_TestCase {
-
+class WikiPageTest extends \PHPUnit_Framework_TestCase
+{
   /** @var SimpleXML Object representation of a typical MediaWiki dumpBackup XML file */
   protected $dumpBackupXml;
 
-  public function setUp() {
+  public function setUp()
+  {
     $xml = new PagesFixture;
     $this->dumpBackupXml = $xml->getXml();
   }
 
-  protected function stdout($text) {
+  protected function stdout($text)
+  {
     fwrite(STDOUT, $text . "\n");
   }
 
   /**
    * @covers ::getTitle
    */
-  public function testTitle() {
+  public function testTitle()
+  {
     $pageNode = $this->dumpBackupXml->page[0];
     $title = (string) $pageNode->title;
     $obj = new WikiPage($pageNode);
@@ -40,7 +47,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::revisions
    */
-  public function testRevisions() {
+  public function testRevisions()
+  {
     $pageNode = $this->dumpBackupXml->page[0];
     $count = count($pageNode->revision);
     $obj = new WikiPage($pageNode);
@@ -50,7 +58,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::latest
    */
-  public function testLatestTimestampFormat() {
+  public function testLatestTimestampFormat()
+  {
     // Made sure we have at least 2 revisions in SAMPLE
     // dumpBackupXml, and that the timestamp of the first item
     // is the following.
@@ -63,7 +72,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::latest
    */
-  public function testLatestRevision() {
+  public function testLatestRevision()
+  {
     $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\WebPlatform\MediaWiki\Transformer\Model\Revision', $obj->getLatest());
   }
@@ -71,7 +81,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::latest
    */
-  public function testLatestRevisionDateTime() {
+  public function testLatestRevisionDateTime()
+  {
     $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\DateTime', $obj->getLatest()->getTimestamp());
   }
@@ -79,7 +90,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::latest
    */
-  public function testLatestRevisionRevisionsType() {
+  public function testLatestRevisionRevisionsType()
+  {
     $obj = new WikiPage($this->dumpBackupXml->page[0]);
     $this->assertInstanceOf('\SplDoublyLinkedList', $obj->getRevisions());
   }
@@ -87,7 +99,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::latest
    */
-  public function testRevisionOrderingListContributors() {
+  public function testRevisionOrderingListContributors()
+  {
     // Made sure we have at least 2 revisions in SAMPLE
     // dumpBackupXml, and that the the contributors usernames
     // are in order.
@@ -96,7 +109,7 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
     $stack = $obj->getRevisions();
     $stack->rewind();
     $contributors = array();
-    while($stack->valid()){
+    while ($stack->valid()) {
         $contributors[] = $stack->current()->getContributor();
         $stack->next();
     }
@@ -107,7 +120,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::hasRedirect
    */
-  public function testHasRedirect(){
+  public function testHasRedirect()
+  {
     $pageNode = $this->dumpBackupXml->page;
 
     // We know that only the page[1] has a redirect
@@ -124,7 +138,8 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase {
    * We want to get the potential name of the redirect
    * so we know which file to refer to.
    */
-  public function testGetRedirect(){
+  public function testGetRedirect()
+  {
     // pageNode[5] has <redirect title="WPD:Example Pages/CSS" />
     // lets expect we get a string similar to "WPD:Example Pages/CSS"
     $redirected = new WikiPage($this->dumpBackupXml->page[5]);

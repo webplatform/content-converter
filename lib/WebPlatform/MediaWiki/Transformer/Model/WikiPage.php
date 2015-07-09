@@ -1,13 +1,16 @@
 <?php
 
+/**
+ * WebPlatform MediaWiki Transformer.
+ */
+
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
-use \Exception;
 use \SimpleXMLElement;
 use \SplDoublyLinkedList;
 
 /**
- * Models a MediaWiki page node from dumpBackupXml schema
+ * Models a MediaWiki page node from dumpBackupXml schema.
  *
  * A page MUST have AT LEAST ONE revision.
  *
@@ -32,9 +35,11 @@ use \SplDoublyLinkedList;
  *     <sha1>l37t3nh9pz0qgiakt2o6v11ofw812jd</sha1>
  *   </revision>
  * </page>
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class WikiPage {
-
+class WikiPage
+{
   /** @var string page Title, but in MW it ends up being an URL too */
   protected $title     = null;
 
@@ -49,18 +54,19 @@ class WikiPage {
    *
    * @param SimpleXMLElement $pageNode
    */
-  public function __construct(SimpleXMLElement $pageNode) {
+  public function __construct(SimpleXMLElement $pageNode)
+  {
     if (self::isMediaWikiDumpPageNode($pageNode) === true) {
       $this->title     = (string) $pageNode->title;
       $this->revisions = new SplDoublyLinkedList;
       $revisions = $pageNode->revision;
 
-      foreach($revisions as $rev) {
+      foreach ($revisions as $rev) {
         $this->revisions->push(new Revision($rev));
       }
 
       $redirect = (string) $pageNode->redirect['title'];
-      if(strlen($redirect) > 1){
+      if (strlen($redirect) > 1) {
         $this->redirect = $redirect;
       }
 
@@ -70,11 +76,12 @@ class WikiPage {
     throw new UnsupportedInputException;
   }
 
-  public static function isMediaWikiDumpPageNode(SimpleXMLElement $pageNode) {
+  public static function isMediaWikiDumpPageNode(SimpleXMLElement $pageNode)
+  {
     $isValid = false;
     $checks[] = $pageNode->getName() === 'page';
     $checks[] = count($pageNode->revision) >= 1;
-    if(in_array(false, $checks) === false) {
+    if (in_array(false, $checks) === false) {
       // We have no failed tests, therefore we have all we need
       return true;
     }
@@ -82,23 +89,28 @@ class WikiPage {
     return false;
   }
 
-  public function getTitle() {
+  public function getTitle()
+  {
     return $this->title;
   }
 
-  public function getRedirect() {
+  public function getRedirect()
+  {
     return (!!$this->redirect)?$this->redirect:false;
   }
 
-  public function hasRedirect() {
+  public function hasRedirect()
+  {
     return !! $this->redirect;
   }
 
-  public function getLatest() {
+  public function getLatest()
+  {
     return $this->revisions->offsetGet(0);
   }
 
-  public function getRevisions() {
+  public function getRevisions()
+  {
     return $this->revisions;
   }
 

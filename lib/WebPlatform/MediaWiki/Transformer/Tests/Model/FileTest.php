@@ -1,22 +1,28 @@
 <?php
 
+/**
+ * WebPlatform MediaWiki Transformer
+ */
+
 namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
 
 use WebPlatform\MediaWiki\Transformer\Model\File;
 use WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
 
 /**
- * File test suite
+ * File test suite.
  *
  * @coversDefaultClass \WebPlatform\MediaWiki\Transformer\Model\File
+ *
+ * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class FileTest extends \PHPUnit_Framework_TestCase {
-
+class FileTest extends \PHPUnit_Framework_TestCase
+{
   /** @var SimpleXML Object representation of a typical MediaWiki dumpBackup XML file */
   protected $dumpBackupXml;
-  protected $fixtureInstance;
 
-  public function setUp() {
+  public function setUp()
+  {
     $xml = new PagesFixture;
     $this->dumpBackupXml = $xml->getXml();
   }
@@ -24,7 +30,8 @@ class FileTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::formatPath
    */
-  public function testFormatPath(){
+  public function testFormatPath()
+  {
     $assertions[0][0] = 'WPD/Infrastructure/proposals/Site_Map';
     $assertions[0][1] = 'WPD:Infrastructure/proposals/Site Map';
     $assertions[1][0] = 'WPD/Doc_Sprints';
@@ -40,7 +47,7 @@ class FileTest extends \PHPUnit_Framework_TestCase {
     $assertions[6][0] = 'tutorials/Raw_WebGL_101_-_Part_4:_Textures';
     $assertions[6][1] = 'tutorials/Raw WebGL 101 - Part 4: Textures';
 
-    foreach($assertions as $assertion) {
+    foreach ($assertions as $assertion) {
       $this->assertSame($assertion[0],File::formatPath($assertion[1]));
     }
   }
