@@ -41,9 +41,6 @@ class WikiPage {
   /** @var mixed string representation of the possible path or false if no redirect was specified */
   protected $redirect = false;
 
-  /** @var string Where would the file be written */
-  protected $file_path = null;
-
   /** @var \SplDoublyLinkedList of Revision objects */
   protected $revisions = array();
 
@@ -57,18 +54,15 @@ class WikiPage {
       $this->title     = (string) $pageNode->title;
       $this->revisions = new SplDoublyLinkedList;
       $revisions = $pageNode->revision;
-      $index = 0;
 
       foreach($revisions as $rev) {
-        $this->revisions->add($index++, new Revision($rev));
+        $this->revisions->push(new Revision($rev));
       }
 
       $redirect = (string) $pageNode->redirect['title'];
       if(strlen($redirect) > 1){
-        $this->redirect = self::potentialFilePath($redirect);
+        $this->redirect = $redirect;
       }
-
-      $this->file_path = self::potentialFilePath($this->title);
 
       return $this;
     }
@@ -88,44 +82,24 @@ class WikiPage {
     return false;
   }
 
-  /**
-   * Returns the title of this page
-   * @return string the title of this page
-   */
   public function getTitle() {
     return $this->title;
   }
 
-  public function getDesiredFilePath() {
-    return $this->file_path;
+  public function getRedirect() {
+    return (!!$this->redirect)?$this->redirect:false;
   }
 
   public function hasRedirect() {
     return !!$this->redirect;
   }
 
-  public function getRedirect() {
-    return (!!$this->redirect)?self::potentialFilePath($this->redirect):false;
-  }
-
-  public function latest() {
+  public function getLatest() {
     return $this->revisions->offsetGet(0);
   }
 
-  public function revisions() {
+  public function getRevisions() {
     return $this->revisions;
-  }
-
-  public static function potentialFilePath($title) {
-    // Replace MW Namespaces separator (":") to make a folder
-    $title = preg_replace('~[\:]+~u', DIRECTORY_SEPARATOR, $title);
-
-    $title = preg_replace('~[\s]+~u', '-', $title);
-
-    // transliterate
-    $title = iconv('utf-8', 'us-ascii//TRANSLIT', $title);
-
-    return $title;
   }
 
 }

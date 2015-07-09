@@ -89,7 +89,7 @@ class Revision {
       return $this;
     }
 
-    throw new UnsupportedInputException;
+    throw new \Exception('SimpleXMLElement object did not contain required contents');
   }
 
   /**
