@@ -6,6 +6,8 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
+use RuntimeException;
+
 /**
  * Contributor entity
  *
@@ -65,41 +67,44 @@ class Contributor
      *
      * 1. String
      *
-     *     {"user_email":"foo@bar.org","user_id":"1","user_name":"WikiSysop","user_real_name":"","user_email_authenticated":null}
+     *     {"user_email":"jdoe@example.org","user_id":"42","user_name":"Jdoe","user_real_name":"John Doe","user_email_authenticated":true}
      *
      * 2. Array
      *
-     *     array('user_email'=>'foo@bar.org', 'user_id'=>1, 'user_name'=> 'WikiSysop', 'user_real_name'=>'', 'user_email_authenticated'=> null);
+     *     array('user_email'=>'jdoe@example.org', 'user_id'=> 42, 'user_name'=> 'Jdoe', 'user_real_name'=>'John Doe', 'user_email_authenticated'=> true);
      *
      * @var mixed $json_or_array User data key-value, make sure you have at least: user_email, user_id, user_name
      **/
     public function __construct($json_or_array)
     {
-        if (is_string($dto)) {
-            $data = json_decode($dto, true);
-        } elseif (is_array($dto)) {
-            $data = $dto;
+        if (is_string($json_or_array)) {
+            $data = json_decode($json_or_array, true);
+        } elseif (is_array($json_or_array)) {
+            $data = $json_or_array;
         } else {
-            throw new UnsupportedUserExportCacheInputException();
+            throw new RuntimeException("Constructor only accepts array or JSON string");
         }
 
-        if (is_array($data)) {
-            foreach ($data as $k => $v) {
-                $key = str_replace('user_', '', $k);
-                if (property_exists($this, $key)) {
-                    $this->{$key} = $v;
-                }
+        foreach ($data as $k => $v) {
+            $key = str_replace('user_', '', $k);
+            if ($key === 'id') {
+                $this->id = (int) $v;
+            } elseif (property_exists($this, $key)) {
+                $this->{$key} = $v;
             }
-        } else {
-            throw new InvalidUserExportCacheFormatException();
         }
 
         return $this;
     }
 
-    public function getUsername()
+    public function getId()
     {
-        return $this->username;
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getEmail()
@@ -107,13 +112,18 @@ class Contributor
         return $this->email;
     }
 
-    public function getFullname()
+    public function getRealName()
     {
-        return $this->full_name;
+        return $this->real_name;
     }
 
-    public function isValid()
+    public function isAuthenticated()
     {
-        return ($this->email_validated === null)?false:true;
+        return ($this->email_authenticated === null)?false:true;
+    }
+
+    public function __toString()
+    {
+        return sprintf("%s <%s>", $this->getRealName(), $this->getEmail());
     }
 }

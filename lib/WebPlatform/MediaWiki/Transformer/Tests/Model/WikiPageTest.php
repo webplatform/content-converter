@@ -110,7 +110,7 @@ class WikiPageTest extends \PHPUnit_Framework_TestCase
     $stack->rewind();
     $contributors = array();
     while ($stack->valid()) {
-        $contributors[] = $stack->current()->getContributor();
+        $contributors[] = $stack->current()->getContributorName();
         $stack->next();
     }
     $this->assertSame(join($contributors,','), $hardcodedContributors);
