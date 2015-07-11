@@ -19,7 +19,6 @@ use SimpleXMLElement;
  */
 class RevisionTest extends \PHPUnit_Framework_TestCase
 {
-
     protected $instance;
 
     /** @var string An hardcoded revision XML */
@@ -68,7 +67,7 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
         $objTimestamp = $this->instance->getTimestamp()->format('Y-m-d\TH:i:sT');
         $this->assertSame($expected, $objTimestamp);
 
-        $expectRfc2822Format = "Mon, 08 Sep 2014 19:05:23 +0000";
+        $expectRfc2822Format = 'Mon, 08 Sep 2014 19:05:23 +0000';
         $this->assertSame($expectRfc2822Format, $this->instance->getTimestamp()->format(\DateTime::RFC2822));
     }
 
@@ -76,7 +75,7 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
     {
         $expectedValues = array(
                              'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
-                            ,'date'    => "Mon, 08 Sep 2014 19:05:23 +0000"
+                            ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000',
                         );
         $this->assertSame(asort($expectedValues), asort($this->instance->commitArgs()));
     }
@@ -85,8 +84,8 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
     {
         $expectedValues = array(
                              'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
-                            ,'date'    => "Mon, 08 Sep 2014 19:05:23 +0000"
-                            ,'author'  => "John Doe <jdoe@example.org>"
+                            ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000'
+                            ,'author' => 'John Doe <jdoe@example.org>',
                         );
         $this->instance->setContributor(new Contributor($this->cached_user_json));
         $this->assertSame(asort($expectedValues), asort($this->instance->commitArgs()));
@@ -124,7 +123,7 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
 
         // Ensure that getContributorName returns the same value as if we did $revision->getContributor()->getName()
         // ... because we asked to NOT validate
-        $this->assertSame($this->instance->getContributorName(), "Mcfly");
+        $this->assertSame($this->instance->getContributorName(), 'Mcfly');
         $this->assertSame($this->instance->getContributorId(), 11); // We want int!
     }
 
@@ -133,21 +132,21 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
         // Let’s say we dont want to use cached version of users, but we still
         // want to import a wiki, will the behavior be consistent too?
         $this->assertSame($this->instance->getContributorId(), 42); // We want int!
-        $this->assertSame($this->instance->getContributorName(), "Jdoe");
-        $this->assertSame($this->instance->getContributorName(), "Jdoe");
+        $this->assertSame($this->instance->getContributorName(), 'Jdoe');
+        $this->assertSame($this->instance->getContributorName(), 'Jdoe');
     }
 
     public function testToString()
     {
         // In the test fixture, we said that "Foo" was the content of the
         // contribution, let’s test that.
-        $this->assertSame("Foo", (string) $this->instance);
+        $this->assertSame('Foo', (string) $this->instance);
     }
 
     public function testCommentRemovesNewlines()
     {
         // We added a \n char in the middle of this string (author don’t know what that says, BTW)
         // Making sure behavior is the same.
-        $this->assertSame("そ れぞれの値には、配列内で付与されたインデックス値である、", $this->instance->getComment());
+        $this->assertSame('そ れぞれの値には、配列内で付与されたインデックス値である、', $this->instance->getComment());
     }
 }

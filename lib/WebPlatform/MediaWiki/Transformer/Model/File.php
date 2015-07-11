@@ -23,9 +23,9 @@ use WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
  */
 class File
 {
-  public static function formatPath($title)
-  {
-    // Replace spaces underscore; Like MediaWiki does
+    public static function formatPath($title)
+    {
+        // Replace spaces underscore; Like MediaWiki does
     $title = preg_replace('~[\s]+~u', '_', $title);
 
     // Lets use this list to make sure our test pass, we’ll have to
@@ -44,10 +44,10 @@ class File
     // Note that this wasn’t tested on Microsoft Windows, but we have the constant, lets use it.
     //
     foreach ($namespaces as $nsname) {
-      if (strpos($title, $nsname) === 0) {
-          $title = str_replace($nsname, str_replace(':', DIRECTORY_SEPARATOR, $nsname), $title);
-          break;
-      }
+        if (strpos($title, $nsname) === 0) {
+            $title = str_replace($nsname, str_replace(':', DIRECTORY_SEPARATOR, $nsname), $title);
+            break;
+        }
     }
 
     // Remove punctuation
@@ -56,7 +56,6 @@ class File
     // transliterate
     $title = iconv('utf-8', 'us-ascii//TRANSLIT', $title);
 
-    return $title;
-  }
-
+        return $title;
+    }
 }

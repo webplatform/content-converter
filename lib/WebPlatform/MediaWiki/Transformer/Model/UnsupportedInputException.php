@@ -6,8 +6,6 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
-use \Exception;
-
 /**
  * Rule replacement has to be a string.
  *

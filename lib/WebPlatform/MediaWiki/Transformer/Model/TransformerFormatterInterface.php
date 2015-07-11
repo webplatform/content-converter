@@ -14,7 +14,7 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
 interface TransformerFormatterInterface
 {
     /**
-     * Apply text rewrites
+     * Apply text rewrites.
      *
      * @return string
      */

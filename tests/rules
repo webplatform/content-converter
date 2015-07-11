@@ -2,23 +2,35 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+//require_once __DIR__ . '/foo.php';
 
 /**
  * Transformation Rules test run
  */
 
 use \WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
-use \WebPlatform\MediaWiki\Transformer\Model;
+use \WebPlatform\MediaWiki\Transformer;
 
+$formatter = new Transformer\Model\MarkdownFormatter();
 $fixtures = new PagesFixture;
+$xml = $fixtures->getXml();
 
-$wikitext = (string)$fixtures->getOne()->revision->text;
 
+// https://gist.github.com/renoirb/43f2b9d6d04ae8c770cf/edit
+// first is 3
+// japanese is 4
+$wikiPageXmlElement = $xml->page[3];
+$wikiInstance = new Transformer\Model\WikiPage($wikiPageXmlElement);
+$wikitext = $wikiInstance->getLatest()->getText();
 //die(var_dump($wikitext));
+
+
+
+
+
 
 /*
 $wikitext = <<<TEMPLATE
-{{PAGE_TITLE}}
 = Hi Dawg =
 
 {{Flags
@@ -30,36 +42,32 @@ $wikitext = <<<TEMPLATE
 TEMPLATE;
 */
 
-$last_ones[] = array('/^\}\}$/mu',PHP_EOL."----");
-$last_ones[] = array('/^\|Manual_sections\=.*/iu', '|Manual_sections='.PHP_EOL);
-foreach($last_ones as $last){
-	$wikitext = preg_replace($last[0], $last[1], $wikitext);
-}
-
+//$last_ones[] = array('/^\}\}$/mu',PHP_EOL."----");
+//$last_ones[] = array('/^\|Manual_sections\=.*/iu', '|Manual_sections='.PHP_EOL);
+//foreach($last_ones as $last){
+//	$wikitext = preg_replace($last[0], $last[1], $wikitext);
+//}
+/*
 $rules = [];
 
 $i1[] = '/^\{\{Page_Title.*$/imu';
 $i1[] = '/^\{\{Page_Title\}\}.*$/imu';
-$rules[] = new Model\Rule($i1);
+$rules[] = new Transformer\Model\Rule($i1);
 
 
 $i2[] = '/\{\{(Flags)/ius';
-$rules[] = new Model\Rule($i2, '## Page status {#${1}}'.PHP_EOL);
+$rules[] = new Transformer\Model\Rule($i2, '## Page status {#${1}}'.PHP_EOL);
 
 
 $i3[] = '/^\|(State)=(.*)$/imu';
 $i3[] = '/^\|(Checked_Out)=(.*)$/imu';
 $i3[] = '/^\|(Editorial(\s|_)notes)=(.*)$/imu';
-$rules[] = new Model\Rule($i3, '| ${1} | ${2} |');
+$rules[] = new Transformer\Model\Rule($i3, '| ${1} | ${2} |');
 
-
-$rules[] = new Model\Rule($i4, PHP_EOL.'|Manual_sections='.PHP_EOL.'${1}');
 
 foreach($rules as $rule){
 	$wikitext = $rule->execute($wikitext);
 }
+*/
 
-
-
-
-var_dump($wikitext);
+var_dump($formatter->apply($wikiInstance->getLatest())->getText());

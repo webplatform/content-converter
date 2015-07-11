@@ -6,8 +6,8 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
-use \SimpleXMLElement;
-use \RuntimeException;
+use SimpleXMLElement;
+use RuntimeException;
 
 /**
  * Models a MediaWiki WikiPage Revision.
@@ -44,10 +44,10 @@ use \RuntimeException;
 class Revision implements WikiPageRevisionInterface
 {
     /* String used in MediaWiki dumpBackup format node in a revision entry  */
-    const FORMAT_WIKI = "text/x-wiki";
+    const FORMAT_WIKI = 'text/x-wiki';
 
     /* String used in MediaWiki dumpBackup model node in a revision entry  */
-    const MODEL_WIKI = "wikitext";
+    const MODEL_WIKI = 'wikitext';
 
     protected $validate_contributor = true;
 
@@ -73,19 +73,15 @@ class Revision implements WikiPageRevisionInterface
     protected $contributor_name = null;
 
     /**
-     * Constructs a WikiPage Revision object
+     * Constructs a WikiPage Revision object.
      *
      * @param SimpleXMLElement $revisionNode
      */
     public function __construct(SimpleXMLElement $revisionNode)
     {
         if (self::isMediaWikiDumpRevisionNode($revisionNode) === true) {
-
             foreach ([
-               'text'
-              ,'format'
-              ,'model'
-              ,'comment'
+               'text', 'format', 'model', 'comment',
             ] as $property) {
                 if (!empty($revisionNode->{$property})) {
                     $this->{$property} = (string) $revisionNode->{$property};
@@ -93,7 +89,7 @@ class Revision implements WikiPageRevisionInterface
             }
 
             // Format is: 2014-09-08T19:05:22Z so we know its in the Zulu Time Zone.
-            $this->timestamp   = new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z'));
+            $this->timestamp = new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z'));
             // XML uses username node
             $this->contributor_name = (string) $revisionNode->contributor[0]->username;
             $this->contributor_id = (int) $revisionNode->contributor[0]->id;
@@ -105,7 +101,7 @@ class Revision implements WikiPageRevisionInterface
     }
 
     /**
-     * Validate if SimpleXMLElement has essential nodes
+     * Validate if SimpleXMLElement has essential nodes.
      *
      * Essential:
      *   - text
@@ -120,7 +116,7 @@ class Revision implements WikiPageRevisionInterface
      *
      * @param SimpleXMLElement $revisionNode <revision> XML node from MediaWiki dumpBackup generated file
      *
-     * @return boolean [description]
+     * @return bool [description]
      */
     public static function isMediaWikiDumpRevisionNode(SimpleXMLElement $revisionNode)
     {
@@ -138,7 +134,7 @@ class Revision implements WikiPageRevisionInterface
     }
 
     /**
-     * What will be the Git commit options
+     * What will be the Git commit options.
      *
      *
      * Provided this function returns
@@ -159,8 +155,8 @@ class Revision implements WikiPageRevisionInterface
     public function commitArgs()
     {
         $args = array(
-                'date'    => $this->getTimestamp()->format(\DateTime::RFC2822),
-                'message' => $this->getComment()
+                'date' => $this->getTimestamp()->format(\DateTime::RFC2822),
+                'message' => $this->getComment(),
         );
 
         if ($this->contributor instanceof Contributor) {
@@ -171,7 +167,8 @@ class Revision implements WikiPageRevisionInterface
     }
 
     /**
-     * Returns the Wikitext of the page
+     * Returns the Wikitext of the page.
+     *
      * @return string of Wikitext
      */
     public function __toString()
@@ -180,19 +177,19 @@ class Revision implements WikiPageRevisionInterface
     }
 
     /**
-     * set Contributor data object
+     * set Contributor data object.
      *
      * @param Contributor $contributor          [description]
-     * @param boolean     $validate_contributor [description]
+     * @param bool        $validate_contributor [description]
      */
-    public function setContributor(Contributor $contributor, $validate_contributor =  true)
+    public function setContributor(Contributor $contributor, $validate_contributor = true)
     {
         $this->validate_contributor = $validate_contributor;
         $u1 = $this->contributor_name;
         $u2 = $contributor->getName();
 
         if ($u2 !== $u1 && $this->validate_contributor === true) {
-            throw new RuntimeException(sprintf("Contributor %s is not the same as %s", $u1, $u2));
+            throw new RuntimeException(sprintf('Contributor %s is not the same as %s', $u1, $u2));
         }
 
         $this->contributor = $contributor;
@@ -206,7 +203,7 @@ class Revision implements WikiPageRevisionInterface
             return $this->contributor;
         }
 
-        throw new RuntimeException("Contributor not linked, please make sure you explicitly call setContributor()");
+        throw new RuntimeException('Contributor not linked, please make sure you explicitly call setContributor()');
     }
 
     public function getContributorName()
@@ -232,6 +229,11 @@ class Revision implements WikiPageRevisionInterface
         return $this->timestamp;
     }
 
+    /**
+     * Fulfills WikiPageRevisionInterface.
+     *
+     * @return string contents of the Revision
+     */
     public function getText()
     {
         return $this->text;
@@ -256,6 +258,6 @@ class Revision implements WikiPageRevisionInterface
      */
     public function getComment()
     {
-        return preg_replace("/\n/imu", " ", $this->comment);
+        return preg_replace("/\n/imu", ' ', $this->comment);
     }
 }

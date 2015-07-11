@@ -17,14 +17,14 @@ use WebPlatform\MediaWiki\Transformer\Model\Rule;
  */
 class RuleTest extends \PHPUnit_Framework_TestCase
 {
-  protected $sample = '';
+    protected $sample = '';
 
-  public function setUp()
-  {
-    $this->sample = <<<SAMPLE
+    public function setUp()
+    {
+        $this->sample = <<<SAMPLE
 = With spaces =
 SAMPLE;
-  }
+    }
 
   /**
    * @covers ::execute
@@ -32,10 +32,10 @@ SAMPLE;
    */
   public function testInvalidInput()
   {
-    $replace = '# ${1}';
-    $rules[] = '/^=(.*)=$/';
+      $replace = '# ${1}';
+      $rules[] = '/^=(.*)=$/';
 
-    $rule = new Rule($rules, $replace);
+      $rule = new Rule($rules, $replace);
 
     // Should return an exception, no need to go further
     $rule->execute(null);
@@ -46,14 +46,14 @@ SAMPLE;
    */
   public function testExecuteReturnType()
   {
-    $replace = '# ${1}';
-    $rules[] = '/^=(.*)=$/';
+      $replace = '# ${1}';
+      $rules[] = '/^=(.*)=$/';
 
-    $rule = new Rule($rules, $replace);
+      $rule = new Rule($rules, $replace);
 
-    $output = $rule->execute($this->sample);
+      $output = $rule->execute($this->sample);
 
-    $this->assertEquals(is_string($output), true);
+      $this->assertEquals(is_string($output), true);
   }
 
   /**
@@ -62,8 +62,8 @@ SAMPLE;
    */
   public function testInvalidConstructorArg0()
   {
-    $replace = new \stdClass;
-    $rules[] = '/^=(.*)=$/';
+      $replace = new \stdClass();
+      $rules[] = '/^=(.*)=$/';
 
     // Should return an exception, no need to go further
     $rule = new Rule($rules, $replace);
@@ -75,11 +75,10 @@ SAMPLE;
    */
   public function testInvalidConstructorArg1()
   {
-    $replace = 'I am a bogus string with missing preg_replace placeholder';
-    $rules[] = '/^=(.*)=$/';
+      $replace = 'I am a bogus string with missing preg_replace placeholder';
+      $rules[] = '/^=(.*)=$/';
 
     // Should return an exception, no need to go further
     $rule = new Rule($rules, $replace);
   }
-
 }

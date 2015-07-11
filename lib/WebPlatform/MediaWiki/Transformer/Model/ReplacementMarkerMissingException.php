@@ -6,8 +6,6 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
-use \Exception;
-
 /**
  * Replacement marker not found in Rule.
  *

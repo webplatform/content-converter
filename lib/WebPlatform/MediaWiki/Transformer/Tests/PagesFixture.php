@@ -14,7 +14,7 @@ namespace WebPlatform\MediaWiki\Transformer\Tests;
 class PagesFixture
 {
     // List namespaces
-    public static $NAMESPACE_PREFIXES = array("10"=>"Template:","102"=>"Property:","15"=>"Category:","3000"=>"WPD:","3020"=>"Meta:");
+    public static $NAMESPACE_PREFIXES = array('10' => 'Template:','102' => 'Property:','15' => 'Category:','3000' => 'WPD:','3020' => 'Meta:');
 
     /** @var SimpleXMLElement obje */
     protected $data = null;
@@ -990,7 +990,14 @@ if (country) {
 |Not_required=Yes
 |Examples=
 }}
-{{Notes_Section}}
+{{Notes_Section
+|Usage=    ラミン
+
+hi we should get
+
+Multiline and still valid-looking kanji.
+
+}}
 {{Related_Specifications_Section
 |Specifications=
 }}

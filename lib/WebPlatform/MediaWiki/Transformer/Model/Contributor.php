@@ -9,7 +9,7 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
 use RuntimeException;
 
 /**
- * Contributor entity
+ * Contributor entity.
  *
  * This class represents a MediaWiki user.
  *
@@ -25,7 +25,7 @@ class Contributor
     protected $name;
 
     /**
-     * User’s email address
+     * User’s email address.
      *
      * Data should be considered trustable source if you imported it
      * from a MediaWiki instance that has email validation working
@@ -35,7 +35,7 @@ class Contributor
     protected $email;
 
     /**
-     * User’s full name
+     * User’s full name.
      *
      * What the user entered in the name field at
      * registration, or in their account settings
@@ -44,11 +44,11 @@ class Contributor
      */
     protected $real_name = '';
 
-    /** @var boolean Value MediaWiki had stored related to email authentication */
+    /** @var bool Value MediaWiki had stored related to email authentication */
     protected $email_authenticated = false;
 
     /**
-     * user_id value in MediaWiki database
+     * user_id value in MediaWiki database.
      *
      * ... not really useful if you merge multiple wikis though.
      *
@@ -56,12 +56,12 @@ class Contributor
      * same MediaWiki instance, the id field should match the Contributor id
      * node within dumpBackup XML file.
      *
-     * @var integer MediaWiki database user table id key
+     * @var int MediaWiki database user table id key
      */
     protected $id = 0;
 
     /**
-     * Build an user entity based on either an array or a JSON string
+     * Build an user entity based on either an array or a JSON string.
      *
      * Acceptable input:
      *
@@ -73,7 +73,7 @@ class Contributor
      *
      *     array('user_email'=>'jdoe@example.org', 'user_id'=> 42, 'user_name'=> 'Jdoe', 'user_real_name'=>'John Doe', 'user_email_authenticated'=> true);
      *
-     * @var mixed $json_or_array User data key-value, make sure you have at least: user_email, user_id, user_name
+     * @var mixed User data key-value, make sure you have at least: user_email, user_id, user_name
      **/
     public function __construct($json_or_array)
     {
@@ -82,7 +82,7 @@ class Contributor
         } elseif (is_array($json_or_array)) {
             $data = $json_or_array;
         } else {
-            throw new RuntimeException("Constructor only accepts array or JSON string");
+            throw new RuntimeException('Constructor only accepts array or JSON string');
         }
 
         foreach ($data as $k => $v) {
@@ -119,11 +119,11 @@ class Contributor
 
     public function isAuthenticated()
     {
-        return ($this->email_authenticated === null)?false:true;
+        return ($this->email_authenticated === null) ? false : true;
     }
 
     public function __toString()
     {
-        return sprintf("%s <%s>", $this->getRealName(), $this->getEmail());
+        return sprintf('%s <%s>', $this->getRealName(), $this->getEmail());
     }
 }

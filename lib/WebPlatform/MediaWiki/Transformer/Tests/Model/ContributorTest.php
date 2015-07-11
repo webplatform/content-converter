@@ -7,7 +7,7 @@
 namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
 
 use WebPlatform\MediaWiki\Transformer\Model\Contributor;
-use \SimpleXMLElement;
+use SimpleXMLElement;
 
 /**
  * WikiPage test suite.
@@ -18,7 +18,6 @@ use \SimpleXMLElement;
  */
 class ContributorTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var Contributor An instance of Contributor */
     protected $instance;
 
@@ -40,20 +39,19 @@ class ContributorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstantiateXmlException()
     {
-        $xml = "
+        $xml = '
             <contributor>
                 <username>Jdoe</username>
                 <id>42</id>
-            </contributor>";
+            </contributor>';
 
         $newed = new Contributor(new SimpleXMLElement($xml));
     }
 
     public function testReturnTypes()
     {
-        $this->assertSame($this->instance->getId(), 42, "Should return integer value");
-        $this->assertSame($this->instance->isAuthenticated(), true, "Should return boolean value");
-        $this->assertSame((string) $this->instance, "John Doe <jdoe@example.org>", "toString() should return both values as a string.");
-
+        $this->assertSame($this->instance->getId(), 42, 'Should return integer value');
+        $this->assertSame($this->instance->isAuthenticated(), true, 'Should return boolean value');
+        $this->assertSame((string) $this->instance, 'John Doe <jdoe@example.org>', 'toString() should return both values as a string.');
     }
 }
