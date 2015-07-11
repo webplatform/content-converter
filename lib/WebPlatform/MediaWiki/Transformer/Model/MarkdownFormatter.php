@@ -18,11 +18,11 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  *
  * Contents here is specific to WebPlatform Docs wiki contents
  * but you would can make your own and implement this library’s
- * TransformerFormatterInterface interface to use your own rules.
+ * FormatterInterface interface to use your own rules.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class MarkdownFormatter implements TransformerFormatterInterface
+class MarkdownFormatter implements FormatterInterface
 {
     private $patterns = array();
     private $replacements = array();
@@ -432,12 +432,18 @@ class MarkdownFormatter implements TransformerFormatterInterface
     /**
      * Apply Wikitext rewrites.
      *
-     * @param WikiPageRevisionInterface $input Input we want to transfer into Markdown
+     * @param RevisionInterface $input Input we want to transfer into Markdown
+     *
+     * @throws UnexpectedValueException If you try to convert a MarkdownRevision
      *
      * @return MarkdownRevision The reworked version
      */
-    public function apply(WikiPageRevisionInterface $input)
+    public function apply(RevisionInterface $input)
     {
+        if ($input instanceof MarkdownRevision) {
+            throw new UnexpectedValueException("Why would you convert a file that’s already been converted?");
+        }
+
         // Reset transclusions_cache, text_cache for this run
         // Maybe we should work with an object instead of
         // using the instance.

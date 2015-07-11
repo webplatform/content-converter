@@ -46,7 +46,7 @@ class WikiPage
     /** @var mixed string representation of the possible path or false if no redirect was specified */
     protected $redirect = false;
 
-    /** @var \SplDoublyLinkedList of Revision objects */
+    /** @var \SplDoublyLinkedList of WikiRevision objects */
     protected $revisions = array();
 
     /**
@@ -62,7 +62,7 @@ class WikiPage
             $revisions = $pageNode->revision;
 
             foreach ($revisions as $rev) {
-                $this->revisions->push(new Revision($rev));
+                $this->revisions->push(new WikiRevision($rev));
             }
 
             $redirect = (string) $pageNode->redirect['title'];

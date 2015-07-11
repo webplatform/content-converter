@@ -11,12 +11,11 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-interface TransformerFormatterInterface
+interface TransformedDocumentInterface
 {
-    /**
-     * Apply text rewrites.
-     *
-     * @return string
-     */
-    public function apply(WikiPageRevisionInterface $input);
+
+    public function getContents();
+
+    public function getHeaders();
+
 }

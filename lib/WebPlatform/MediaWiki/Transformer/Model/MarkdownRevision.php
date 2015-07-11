@@ -14,7 +14,7 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class MarkdownRevision implements WikiPageRevisionInterface
+class MarkdownRevision implements RevisionInterface, TransformedDocumentInterface
 {
     /** @var string The text content */
     protected $text = '';
@@ -31,7 +31,7 @@ class MarkdownRevision implements WikiPageRevisionInterface
     }
 
     /**
-     * Fulfills WikiPageRevisionInterface.
+     * Fulfills RevisionInterface.
      *
      * @return string contents of the Revision
      */
@@ -48,5 +48,20 @@ class MarkdownRevision implements WikiPageRevisionInterface
     public function __toString()
     {
         return $this->text;
+    }
+
+    public function getContents()
+    {
+        // We’ll have to do more, just
+        // a stub for now.
+        return $this->getText();
+    }
+
+    public function getHeaders()
+    {
+        // Lets format YAML here. This will do for now.
+        $out[] = '----';
+        $out[] = json_encode($this->transclusions, true);
+        $out[] = '----';
     }
 }

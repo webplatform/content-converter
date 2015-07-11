@@ -11,7 +11,7 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-interface WikiPageRevisionInterface
+interface RevisionInterface
 {
     public function getText();
 }

@@ -41,7 +41,7 @@ use RuntimeException;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class Revision implements WikiPageRevisionInterface
+class WikiRevision implements RevisionInterface
 {
     /* String used in MediaWiki dumpBackup format node in a revision entry  */
     const FORMAT_WIKI = 'text/x-wiki';
@@ -230,7 +230,7 @@ class Revision implements WikiPageRevisionInterface
     }
 
     /**
-     * Fulfills WikiPageRevisionInterface.
+     * Fulfills RevisionInterface.
      *
      * @return string contents of the Revision
      */

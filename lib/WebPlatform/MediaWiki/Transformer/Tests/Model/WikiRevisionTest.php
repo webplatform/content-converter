@@ -6,18 +6,18 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
 
-use WebPlatform\MediaWiki\Transformer\Model\Revision;
+use WebPlatform\MediaWiki\Transformer\Model\WikiRevision;
 use WebPlatform\MediaWiki\Transformer\Model\Contributor;
 use SimpleXMLElement;
 
 /**
- * Revision test suite.
+ * WikiRevision test suite.
  *
- * @coversDefaultClass \WebPlatform\MediaWiki\Transformer\Model\Revision
+ * @coversDefaultClass \WebPlatform\MediaWiki\Transformer\Model\WikiRevision
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class RevisionTest extends \PHPUnit_Framework_TestCase
+class WikiRevisionTest extends \PHPUnit_Framework_TestCase
 {
     protected $instance;
 
@@ -47,18 +47,18 @@ class RevisionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->instance = new Revision(new SimpleXMLElement($this->revisionXml), 1);
+        $this->instance = new WikiRevision(new SimpleXMLElement($this->revisionXml), 1);
     }
 
     public function testIsMediaWikiDumpRevisionNode()
     {
         $xmlElement = new SimpleXMLElement($this->revisionXml);
 
-        $this->assertTrue(Revision::isMediaWikiDumpRevisionNode($xmlElement));
+        $this->assertTrue(WikiRevision::isMediaWikiDumpRevisionNode($xmlElement));
 
         // Lets remove data we know require, make sure the Revision class tests it too
         unset($xmlElement->timestamp, $xmlElement->contributor);
-        $this->assertFalse(Revision::isMediaWikiDumpRevisionNode($xmlElement));
+        $this->assertFalse(WikiRevision::isMediaWikiDumpRevisionNode($xmlElement));
     }
 
     public function testTimestampIdempotencyFormat()
