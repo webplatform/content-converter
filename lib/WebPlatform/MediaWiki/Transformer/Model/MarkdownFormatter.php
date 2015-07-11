@@ -91,7 +91,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
             }
         }
 
-        $this->transclusions[] = array('type' => $type, 'members' => $members);
+        $this->transclusions_cache[] = array('type' => $type, 'members' => $members);
         //fwrite(STDERR, print_r(array('type' => $type, 'members'=> $members), 1));
         return "<!-- we had a template call of type \"$type\" here -->";
     }
@@ -454,7 +454,7 @@ class MarkdownFormatter implements TransformerFormatterInterface
 
         // Maybe we should work with that instead. That’ll do for now.
         // We aren’t working on concurency yet.
-        $obj = new MarkdownRevision();
+        $obj = new MarkdownRevision;
         $obj->setText($this->text_cache);
         $obj->setTransclusions($this->transclusions_cache);
 
