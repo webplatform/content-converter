@@ -70,4 +70,4 @@ foreach($rules as $rule){
 }
 */
 
-var_dump($formatter->apply($wikiInstance->getLatest())->getText());
+var_dump($formatter->apply($wikiInstance->getLatest())->getContents());

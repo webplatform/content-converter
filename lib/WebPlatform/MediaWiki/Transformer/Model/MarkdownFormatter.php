@@ -24,11 +24,11 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  */
 class MarkdownFormatter implements FormatterInterface
 {
-    private $patterns = array();
-    private $replacements = array();
+    protected $patterns = array();
+    protected $replacements = array();
 
-    private $text_cache = '';
-    private $transclusions_cache = array();
+    protected $text_cache = '';
+    protected $transclusions_cache = array();
 
     protected function helperExternlinks($matches)
     {

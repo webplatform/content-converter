@@ -47,21 +47,24 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
 
     public function __toString()
     {
-        return $this->text;
+        return $this->getContents();
     }
 
     public function getContents()
     {
         // We’ll have to do more, just
         // a stub for now.
-        return $this->getText();
+        return join(array($this->getHeaders(), $this->getText()), "\n");
     }
 
     public function getHeaders()
     {
-        // Lets format YAML here. This will do for now.
+        // use yaml_emit, or check if we have it and use it
+        // Lets format YAML here, need to have extension. This will do for now.
         $out[] = '----';
         $out[] = json_encode($this->transclusions, true);
         $out[] = '----';
+
+        return join($out, "\n");
     }
 }
