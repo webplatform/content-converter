@@ -22,7 +22,7 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
     /** @var array A representation of the original Transclusion */
     protected $transclusions = array();
 
-    /** @var array A representation of the original Transclusion */
+    /** @var array Markdown document Headers */
     protected $front_matter = array();
 
     public function setText($text)
@@ -54,17 +54,16 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
     {
         // We’ll have to do more, just
         // a stub for now.
-        return join(array($this->getHeaders(), $this->getText()), "\n");
+        return join(array($this->getFrontMatter(), $this->getText()), "\n");
     }
 
-    public function getHeaders()
+    public function setFrontMatter($front_matter)
     {
-        // use yaml_emit, or check if we have it and use it
-        // Lets format YAML here, need to have extension. This will do for now.
-        $out[] = '----';
-        $out[] = json_encode($this->transclusions, true);
-        $out[] = '----';
+        return $this->front_matter = $front_matter;
+    }
 
-        return join($out, "\n");
+    public function getFrontMatter()
+    {
+        return $this->front_matter;
     }
 }

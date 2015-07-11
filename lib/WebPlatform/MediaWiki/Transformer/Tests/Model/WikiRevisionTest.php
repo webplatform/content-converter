@@ -77,7 +77,8 @@ class WikiRevisionTest extends \PHPUnit_Framework_TestCase
                              'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
                             ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000',
                         );
-        $this->assertSame(asort($expectedValues), asort($this->instance->commitArgs()));
+        $obj = $this->instance->commitArgs();
+        $this->assertSame(asort($expectedValues), asort($obj));
     }
 
     public function testCommitArgsContributor()
@@ -87,8 +88,9 @@ class WikiRevisionTest extends \PHPUnit_Framework_TestCase
                             ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000'
                             ,'author' => 'John Doe <jdoe@example.org>',
                         );
+        $obj = $this->instance->commitArgs();
         $this->instance->setContributor(new Contributor($this->cached_user_json));
-        $this->assertSame(asort($expectedValues), asort($this->instance->commitArgs()));
+        $this->assertSame(asort($expectedValues), asort($obj));
     }
 
     /**

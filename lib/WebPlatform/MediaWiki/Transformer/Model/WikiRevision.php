@@ -72,6 +72,9 @@ class WikiRevision implements RevisionInterface
     /** @var string username of the MediaWiki user table */
     protected $contributor_name = null;
 
+    /** @var Contributor  */
+    protected $contributor = null;
+
     /**
      * Constructs a WikiPage Revision object.
      *
@@ -123,7 +126,7 @@ class WikiRevision implements RevisionInterface
         $checks[] = $revisionNode->getName() === 'revision';
         $checks[] = count($revisionNode->timestamp) == 1;
         $checks[] = count($revisionNode->contributor) >= 1;
-        $checks[] = count($revisionNode->contributor[0]->username) >= 1;
+        $checks[] = count($revisionNode->contributor->username) >= 1;
         $checks[] = count($revisionNode->text) == 1;
         if (in_array(false, $checks) === false) {
             // We have no failed tests, therefore we have all we need

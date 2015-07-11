@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 //require_once __DIR__ . '/foo.php';
 
