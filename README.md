@@ -1,10 +1,12 @@
-# MediaWiki Transformer
+# Content Converter
 
-**WORK IN PROGRESS!**
+Transform CMS content from a format into another.
 
-Transform [MediaWiki XML dumpBackup][mw-dumpbackup] `<page/>` entry into an object representation for further processing.
+Initial implementation is about converting a [MediaWiki XML dumpBackup][mw-dumpbackup] `<page/>` backup into static files. Each MediaWiki revision (i.e. "save") becomes a Git Commit. Library should support to handle content conversion from MediaWiki Wikitext we were using on WebPlatform.org into plain Markdown.
 
-## Design roadmap
+See [webplatform/mediawiki-conversion](https://github.com/webplatform/mediawiki-conversion.git)
+
+## Library features
 
 * Read either a [MediaWiki dumpBackup *page* XML node (`SimpleXML`)][mw-dumpbackup], or directly a [MediaWiki  *Wikitext* `string`][mw-wikitext] and convert into a `WikiPage` object
 * Provide way to describe sequence of edits to achieve desired output
@@ -12,49 +14,65 @@ Transform [MediaWiki XML dumpBackup][mw-dumpbackup] `<page/>` entry into an obje
 
 ## Usage overview
 
-1. Let’s start with Wikitext of a page
+See **tests/rules** to review how to use.
+
+Notice that this example explicitly converts from MediaWiki dumpBackup XML
+but has bee thought out to allow other types of conversions.
+
+1. Let’s start with Wikitext of a MediaWiki page
 
     ```php
-    // A sample wikitext string to experiment with
-    $wikitext = <<<TEMPLATE
-    {{PAGE_TITLE}}
-    == 1. Subtitle ==
+    $wikiPageXmlElement = <<<SAMPLE
+    <page>
+        <title>tutorials/what is css</title>
+        <revision>
+            <timestamp>2014-09-08T19:05:23Z</timestamp>
+            <contributor>
+                <username>Jdoe</username>
+                <id>42</id>
+            </contributor>
+            <comment>そ\nれぞれの値には、配列内で付与されたインデックス値である、</comment>
+            <model>wikitext</model>
+            <format>text/x-wiki</format>
+            <text xml:space=\"preserve\" bytes=\"2\">
+            {{PAGE_TITLE}}
+            == 1. Subtitle ==
 
-    {{Flags
-    |State=Ready to Use
-    |Checked_Out=No
-    }}
+            {{Flags
+            |State=Ready to Use
+            |Checked_Out=No
+            }}
 
-    === 1.1. Sub-Subtitle ===
+            === 1.1. Sub-Subtitle ===
 
-    * Foo
-    * Bar
-    TEMPLATE;
+            * Foo
+            * Bar
+            </text>
+        </revision>
+    </page>
+    SAMPLE;
     ```
 
-1. Describe all matching patterns for one replacement
+
+1. Create an object with the wikitext
 
 
-    ```php
-    $matcher1[] = '/^\{\{Page_Title.*$/imu';
-    $matcher1[] = '/^\{\{Page_Title\}\}.*$/imu';
-    $replacer1  = '# ${1}';
-    $rules[] = new Model\Rule($matcher1, $replacer1);
-    ```
+    $wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
 
-1. Loop through a runner to apply the changes
 
-    ```php
-    foreach($rules as $rule){
-      $wikitext = $rule->execute($wikitext);
-    }
-    ```
+1. Initialize Converter service
+
+
+    $converter = new MediaWikiToMarkdown;
+
+
+1. Pick a revision and pass it to the converter
+
+    $wikiRevision = $wikiDocument->getLatest();
+    $markdownRevision = $converter->apply($wikiRevision);
+
 
 ## See also
-
-### PHP Modules in use
-
-* [lightncandy](https://github.com/zordius/lightncandy/blob/master/src/lightncandy.php)
 
 
 ### Documentation
