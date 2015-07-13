@@ -16,6 +16,4 @@ interface TransformedDocumentInterface
 
     public function getContents();
 
-    public function getHeaders();
-
 }

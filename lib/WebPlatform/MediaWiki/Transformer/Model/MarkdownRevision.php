@@ -6,6 +6,8 @@
 
 namespace WebPlatform\MediaWiki\Transformer\Model;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Markdown Page.
  *
@@ -43,6 +45,13 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
     public function setTransclusions($transclusions)
     {
         $this->transclusions = $transclusions;
+
+        /** TEMPORARY, what setFrontMatter argument should provide. */
+        foreach ($transclusions as $t) {
+            if (isset($t['type']) && isset($t['members'])) {
+                $this->front_matter[$t['type']] = $t['members'];
+            }
+        }
     }
 
     public function __toString()
@@ -59,11 +68,15 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
 
     public function setFrontMatter($front_matter)
     {
-        return $this->front_matter = $front_matter;
+        return $this->front_matter = (array) $front_matter;
     }
 
     public function getFrontMatter()
     {
-        return $this->front_matter;
+        $out[] = '---';
+        $out[] = Yaml::dump($this->front_matter);
+        $out[] = '---';
+
+        return join($out, PHP_EOL);
     }
 }
