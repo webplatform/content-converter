@@ -22,7 +22,7 @@ but has bee thought out to allow other types of conversions.
 1. Let’s start with Wikitext of a MediaWiki page
 
     ```php
-    $wikiPageXmlElement = <<<SAMPLE
+    $xml = <<<SAMPLE
     <page>
         <title>tutorials/what is css</title>
         <revision>
@@ -51,19 +51,22 @@ but has bee thought out to allow other types of conversions.
         </revision>
     </page>
     SAMPLE;
+
+    // Leverage PHP native SimpleXMLElement modules
+    $wikiPageXmlElement = new \SimpleXMLElement($xml);
     ```
 
 
 1. Create an object with the wikitext
 
 
-        $wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
+        $wikiDocument = new WebPlatform\ContentConverter\Model\MediaWikiDocument($wikiPageXmlElement);
 
 
 1. Initialize Converter service
 
 
-        $converter = new MediaWikiToMarkdown;
+        $converter = new WebPlatform\ContentConverter\Converter\MediaWikiToMarkdown;
 
 
 1. Pick a revision and pass it to the converter
@@ -71,6 +74,9 @@ but has bee thought out to allow other types of conversions.
         $wikiRevision = $wikiDocument->getLatest();
         $markdownRevision = $converter->apply($wikiRevision);
 
+1. Look how the file changed
+
+        var_dump($markdownRevision->getContent());
 
 ## See also
 

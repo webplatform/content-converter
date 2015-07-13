@@ -34,3 +34,5 @@ $file = new FileGitCommit($markdownRevision);
 $file->setFileName(MediaWikiDocument::toFileName($wikiDocument->getTitle()));
 
 $file->persist();
+
+var_dump($markdownRevision->getContent());
