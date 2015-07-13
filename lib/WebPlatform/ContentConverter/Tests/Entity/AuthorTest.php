@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Entity;
@@ -22,21 +22,20 @@ class AuthorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->instance = new Author;
+        $this->instance = new Author();
     }
 
     public function testName()
     {
-        $fullName = "John Doe";
+        $fullName = 'John Doe';
         $instance = $this->instance->setRealName($fullName);
         $this->assertEquals($instance->getRealName(), $fullName);
     }
 
     public function testEmail()
     {
-        $email = "jdoe@example.co";
+        $email = 'jdoe@example.co';
         $instance = $this->instance->setEmail($email);
         $this->assertEquals($instance->getEmail(), $email);
     }
-
 }

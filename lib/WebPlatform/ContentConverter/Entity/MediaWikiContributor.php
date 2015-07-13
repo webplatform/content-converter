@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Entity;
@@ -10,6 +10,14 @@ use RuntimeException;
 
 /**
  * MediaWiki Contributor ("Author").
+ *
+ * The name and email address of the person who made a change.
+ *
+ * Data should be coming, and validated, from MediaWiki.
+ *
+ * In the case of MediaWiki, you should create a JSON file cache
+ * of all your users. To do so, you can use the export_users.php
+ * script in the sample/ directory at the root of this library.
  *
  * What was the MediaWiki user who made the contribution.
  *

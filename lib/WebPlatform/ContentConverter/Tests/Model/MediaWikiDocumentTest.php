@@ -1,13 +1,12 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Model;
 
 use WebPlatform\ContentConverter\Model\MediaWikiDocument;
-use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
 use WebPlatform\ContentConverter\Tests\PagesFixture;
 
 /**

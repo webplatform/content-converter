@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  *
  * export_users.php
  *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Entity;
@@ -11,8 +11,7 @@ use Symfony\Component\Yaml\Dumper;
 /**
  * Markdown Revision.
  *
- * This class handles the Markdown contents so it can
- * be transfered into a file.
+ * Represent one revision of content written in Markdown.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */

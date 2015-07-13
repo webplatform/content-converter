@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Entity;
@@ -41,7 +41,7 @@ EOQ;
     public function testToStringAndFrontMatter()
     {
         $tmpMarkdown = '# Foo';
-        $tmpFrontMatter = array('Tag'=> array('Bar', 'Bazz', 'Buzz'));
+        $tmpFrontMatter = array('Tag' => array('Bar', 'Bazz', 'Buzz'));
 
         $mdObj = new MarkdownRevision('# Foo');
         $mdObj->setFrontMatter($tmpFrontMatter);
@@ -57,6 +57,6 @@ EOQ;
         $someComment = "Roads? Where we're going we don't need... roads!";
         $this->instance->setComment($someComment);
 
-        $this->assertSame($someComment, $this->instance->getComment(), "We should be able to override comment");
+        $this->assertSame($someComment, $this->instance->getComment(), 'We should be able to override comment');
     }
 }

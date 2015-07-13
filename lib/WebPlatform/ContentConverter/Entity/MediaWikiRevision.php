@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Entity;
@@ -14,8 +14,8 @@ use RuntimeException;
  *
  * Represent one revision from a page node.
  *
- * Revision MUST be child of a WikiPage (representing a page node),
- * accessible through the revision property.
+ * Revision MUST be child of a MediaWikiDocument (representing a page node),
+ * accessible through the getRevisions() method.
  *
  * Here is a sample of a MediaWiki dumpBackupXml page node.
  *

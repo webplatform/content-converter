@@ -1,19 +1,15 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Entity;
 
 /**
- * Contributor entity.
+ * Author.
  *
- * This class represents an Author.
- *
- * In the case of MediaWiki, you should create a JSON file cache
- * of all your users. To do so, you can use the export_users.php
- * script in the sample/ directory at the root of this library.
+ * The name and email address of the person who made a change.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */

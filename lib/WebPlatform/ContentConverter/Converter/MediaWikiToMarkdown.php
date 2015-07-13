@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Converter;
@@ -12,18 +12,20 @@ use WebPlatform\ContentConverter\Entity\MarkdownRevision;
 use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
 
 /**
- * Wiki Page to Markdown Formatter.
+ * MediaWiki Wikitext to Markdown Converter.
  *
- * This class handles the Wikimedia Wikitext filtering.
+ * This class handles a MediaWikiRevision instance and converts
+ * the content into a MarkdownRevision.
  *
- * You can do multiple passes, you’ll notice that we have an array
- * of patterns and replacement, each of them will be passed in the
- * order they’ve been defined. That way can incrementally adjust
- * broken and fix it up in the following pass.
+ * The apply method loops through an array of patterns,
+ * replacements, and other similar functions. You can do do
+ * multiple passes; each pass can be done in a wa such that you
+ * can incrementally adjust patterns to get toward your
+ * desired result in the following pass.
  *
- * Contents here is specific to WebPlatform Docs wiki contents
+ * Contents here is specific to WebPlatform Docs wiki
  * but you would can make your own and implement this library’s
- * FormatterInterface interface to use your own rules.
+ * ConverterInterface interface to roll your own.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
@@ -40,7 +42,7 @@ class MediaWikiToMarkdown implements ConverterInterface
                                                         'Topics',
                                                         'External_Attribution',
                                                         'Standardization_Status',
-                                                        'See_Also_Section'
+                                                        'See_Also_Section',
                                                     );
 
     public static function toFrontMatter($transclusions)
@@ -48,15 +50,18 @@ class MediaWikiToMarkdown implements ConverterInterface
         $out = array();
         foreach ($transclusions as $t) {
             if (isset($t['type']) && in_array($t['type'], self::$front_matter_transclusions)) {
+                $type = strtolower($t['type']);
                 if ($t['type'] === 'Topics' && isset($t['members'][0])) {
-                    $out[$t['type']] = $t['members'][0];
+                    $out['tags'] = $t['members'][0];
                 } elseif ($t['type'] === 'Standardization_Status' && isset($t['members']['content'])) {
-                    $out[$t['type']] = $t['members']['content'];
+                    $out[$type] = $t['members']['content'];
                 } elseif ($t['type'] === 'Flags' && isset($t['members']['Content'])) {
-                    $out[$t['type']] = $t['members'];
-                    $out[$t['type']]['Content'] = explode(', ', $t['members']['Content']);
+                    $out[$type] = $t['members'];
+                    $out[$type]['issues'] = explode(', ', $t['members']['High-level issues']);
+                    $out[$type]['content'] = explode(', ', $t['members']['Content']);
+                    unset($out[$type]['Content'], $out[$type]['High-level issues']);
                 } else {
-                    $out[$t['type']] = $t['members'];
+                    $out[$type] = $t['members'];
                 }
             }
         }

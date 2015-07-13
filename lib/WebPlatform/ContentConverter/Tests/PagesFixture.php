@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests;
@@ -13,7 +13,6 @@ namespace WebPlatform\ContentConverter\Tests;
  */
 class PagesFixture
 {
-
     /** @var SimpleXMLElement obje */
     protected $data = null;
 

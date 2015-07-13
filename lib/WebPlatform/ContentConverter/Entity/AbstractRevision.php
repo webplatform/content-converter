@@ -1,13 +1,18 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Entity;
 
 /**
- * An abstract Revision.
+ * Defines state of the content of a document at a given time.
+ *
+ * A revision represent the state of the content
+ * of a document. This is suitable when you have
+ * access to the full content of the document at
+ * the time the change was saved.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */

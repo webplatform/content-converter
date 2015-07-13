@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Converter;
@@ -9,7 +9,7 @@ namespace WebPlatform\ContentConverter\Converter;
 use WebPlatform\ContentConverter\Entity\AbstractRevision;
 
 /**
- * Transformer Formatter Interface.
+ * Converter Interface.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */

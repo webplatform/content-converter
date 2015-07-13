@@ -1,14 +1,13 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Entity;
 
 use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
 use SimpleXMLElement;
-use RuntimeException;
 
 /**
  * WikiPage test suite.
@@ -52,7 +51,7 @@ class MediaWikiContributorTest extends \PHPUnit_Framework_TestCase
     public function testNameEmail()
     {
         $email = 'foo@bar.baz';
-        $name  = 'Foo B. Bazz';
+        $name = 'Foo B. Bazz';
 
         $author = $this->instance->setRealName($name);
         $author->setEmail($email);

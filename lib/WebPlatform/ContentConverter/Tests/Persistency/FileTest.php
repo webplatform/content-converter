@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Persistency;
@@ -49,5 +49,4 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $file->setFilename($fileName);
         $this->assertEquals($fileName, $file->getFileName());
     }
-
 }

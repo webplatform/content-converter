@@ -1,7 +1,7 @@
 <?php
 
 /**
- * WebPlatform MediaWiki Transformer.
+ * WebPlatform Content Converter.
  */
 
 namespace WebPlatform\ContentConverter\Tests\Entity;
@@ -9,7 +9,6 @@ namespace WebPlatform\ContentConverter\Tests\Entity;
 use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
 use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
 use SimpleXMLElement;
-use RuntimeException;
 
 /**
  * MediaWikiRevision test suite.
@@ -160,17 +159,16 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
         $someComment = "Roads? Where we're going we don't need... roads!";
         $this->instance->setComment($someComment);
 
-        $this->assertSame($someComment, $this->instance->getComment(), "We should be able to override comment");
+        $this->assertSame($someComment, $this->instance->getComment(), 'We should be able to override comment');
     }
 
     public function testGetFormat()
     {
-        $this->assertSame("text/x-wiki", $this->instance->getFormat());
+        $this->assertSame('text/x-wiki', $this->instance->getFormat());
     }
 
     public function testGetModel()
     {
-        $this->assertSame("wikitext", $this->instance->getModel());
+        $this->assertSame('wikitext', $this->instance->getModel());
     }
-
 }
