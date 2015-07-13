@@ -4,7 +4,12 @@
  * WebPlatform MediaWiki Transformer.
  */
 
-namespace WebPlatform\MediaWiki\Transformer\Model;
+namespace WebPlatform\ContentConverter\Converter;
+
+use WebPlatform\ContentConverter\Entity\AbstractRevision;
+use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
+use WebPlatform\ContentConverter\Entity\MarkdownRevision;
+use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
 
 /**
  * Wiki Page to Markdown Formatter.
@@ -22,15 +27,44 @@ namespace WebPlatform\MediaWiki\Transformer\Model;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class MarkdownFormatter implements FormatterInterface
+class MediaWikiToMarkdown implements ConverterInterface
 {
     protected $patterns = array();
     protected $replacements = array();
 
-    protected $text_cache = '';
-    protected $transclusions_cache = array();
+    // Make stateless #TODO
+    protected $transclusionCache = array();
 
-    protected function helperExternlinks($matches)
+    protected static $front_matter_transclusions = array(
+                                                        'Flags',
+                                                        'Topics',
+                                                        'External_Attribution',
+                                                        'Standardization_Status',
+                                                        'See_Also_Section'
+                                                    );
+
+    public static function toFrontMatter($transclusions)
+    {
+        $out = array();
+        foreach ($transclusions as $t) {
+            if (isset($t['type']) && in_array($t['type'], self::$front_matter_transclusions)) {
+                if ($t['type'] === 'Topics' && isset($t['members'][0])) {
+                    $out[$t['type']] = $t['members'][0];
+                } elseif ($t['type'] === 'Standardization_Status' && isset($t['members']['content'])) {
+                    $out[$t['type']] = $t['members']['content'];
+                } elseif ($t['type'] === 'Flags' && isset($t['members']['Content'])) {
+                    $out[$t['type']] = $t['members'];
+                    $out[$t['type']]['Content'] = explode(', ', $t['members']['Content']);
+                } else {
+                    $out[$t['type']] = $t['members'];
+                }
+            }
+        }
+
+        return $out;
+    }
+
+    protected static function helperExternlinks($matches)
     {
         $target = $matches[1];
         $text = empty($matches[2]) ? $matches[1] : $matches[2];
@@ -87,12 +121,17 @@ class MarkdownFormatter implements FormatterInterface
                 $members[] = explode(',', $arg);
             } else {
                 // Treant entries that doesn’t have equals, nor coma
-                $members['content'] = $arg;
+                $value = trim($arg);
+                if (!empty($value)) {
+                    $members['content'] = $value;
+                }
             }
         }
 
-        $this->transclusions_cache[] = array('type' => $type, 'members' => $members);
-        //fwrite(STDERR, print_r(array('type' => $type, 'members'=> $members), 1));
+        // ...stateless
+        $this->transclusionCache[] = array('type' => $type, 'members' => $members);
+
+        //fwrite(STDERR, print_r(array('type' => $type, 'members'=> $members, 'args'=>$args), 1));
         return "<!-- we had a template call of type \"$type\" here -->";
     }
 
@@ -169,8 +208,8 @@ class MarkdownFormatter implements FormatterInterface
           // Make sure anything here is most likely only to remain on one line!
           "/^\|("
             .'Safari_mobile_prefixed_version'
-            .'|Examples'       // "|Examples={{Single Example", within code examples; we’ll use "{{Examples_Section" as title anyway.
-            .'|Specifications' // "|Specifications={{Related Specification", within related specification; we’ll use "{{Related_Specifications_Section" as title instead
+            .'|Examples'       // "|Examples={{Single Example"; we’ll use "{{Examples_Section" as title
+            .'|Specifications' // "|Specifications={{Related Specification"; we’ll use "{{Related_Specifications_Section"
             .'|Safari_mobile_prefixed_supported'
             .'|Safari_mobile_version'
             .'|Android_prefixed_supported'
@@ -432,38 +471,35 @@ class MarkdownFormatter implements FormatterInterface
     /**
      * Apply Wikitext rewrites.
      *
-     * @param RevisionInterface $input Input we want to transfer into Markdown
+     * @param AbstractRevision $revision Input we want to transfer into Markdown
      *
-     * @throws UnexpectedValueException If you try to convert a MarkdownRevision
-     *
-     * @return MarkdownRevision The reworked version
+     * @return AbstractRevision
      */
-    public function apply(RevisionInterface $input)
+    public function apply(AbstractRevision $revision)
     {
-        if ($input instanceof MarkdownRevision) {
-            throw new UnexpectedValueException("Why would you convert a file that’s already been converted?");
+        // ...stateless
+        $this->transclusionCache = array();
+
+        if ($revision instanceof MediaWikiRevision) {
+            $content = $revision->getContent();
+
+            for ($pass = 0; $pass < count($this->patterns); ++$pass) {
+                $content = preg_replace($this->patterns[$pass], $this->replacements[$pass], $content);
+            }
+
+            // Should we make a loop for that?
+            $content = preg_replace_callback("/^\{\{(.*?)\}\}$/imus", array($this, 'helperTemplateMatchHonker'), $content);
+            $content = preg_replace_callback('/\[([^\[\]\|\n\': ]+)\]/', 'self::helperExternlinks', $content);
+            $content = preg_replace_callback('/\[?\[([^\[\]\|\n\' ]+)[\| ]([^\]\']+)\]\]?/', 'self::helperExternlinks', $content);
+
+            $front_matter = self::toFrontMatter($this->transclusionCache);
+
+            $mdRevObj = new MarkdownRevision($content, $front_matter);
+            $mdRevObj->setAuthor(MediaWikiContributor::authorFactory($revision, 'public-webplatform@w3.org'));
+
+            return $mdRevObj;
         }
 
-        // Reset transclusions_cache, text_cache for this run
-        // Maybe we should work with an object instead of
-        // using the instance.
-        $this->transclusions_cache = array();
-        $this->text_cache = $input->getText();
-        for ($pass = 0; $pass < count($this->patterns); ++$pass) {
-            $this->text_cache = preg_replace($this->patterns[$pass], $this->replacements[$pass], $this->text_cache);
-        }
-
-        // Should we make a loop for that?
-        $this->text_cache = preg_replace_callback("/^\{\{(.*?)\}\}$/imus", array($this, 'helperTemplateMatchHonker'), $this->text_cache);
-        $this->text_cache = preg_replace_callback('/\[([^\[\]\|\n\': ]+)\]/', array($this, 'helperExternlinks'), $this->text_cache);
-        $this->text_cache = preg_replace_callback('/\[?\[([^\[\]\|\n\' ]+)[\| ]([^\]\']+)\]\]?/', array($this, 'helperExternlinks'), $this->text_cache);
-
-        // Maybe we should work with that instead. That’ll do for now.
-        // We aren’t working on concurency yet.
-        $obj = new MarkdownRevision;
-        $obj->setText($this->text_cache);
-        $obj->setTransclusions($this->transclusions_cache);
-
-        return $obj;
+        return $revision;
     }
 }

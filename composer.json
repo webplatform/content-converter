@@ -20,7 +20,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "WebPlatform\\MediaWiki\\Transformer\\": "lib/"
+            "WebPlatform\\ContentConverter\\": "lib/"
         }
     },
     "require": {

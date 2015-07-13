@@ -4,7 +4,7 @@
  * WebPlatform MediaWiki Transformer.
  */
 
-namespace WebPlatform\MediaWiki\Transformer\Model;
+namespace WebPlatform\ContentConverter\Entity;
 
 use SimpleXMLElement;
 use RuntimeException;
@@ -41,7 +41,7 @@ use RuntimeException;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class WikiRevision implements RevisionInterface
+class MediaWikiRevision extends AbstractRevision
 {
     /* String used in MediaWiki dumpBackup format node in a revision entry  */
     const FORMAT_WIKI = 'text/x-wiki';
@@ -51,29 +51,17 @@ class WikiRevision implements RevisionInterface
 
     protected $validate_contributor = true;
 
-    /** @var string The revision text content */
-    protected $text = null;
-
     /** @var string MediaWiki’s Content-Type format string name, e.g. "text/x-wiki" */
     protected $format = null;
 
     /** @var string MediaWiki content model name, e.g. "wikitext" */
     protected $model = null;
 
-    /** @var string comment from the contributor when saved the revision */
-    protected $comment = null;
-
-    /** @var \DateTime The page revision edition timestamp */
-    protected $timestamp = null;
-
     /** @var int id of the MediaWiki from the user table */
     protected $contributor_id = null;
 
     /** @var string username of the MediaWiki user table */
     protected $contributor_name = null;
-
-    /** @var Contributor  */
-    protected $contributor = null;
 
     /**
      * Constructs a WikiPage Revision object.
@@ -83,16 +71,20 @@ class WikiRevision implements RevisionInterface
     public function __construct(SimpleXMLElement $revisionNode)
     {
         if (self::isMediaWikiDumpRevisionNode($revisionNode) === true) {
-            foreach ([
-               'text', 'format', 'model', 'comment',
-            ] as $property) {
-                if (!empty($revisionNode->{$property})) {
-                    $this->{$property} = (string) $revisionNode->{$property};
-                }
+            if (!empty($revisionNode->comment)) {
+                $this->setComment((string) $revisionNode->comment);
             }
 
+            if (!empty($revisionNode->text)) {
+                $this->setContent((string) $revisionNode->text);
+            }
+
+            $this->format = (string) $revisionNode->format;
+            $this->model = (string) $revisionNode->model;
+
             // Format is: 2014-09-08T19:05:22Z so we know its in the Zulu Time Zone.
-            $this->timestamp = new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z'));
+            $this->setTimestamp(new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z')));
+
             // XML uses username node
             $this->contributor_name = (string) $revisionNode->contributor[0]->username;
             $this->contributor_id = (int) $revisionNode->contributor[0]->id;
@@ -100,7 +92,7 @@ class WikiRevision implements RevisionInterface
             return $this;
         }
 
-        throw new \Exception('SimpleXMLElement object did not contain required contents');
+        throw new RuntimeException('SimpleXMLElement revision element did not contain required nodes');
     }
 
     /**
@@ -137,82 +129,39 @@ class WikiRevision implements RevisionInterface
     }
 
     /**
-     * What will be the Git commit options.
+     * set Author data object.
      *
-     *
-     * Provided this function returns
-     *
-     *     array(
-     *       'date'    => 'Wed Feb 16 14:00 2037 +0100',
-     *       'message' => 'message string'
-     *     );
-     *
-     * We want to get;
-     *
-     *     git commit --date="Wed Feb 16 14:00 2037 +0100" --author="John Doe <jdoe@example.org>" -m "message string"
-     *
-     * To get the author details, we’ll have to get it from a Contributor instance.
-     *
-     * @return array of values to send to git
+     * @param Author $author               The Author of the change
+     * @param bool   $validate_contributor Whether or not we should make sure the MediaWiki contributor node data match our JSON user cache
      */
-    public function commitArgs()
-    {
-        $args = array(
-                'date' => $this->getTimestamp()->format(\DateTime::RFC2822),
-                'message' => $this->getComment(),
-        );
-
-        if ($this->contributor instanceof Contributor) {
-            $args['author'] = (string) $this->contributor;
-        }
-
-        return $args;
-    }
-
-    /**
-     * Returns the Wikitext of the page.
-     *
-     * @return string of Wikitext
-     */
-    public function __toString()
-    {
-        return $this->text;
-    }
-
-    /**
-     * set Contributor data object.
-     *
-     * @param Contributor $contributor          [description]
-     * @param bool        $validate_contributor [description]
-     */
-    public function setContributor(Contributor $contributor, $validate_contributor = true)
+    public function setContributor(MediaWikiContributor $author, $validate_contributor = true)
     {
         $this->validate_contributor = $validate_contributor;
         $u1 = $this->contributor_name;
-        $u2 = $contributor->getName();
+        $u2 = $author->getName();
 
         if ($u2 !== $u1 && $this->validate_contributor === true) {
             throw new RuntimeException(sprintf('Contributor %s is not the same as %s', $u1, $u2));
         }
 
-        $this->contributor = $contributor;
+        $this->setAuthor($author);
 
-        return $contributor;
+        return $this;
     }
 
     public function getContributor()
     {
-        if ($this->contributor instanceof Contributor) {
-            return $this->contributor;
+        if ($this->author instanceof Author) {
+            return $this->author;
         }
 
-        throw new RuntimeException('Contributor not linked, please make sure you explicitly call setContributor()');
+        throw new RuntimeException('Author not linked to Revision, please make sure you explicitly call setContributor()');
     }
 
     public function getContributorName()
     {
-        if ($this->contributor instanceof Contributor) {
-            return $this->contributor->getName();
+        if ($this->author instanceof Author) {
+            return $this->author->getName();
         }
 
         return $this->contributor_name;
@@ -220,26 +169,11 @@ class WikiRevision implements RevisionInterface
 
     public function getContributorId()
     {
-        if ($this->contributor instanceof Contributor) {
-            return $this->contributor->getId();
+        if ($this->author instanceof Author) {
+            return $this->author->getId();
         }
 
         return $this->contributor_id;
-    }
-
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    /**
-     * Fulfills RevisionInterface.
-     *
-     * @return string contents of the Revision
-     */
-    public function getText()
-    {
-        return $this->text;
     }
 
     public function getFormat()
@@ -252,15 +186,15 @@ class WikiRevision implements RevisionInterface
         return $this->model;
     }
 
-    /**
-     * Return the comment.
-     *
-     * Make sure it NEVER has a new line. Just add a space to be sure.
-     *
-     * @return string the page save comment MediaWiki recorded
-     */
-    public function getComment()
+    public function setComment($comment)
     {
-        return preg_replace("/\n/imu", ' ', $this->comment);
+        $this->comment = preg_replace("/\n/imu", ' ', $comment);
+
+        return $this;
+    }
+
+    public function getContent()
+    {
+        return $this->content;
     }
 }

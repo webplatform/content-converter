@@ -4,7 +4,7 @@
  * WebPlatform MediaWiki Transformer.
  */
 
-namespace WebPlatform\MediaWiki\Transformer\Tests;
+namespace WebPlatform\ContentConverter\Tests;
 
 /**
  * Tests Fixtures.
@@ -13,8 +13,6 @@ namespace WebPlatform\MediaWiki\Transformer\Tests;
  */
 class PagesFixture
 {
-    // List namespaces
-    public static $NAMESPACE_PREFIXES = array('10' => 'Template:','102' => 'Property:','15' => 'Category:','3000' => 'WPD:','3020' => 'Meta:');
 
     /** @var SimpleXMLElement obje */
     protected $data = null;

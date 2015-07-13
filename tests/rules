@@ -6,16 +6,16 @@ if (!ini_get('date.timezone')) {
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
-//require_once __DIR__ . '/foo.php';
 
 /**
  * Transformation Rules test run
  */
 
-use \WebPlatform\MediaWiki\Transformer\Tests\PagesFixture;
-use \WebPlatform\MediaWiki\Transformer;
+use \WebPlatform\ContentConverter\Tests\PagesFixture;
+use \WebPlatform\ContentConverter\Converter\MediaWikiToMarkdown;
+use \WebPlatform\ContentConverter\Model\MediaWikiDocument;
 
-$formatter = new Transformer\Model\MarkdownFormatter();
+$formatter = new MediaWikiToMarkdown;
 $fixtures = new PagesFixture;
 $xml = $fixtures->getXml();
 
@@ -24,8 +24,8 @@ $xml = $fixtures->getXml();
 // first is 3
 // japanese is 4
 $wikiPageXmlElement = $xml->page[3];
-$wikiInstance = new Transformer\Model\WikiPage($wikiPageXmlElement);
-$wikitext = $wikiInstance->getLatest()->getText();
+$wikiInstance = new MediaWikiDocument($wikiPageXmlElement);
+$wikitext = $wikiInstance->getLatest()->getContent();
 //die(var_dump($wikitext));
 
 
@@ -74,4 +74,4 @@ foreach($rules as $rule){
 }
 */
 
-var_dump($formatter->apply($wikiInstance->getLatest())->getContents());
+var_dump($formatter->apply($wikiInstance->getLatest())->getContent());

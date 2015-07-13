@@ -4,21 +4,22 @@
  * WebPlatform MediaWiki Transformer.
  */
 
-namespace WebPlatform\MediaWiki\Transformer\Tests\Model;
+namespace WebPlatform\ContentConverter\Tests\Entity;
 
-use WebPlatform\MediaWiki\Transformer\Model\Contributor;
+use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
 use SimpleXMLElement;
+use RuntimeException;
 
 /**
  * WikiPage test suite.
  *
- * @coversDefaultClass \WebPlatform\MediaWiki\Transformer\Model\Contributor
+ * @coversDefaultClass \WebPlatform\ContentConverter\Entity\MediaWikiContributor
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class ContributorTest extends \PHPUnit_Framework_TestCase
+class MediaWikiContributorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Contributor An instance of Contributor */
+    /** @var MediaWikiContributor */
     protected $instance;
 
     protected $cached_user_json = '{
@@ -31,7 +32,7 @@ class ContributorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->instance = new Contributor($this->cached_user_json);
+        $this->instance = new MediaWikiContributor($this->cached_user_json);
     }
 
     /**
@@ -45,7 +46,19 @@ class ContributorTest extends \PHPUnit_Framework_TestCase
                 <id>42</id>
             </contributor>';
 
-        $newed = new Contributor(new SimpleXMLElement($xml));
+        $newed = new MediaWikiContributor(new SimpleXMLElement($xml));
+    }
+
+    public function testNameEmail()
+    {
+        $email = 'foo@bar.baz';
+        $name  = 'Foo B. Bazz';
+
+        $author = $this->instance->setRealName($name);
+        $author->setEmail($email);
+
+        $this->assertSame($email, $author->getEmail());
+        $this->assertSame($name, $author->getRealName());
     }
 
     public function testReturnTypes()
