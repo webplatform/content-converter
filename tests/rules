@@ -14,64 +14,23 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use \WebPlatform\ContentConverter\Tests\PagesFixture;
 use \WebPlatform\ContentConverter\Converter\MediaWikiToMarkdown;
 use \WebPlatform\ContentConverter\Model\MediaWikiDocument;
+use \WebPlatform\ContentConverter\Persistency\FileGitCommit;
 
-$formatter = new MediaWikiToMarkdown;
-$fixtures = new PagesFixture;
-$xml = $fixtures->getXml();
+$converter = new MediaWikiToMarkdown;
+$fixture = new PagesFixture;
 
 
 // https://gist.github.com/renoirb/43f2b9d6d04ae8c770cf/edit
 // first is 3
 // japanese is 4
+$xml = $fixture->getXml();
 $wikiPageXmlElement = $xml->page[3];
-$wikiInstance = new MediaWikiDocument($wikiPageXmlElement);
-$wikitext = $wikiInstance->getLatest()->getContent();
-//die(var_dump($wikitext));
 
+$wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
+$wikiRevision = $wikiDocument->getLatest();
+$markdownRevision = $converter->apply($wikiRevision);
 
+$file = new FileGitCommit($markdownRevision);
+$file->setFileName(MediaWikiDocument::toFileName($wikiDocument->getTitle()));
 
-
-
-
-/*
-$wikitext = <<<TEMPLATE
-= Hi Dawg =
-
-{{Flags
-|State=Ready to Use
-|Checked_Out=No
-}}
-
-== Stuff ==
-TEMPLATE;
-*/
-
-//$last_ones[] = array('/^\}\}$/mu',PHP_EOL."----");
-//$last_ones[] = array('/^\|Manual_sections\=.*/iu', '|Manual_sections='.PHP_EOL);
-//foreach($last_ones as $last){
-//	$wikitext = preg_replace($last[0], $last[1], $wikitext);
-//}
-/*
-$rules = [];
-
-$i1[] = '/^\{\{Page_Title.*$/imu';
-$i1[] = '/^\{\{Page_Title\}\}.*$/imu';
-$rules[] = new Transformer\Model\Rule($i1);
-
-
-$i2[] = '/\{\{(Flags)/ius';
-$rules[] = new Transformer\Model\Rule($i2, '## Page status {#${1}}'.PHP_EOL);
-
-
-$i3[] = '/^\|(State)=(.*)$/imu';
-$i3[] = '/^\|(Checked_Out)=(.*)$/imu';
-$i3[] = '/^\|(Editorial(\s|_)notes)=(.*)$/imu';
-$rules[] = new Transformer\Model\Rule($i3, '| ${1} | ${2} |');
-
-
-foreach($rules as $rule){
-	$wikitext = $rule->execute($wikitext);
-}
-*/
-
-var_dump($formatter->apply($wikiInstance->getLatest())->getContent());
+$file->persist();

@@ -23,5 +23,10 @@ abstract class AbstractPersister
         $this->revision = $revision;
     }
 
+    public function getRevision()
+    {
+        return $this->revision;
+    }
+
     abstract public function persist();
 }

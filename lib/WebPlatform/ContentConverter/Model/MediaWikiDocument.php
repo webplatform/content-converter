@@ -81,6 +81,14 @@ class MediaWikiDocument
         throw new DomainException('Constructor argument did not pass MediaWikiDocument::isMediaWikiDumpPageNode() test.');
     }
 
+    /**
+     * Figure out what would be the file name to use
+     *
+     * Not sure if its the best place to keep this.
+     *
+     * @param  string $wikiTitle
+     * @return [type] [description]
+     */
     public static function toFileName($wikiTitle)
     {
         $fileName = $wikiTitle;

@@ -501,6 +501,7 @@ class MediaWikiToMarkdown implements ConverterInterface
 
             $mdRevObj = new MarkdownRevision($content, $front_matter);
             $mdRevObj->setAuthor(MediaWikiContributor::authorFactory($revision, 'public-webplatform@w3.org'));
+            $mdRevObj->setTimestamp($revision->getTimestamp());
 
             return $mdRevObj;
         }
