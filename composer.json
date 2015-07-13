@@ -1,8 +1,8 @@
 {
-    "name": "webplatform/mediawiki-transformer",
-    "description": "Transform MediaWiki XML dumpBackup page entry into an object representation for further processing",
+    "name": "webplatform/content-converter",
+    "description": "Convert content from a data source and format into another format in another data persistency layer. First implementation; MediaWiki XML dumpBackup into Markdown files in Git",
     "type": "library",
-    "keywords": ["mediawiki","wikitext"],
+    "keywords": ["mediawiki","wikitext", "markdown", "git"],
     "license": "MIT",
     "config": {
         "bin-dir": "bin"
