@@ -57,19 +57,19 @@ but has bee thought out to allow other types of conversions.
 1. Create an object with the wikitext
 
 
-    $wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
+        $wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
 
 
 1. Initialize Converter service
 
 
-    $converter = new MediaWikiToMarkdown;
+        $converter = new MediaWikiToMarkdown;
 
 
 1. Pick a revision and pass it to the converter
 
-    $wikiRevision = $wikiDocument->getLatest();
-    $markdownRevision = $converter->apply($wikiRevision);
+        $wikiRevision = $wikiDocument->getLatest();
+        $markdownRevision = $converter->apply($wikiRevision);
 
 
 ## See also
