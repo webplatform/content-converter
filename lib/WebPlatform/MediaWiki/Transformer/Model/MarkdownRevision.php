@@ -63,7 +63,7 @@ class MarkdownRevision implements RevisionInterface, TransformedDocumentInterfac
     {
         // We’ll have to do more, just
         // a stub for now.
-        return join(array($this->getFrontMatter(), $this->getText()), "\n");
+        return join(array($this->getFrontMatter(), $this->getText()), PHP_EOL);
     }
 
     public function setFrontMatter($front_matter)
