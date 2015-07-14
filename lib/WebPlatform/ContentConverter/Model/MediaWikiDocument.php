@@ -84,8 +84,26 @@ class MediaWikiDocument
 
     const LANG_ = '';
 
-    /** String RegEx to find if the page is a page translation */
-    const REGEX_LANGUAGES = '/\/(ar|ast|az|bcc|bg|br|ca|cs|da|de|diq|el|eo|es|fa|fi|fr|gl|gu|he|hu|hy|id|it|ja|ka|kk|km|ko|ksh|kw|mk|ml|mr|ms|nl|no|oc|pl|pt|pt\-br|ro|ru|si|sk|sl|sq|sr|sv|ta|th|tr|uk|vi|yue|zh)$/';
+    /**
+     * String RegEx to find if the page is a page translation
+     *
+     * From https://docs.webplatform.org/wiki/Template:Languages?action=raw
+     *
+     * Removed:
+     *
+     *   - id (no translations made in this language)
+     *   - th (^)
+     *
+     * Added:
+     *
+     *   - zh-hant
+     *   - zh-hans
+     *
+     * Should reflect the list of defined translation in [[Template:Languages]] source.
+     */
+    const REGEX_LANGUAGES = '/\/(ar|ast|az|bcc|bg|ca|cs|da|de|diq|el|eo|es|fa|fi|fr|gl|gu|he|hu|hy|it|ja|ka|kk|km|ko|ksh|kw|mk|ml|mr|ms|nl|no|oc|pl|pt|pt\-br|ro|ru|si|sk|sl|sq|sr|sv|ta|tr|uk|vi|yue|zh|zh\-hant|zh\-hans)"$/';
+
+    //
 
     /**
      * Commonly used translation codes used in WebPlatform Docs
@@ -96,16 +114,16 @@ class MediaWikiDocument
      * 1. CAPITALIZED english name of the language (e.g. self::$translationCodes['zh'][0] would be 'CHINESE'), so we could map back to self::CHINESE,
      * 2. Language name in its native form (e.g. self::$translationCodes['zh'][1] would be '中文')
      *
-     * Should reflect the list of defined translation in [[Template:Languages]] source.
-     *
-     *   - https://docs.webplatform.org/wiki/Template:Languages?action=raw
-     *
      * See also:
      *   - https://docs.webplatform.org/w/index.php?title=Special%3AWhatLinksHere&target=Template%3ALanguages&namespace=0
      *   - https://docs.webplatform.org/wiki/WPD:Translations
      *   - https://docs.webplatform.org/wiki/WPD:Multilanguage_Support
      *   - https://docs.webplatform.org/wiki/WPD:Implementation_Patterns
      *   - http://www.w3.org/International/articles/language-tags/
+     *
+     * Ideally, we should use self::REGEX_LANGUAGES, but in the end after looking up dumpBackup XML file, only those had contents;
+     *
+     * [de,es,fr,ja,ko,nl,pt-br,sv,tr,zh,zh-hant,zh-hans]
      *
      * @var array
      */
@@ -186,7 +204,7 @@ class MediaWikiDocument
         $fileName = preg_replace('~[\s\:\!\(\)]+~u', '_', $fileName);
 
         // Remove punctuation
-        $fileName = preg_replace('~[\?]+~u', '', $fileName);
+        $fileName = preg_replace('~[\?@\!]+~u', '', $fileName);
 
         // transliterate
         $fileName = iconv('utf-8', 'us-ascii//TRANSLIT', $fileName);
@@ -196,7 +214,6 @@ class MediaWikiDocument
 
     public static function isMediaWikiDumpPageNode(SimpleXMLElement $pageNode)
     {
-        $isValid = false;
         $checks[] = $pageNode->getName() === 'page';
         $checks[] = count($pageNode->revision) >= 1;
         if (in_array(false, $checks) === false) {
@@ -207,20 +224,29 @@ class MediaWikiDocument
         return false;
     }
 
+    public function hasEndingSlash()
+    {
+        return substr($this->getTitle(), -1) === '/';
+    }
+
     public function isTranslation()
     {
-        $out = null;
-        preg_match(self::REGEX_LANGUAGES, $this->getTitle(), $out);
+        $title = $this->getTitle();
+        $lastUriFragment = substr($title, (int) strrpos($title, '/')+ 1);
 
-        return (is_array($out) && isset($out[1]))?true:false;
+        return in_array($lastUriFragment, array_keys(self::$translationCodes)) === true;
     }
 
     public function getLanguageCode()
     {
-        $out = null;
-        preg_match(self::REGEX_LANGUAGES, $this->getTitle(), $out);
+        $title = $this->getTitle();
+        $lastUriFragment = substr($title, (int) strrpos($title, '/')+ 1);
 
-        return (is_array($out) && isset($out[1])) ? $out[1] : 'en' /* Must match w/ self::$translationCodes['en'] */;
+        if ($this->isTranslation() === true) {
+            return $lastUriFragment;
+        } else {
+            return 'en'; // Must match w/ self::$translationCodes['en']
+        }
     }
 
     public function getTitle()
