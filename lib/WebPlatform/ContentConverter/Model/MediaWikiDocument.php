@@ -201,10 +201,10 @@ class MediaWikiDocument
             }
         }
 
-        $fileName = preg_replace('~[\s\:\!\(\)]+~u', '_', $fileName);
+        $fileName = preg_replace('~[\s]+~u', '_', $fileName);
 
         // Remove punctuation
-        $fileName = preg_replace('~[\?@\!]+~u', '', $fileName);
+        $fileName = preg_replace('~[\?@\!\(\)\:]+~u', '', $fileName);
 
         // transliterate
         $fileName = iconv('utf-8', 'us-ascii//TRANSLIT', $fileName);
