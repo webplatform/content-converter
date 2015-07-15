@@ -204,6 +204,7 @@ class MediaWikiDocument
         $fileName = preg_replace('~[\s]+~u', '_', $fileName);
 
         // Remove punctuation
+        $fileName = preg_replace('~\([n|c]\)~u', '', $fileName);
         $fileName = preg_replace('~[\?@\!\(\)\:]+~u', '', $fileName);
 
         // transliterate
