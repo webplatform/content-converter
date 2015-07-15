@@ -229,21 +229,41 @@ class MediaWikiDocument
         return substr($this->getTitle(), -1) === '/';
     }
 
-    public function isTranslation()
+    public function getLastTitleFragment()
     {
         $title = $this->getTitle();
-        $lastUriFragment = substr($title, (int) strrpos($title, '/')+ 1);
 
-        return in_array($lastUriFragment, array_keys(self::$translationCodes)) === true;
+        return substr($title, (int) strrpos($title, '/') + 1);
+    }
+
+    public function isChildOfKnownPageListing()
+    {
+        $knownPageListings = ['elements','attributes'];
+
+        $needles = explode('/', $this->getTitle());
+        $size = (int) count($needles);
+
+        if ($size < 2) {
+            return false;
+        }
+
+        return in_array($needles[ $size - 2 ], $knownPageListings);
+    }
+
+    public function isTranslation()
+    {
+        // An edge case. Contents in html/elements/tr,
+        if ($this->isChildOfKnownPageListing()) {
+            return false;
+        }
+
+        return in_array($this->getLastTitleFragment(), array_keys(self::$translationCodes)) === true;
     }
 
     public function getLanguageCode()
     {
-        $title = $this->getTitle();
-        $lastUriFragment = substr($title, (int) strrpos($title, '/')+ 1);
-
         if ($this->isTranslation() === true) {
-            return $lastUriFragment;
+            return $this->getLastTitleFragment();
         } else {
             return 'en'; // Must match w/ self::$translationCodes['en']
         }
