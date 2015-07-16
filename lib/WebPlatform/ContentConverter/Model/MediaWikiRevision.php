@@ -4,7 +4,7 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Entity;
+namespace WebPlatform\ContentConverter\Model;
 
 use SimpleXMLElement;
 use RuntimeException;
@@ -90,7 +90,10 @@ class MediaWikiRevision extends AbstractRevision
             $this->setTimestamp(new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z')));
 
             // XML uses username node
-            $this->contributor_name = (string) $revisionNode->contributor[0]->username;
+            if (!empty($revisionNode->contributor[0]->username)) {
+                $this->contributor_name = (string) $revisionNode->contributor[0]->username;
+            }
+
             $this->contributor_id = (int) $revisionNode->contributor[0]->id;
 
             return $this;
@@ -122,7 +125,7 @@ class MediaWikiRevision extends AbstractRevision
         $checks[] = $revisionNode->getName() === 'revision';
         $checks[] = count($revisionNode->timestamp) == 1;
         $checks[] = count($revisionNode->contributor) >= 1;
-        $checks[] = count($revisionNode->contributor->username) >= 1;
+        $checks[] = count($revisionNode->contributor->id) >= 1;
         $checks[] = count($revisionNode->text) == 1;
         if (in_array(false, $checks) === false) {
             // We have no failed tests, therefore we have all we need
@@ -141,14 +144,17 @@ class MediaWikiRevision extends AbstractRevision
     public function setContributor(MediaWikiContributor $author, $validate_contributor = true)
     {
         $this->validate_contributor = $validate_contributor;
-        $u1 = $this->contributor_name;
-        $u2 = $author->getName();
+        $u1 = $this->getContributorId();
+        $u2 = $author->getId();
 
         if ($u2 !== $u1 && $this->validate_contributor === true) {
             throw new RuntimeException(sprintf('Contributor %s is not the same as %s', $u1, $u2));
         }
 
         $this->setAuthor($author);
+        // Override our new author real_name and id values.
+        $this->contributor_name = $author->getRealName();
+        $this->contributor_id = $author->getId();
 
         return $this;
     }
@@ -162,30 +168,13 @@ class MediaWikiRevision extends AbstractRevision
         throw new RuntimeException('Author not linked to Revision, please make sure you explicitly call setContributor()');
     }
 
-    public function getContributorName2()
-    {
-        if ($this->author instanceof Author) {
-            return $this->author->getName();
-        }
-
-        return $this->contributor_name;
-    }
-
     public function getContributorName()
     {
-        if ($this->author instanceof Author) {
-            return $this->author->getName();
-        }
-
         return $this->contributor_name;
     }
 
     public function getContributorId()
     {
-        if ($this->author instanceof Author) {
-            return $this->author->getId();
-        }
-
         return $this->contributor_id;
     }
 
@@ -201,13 +190,13 @@ class MediaWikiRevision extends AbstractRevision
 
     public function setComment($comment)
     {
-        /**
+        /*
          * Because we’ll use double quotes to delimit commit message
          * argument, that HTML is pointless in a comment, and that we’ll
          * most likely issue a commit from a terminal.
          * Let’s strip HTML tags, carriage returns and double quotes.
          **/
-        $this->comment = preg_replace("/(\n|\")/imu", ' ', strip_tags($comment));
+        $this->comment = preg_replace("/(\n|\|\t\")/imu", ' ', strip_tags($comment));
 
         return $this;
     }

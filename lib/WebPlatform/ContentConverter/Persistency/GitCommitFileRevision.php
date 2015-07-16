@@ -6,14 +6,12 @@
 
 namespace WebPlatform\ContentConverter\Persistency;
 
-use WebPlatform\ContentConverter\Entity\Author;
-
 /**
  * Save File Revision into a Git Commit.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class FileGitCommit extends File
+class GitCommitFileRevision extends AbstractPersister
 {
     /**
      * What will be the persist arguments.
@@ -50,7 +48,7 @@ class FileGitCommit extends File
 
     public function persist()
     {
-        $out['fileName'] = $this->getFileName();
+        $out['name'] = $this->getName();
         $out['args'] = $this->commitArgs();
 
         var_dump($out);

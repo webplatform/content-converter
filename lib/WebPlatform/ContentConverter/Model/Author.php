@@ -4,7 +4,7 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Entity;
+namespace WebPlatform\ContentConverter\Model;
 
 /**
  * Author.
@@ -24,7 +24,7 @@ class Author
      *
      * @var string User email address
      */
-    protected $email;
+    protected $email = '';
 
     /**
      * User’s full name.
@@ -34,7 +34,7 @@ class Author
      *
      * @var string User Full name
      */
-    protected $realName = '';
+    protected $realName = 'Anonymous Author';
 
     public function setEmail($email)
     {
@@ -43,11 +43,21 @@ class Author
         return $this;
     }
 
+    /**
+     * Get Author Email address.
+     *
+     * @return string Email address or an empty string
+     */
     public function getEmail()
     {
         return $this->email;
     }
 
+    /**
+     * Set Author Full name (e.g. John Doe).
+     *
+     * @param string $realName Author name or "Anonymous Author"
+     */
     public function setRealName($realName)
     {
         $this->realName = $realName;

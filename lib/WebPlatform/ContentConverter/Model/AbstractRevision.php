@@ -4,7 +4,7 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Entity;
+namespace WebPlatform\ContentConverter\Model;
 
 /**
  * Defines state of the content of a document at a given time.

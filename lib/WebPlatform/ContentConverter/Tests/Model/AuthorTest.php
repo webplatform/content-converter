@@ -4,14 +4,14 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Tests\Entity;
+namespace WebPlatform\ContentConverter\Tests\Model;
 
-use WebPlatform\ContentConverter\Entity\Author;
+use WebPlatform\ContentConverter\Model\Author;
 
 /**
  * WikiPage test suite.
  *
- * @coversDefaultClass \WebPlatform\ContentConverter\Entity\MediaWikiContributor
+ * @coversDefaultClass \WebPlatform\ContentConverter\Model\MediaWikiContributor
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
@@ -37,5 +37,11 @@ class AuthorTest extends \PHPUnit_Framework_TestCase
         $email = 'jdoe@example.co';
         $instance = $this->instance->setEmail($email);
         $this->assertEquals($instance->getEmail(), $email);
+    }
+
+    public function testAnonymousAuthorRealName()
+    {
+        $fullName = $this->instance->getRealName();
+        $this->assertEquals($fullName, 'Anonymous Author', 'We should ensure a name exists');
     }
 }

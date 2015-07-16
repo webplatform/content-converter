@@ -6,9 +6,7 @@
 
 namespace WebPlatform\ContentConverter\Model;
 
-use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
 use SimpleXMLElement;
-use SplDoublyLinkedList;
 use DomainException;
 
 /**
@@ -40,7 +38,7 @@ use DomainException;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class MediaWikiDocument
+class MediaWikiDocument extends AbstractDocument
 {
     // List namespaces
     public static $NAMESPACE_PREFIXES = array('10' => 'Template:','102' => 'Property:','15' => 'Category:','3000' => 'WPD:','3020' => 'Meta:');
@@ -50,9 +48,6 @@ class MediaWikiDocument
 
     /** @var mixed string representation of the possible path or false if no redirect was specified */
     protected $redirect = false;
-
-    /** @var \SplDoublyLinkedList of MediaWikiRevision objects */
-    protected $revisions = array();
 
     const LANG_ENGLISH = 0;
 
@@ -82,10 +77,8 @@ class MediaWikiDocument
 
     const LANG_DUTCH = 'nl';
 
-    const LANG_ = '';
-
     /**
-     * String RegEx to find if the page is a page translation
+     * String RegEx to find if the page is a page translation.
      *
      * From https://docs.webplatform.org/wiki/Template:Languages?action=raw
      *
@@ -106,7 +99,7 @@ class MediaWikiDocument
     //
 
     /**
-     * Commonly used translation codes used in WebPlatform Docs
+     * Commonly used translation codes used in WebPlatform Docs.
      *
      * Each key represent a language code generally put at the end of a page URL (e.g. Main_Page/es).
      *
@@ -128,20 +121,20 @@ class MediaWikiDocument
      * @var array
      */
     public static $translationCodes = array(
-                    'en'      => ['ENGLISH', 'English'],
-                    'ja'      => ['JAPANESE', '日本語'],
-                    'de'      => ['GERMAN', 'Deutsch'],
-                    'tr'      => ['TURKISH', 'Türkçe'],
-                    'ko'      => ['KOREAN', '한국어'],
-                    'es'      => ['SPANISH', 'Español'],
-                    'pt-br'   => ['PORTUGUESE_BRAZIL', 'Português do Brasil'],
-                    'pt'      => ['PORTUGUESE', 'Português'],
-                    'zh'      => ['CHINESE', '中文'],
+                    'en' => ['ENGLISH', 'English'],
+                    'ja' => ['JAPANESE', '日本語'],
+                    'de' => ['GERMAN', 'Deutsch'],
+                    'tr' => ['TURKISH', 'Türkçe'],
+                    'ko' => ['KOREAN', '한국어'],
+                    'es' => ['SPANISH', 'Español'],
+                    'pt-br' => ['PORTUGUESE_BRAZIL', 'Português do Brasil'],
+                    'pt' => ['PORTUGUESE', 'Português'],
+                    'zh' => ['CHINESE', '中文'],
                     'zh-hant' => ['CHINESE_HANT', '中文（繁體）'],
                     'zh-hans' => ['CHINESE_HANS', '中文（简体）'],
-                    'fr'      => ['FRENCH', 'Français'],
-                    'sv'      => ['SWEDISH', 'Svenska'],
-                    'nl'      => ['DUTCH', 'Nederlands']
+                    'fr' => ['FRENCH', 'Français'],
+                    'sv' => ['SWEDISH', 'Svenska'],
+                    'nl' => ['DUTCH', 'Nederlands'],
                 );
 
     /**
@@ -152,12 +145,12 @@ class MediaWikiDocument
     public function __construct(SimpleXMLElement $pageNode)
     {
         if (self::isMediaWikiDumpPageNode($pageNode) === true) {
-            $this->title = (string) $pageNode->title;
-            $this->revisions = new SplDoublyLinkedList();
-            $revisions = $pageNode->revision;
+            $title = (string) $pageNode->title;
+            $this->setName(self::toFileName($title));
+            $this->title = $title;
 
-            foreach ($revisions as $rev) {
-                $this->revisions->push(new MediaWikiRevision($rev));
+            foreach ($pageNode->revision as $rev) {
+                $this->addRevision(new MediaWikiRevision($rev));
             }
 
             $redirect = (string) $pageNode->redirect['title'];
@@ -172,11 +165,12 @@ class MediaWikiDocument
     }
 
     /**
-     * Figure out what would be the file name to use
+     * Figure out what would be the file name to use.
      *
      * Not sure if its the best place to keep this.
      *
-     * @param  string $wikiTitle
+     * @param string $wikiTitle
+     *
      * @return [type] [description]
      */
     public static function toFileName($wikiTitle)
@@ -243,6 +237,21 @@ class MediaWikiDocument
         return substr($title, (int) strrpos($title, '/') + 1);
     }
 
+    /**
+     * We expect this is *only* OK the entry *just before*
+     * the last *IS* either "elements" or "attributes" because
+     * the current implementation used language codes that was
+     * conflated with valid HTML/SVG/SGML elements and attributes.
+     *
+     * e.g. [tr, id, ...]
+     *
+     *   - html/elements/tr
+     *   - html/attributes/id
+     *   - svg/attributes/marker/tr
+     *   - mathml/elements/menclose
+     *
+     * @return bool
+     */
     public function isChildOfKnownPageListing()
     {
         $knownPageListings = ['elements','attributes'];
@@ -289,15 +298,5 @@ class MediaWikiDocument
     public function hasRedirect()
     {
         return !!$this->redirect;
-    }
-
-    public function getLatest()
-    {
-        return $this->revisions->offsetGet(0);
-    }
-
-    public function getRevisions()
-    {
-        return $this->revisions;
     }
 }

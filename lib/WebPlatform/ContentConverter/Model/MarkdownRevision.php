@@ -4,7 +4,7 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Entity;
+namespace WebPlatform\ContentConverter\Model;
 
 use Symfony\Component\Yaml\Dumper;
 

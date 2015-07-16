@@ -4,14 +4,14 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Tests\Entity;
+namespace WebPlatform\ContentConverter\Tests\Model;
 
-use WebPlatform\ContentConverter\Entity\MarkdownRevision;
+use WebPlatform\ContentConverter\Model\MarkdownRevision;
 
 /**
  * MarkdownRevision test suite.
  *
- * @coversDefaultClass \WebPlatform\ContentConverter\Entity\MarkdownRevision
+ * @coversDefaultClass \WebPlatform\ContentConverter\Model\MarkdownRevision
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */

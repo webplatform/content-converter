@@ -4,16 +4,16 @@
  * WebPlatform Content Converter.
  */
 
-namespace WebPlatform\ContentConverter\Tests\Entity;
+namespace WebPlatform\ContentConverter\Tests\Model;
 
-use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
-use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
+use WebPlatform\ContentConverter\Model\MediaWikiRevision;
+use WebPlatform\ContentConverter\Model\MediaWikiContributor;
 use SimpleXMLElement;
 
 /**
  * MediaWikiRevision test suite.
  *
- * @coversDefaultClass \WebPlatform\ContentConverter\Entity\MediaWikiRevision
+ * @coversDefaultClass \WebPlatform\ContentConverter\Model\MediaWikiRevision
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
@@ -59,6 +59,28 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
         // Lets remove data we know require, make sure the Revision class tests it too
         unset($xmlElement->timestamp, $xmlElement->contributor);
         $this->assertFalse(MediaWikiRevision::isMediaWikiDumpRevisionNode($xmlElement));
+    }
+
+    public function testRevisionContributorRelationship()
+    {
+        $xmlElement = new SimpleXMLElement($this->revisionXml);
+
+        // Lets create two objects based on complemetary sample data
+        // and bind them together. This should not throw any Exceptions.
+        $revision = new MediaWikiRevision($xmlElement);
+        $contributor = new MediaWikiContributor($this->cached_user_json);
+        $revision->setContributor($contributor);
+
+        // Through getAuthor 1..1 getter
+        $this->assertSame($revision->getAuthor()->getEmail(), 'jdoe@example.org');
+        $this->assertSame($revision->getAuthor()->getName(), 'Jdoe');
+        $this->assertTrue($revision->getAuthor()->isAuthenticated());
+
+        // Revision should have same same data about author too
+        $this->assertSame($revision->getContributorName(), 'John Doe');
+        $this->assertSame($revision->getAuthor()->getRealName(), 'John Doe');
+        $this->assertSame($revision->getContributorId(), 42);
+        $this->assertSame($revision->getAuthor()->getId(), 42);
     }
 
     public function testTimestampIdempotencyFormat()
@@ -108,7 +130,7 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
             ,"user_email_authenticated": true
         }';
 
-        $this->instance->setContributor(new MediaWikiContributor($forged_user)/*, false <- to force NO validation*/);
+        $this->instance->setContributor(new MediaWikiContributor($forged_user)/*, false <- to force NO validation. We want validation here. */);
     }
 
     public function testSetContributorEnforceNoValidation()
@@ -121,14 +143,16 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
             ,"user_email_authenticated": true
         }';
 
-        $this->instance->setContributor(new MediaWikiContributor($forged_user), false);
+        $this->instance->setContributor(new MediaWikiContributor($forged_user), false /* Lets NOT validate if it matches*/);
 
-        $this->assertInstanceOf('\WebPlatform\ContentConverter\Entity\MediaWikiContributor', $this->instance->getContributor());
+        $this->assertInstanceOf('\WebPlatform\ContentConverter\Model\MediaWikiContributor', $this->instance->getContributor());
 
         // Ensure that getContributorName returns the same value as if we did $revision->getContributor()->getName()
         // ... because we asked to NOT validate
-        $this->assertSame($this->instance->getContributorName(), 'Mcfly');
+        $this->assertSame($this->instance->getContributorName(), 'Marty McFly');
+        $this->assertSame($this->instance->getAuthor()->getRealName(), 'Marty McFly');
         $this->assertSame($this->instance->getContributorId(), 11); // We want int!
+        $this->assertSame($this->instance->getAuthor()->getId(), 11); // We want int!
     }
 
     public function testRevisionContributorProperty()
