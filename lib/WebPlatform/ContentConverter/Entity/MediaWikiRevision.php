@@ -63,6 +63,8 @@ class MediaWikiRevision extends AbstractRevision
     /** @var string username of the MediaWiki user table */
     protected $contributor_name = null;
 
+    protected $id;
+
     /**
      * Constructs a WikiPage Revision object.
      *
@@ -78,6 +80,8 @@ class MediaWikiRevision extends AbstractRevision
             if (!empty($revisionNode->text)) {
                 $this->setContent((string) $revisionNode->text);
             }
+
+            $this->id = (int) $revisionNode->id;
 
             $this->format = (string) $revisionNode->format;
             $this->model = (string) $revisionNode->model;
@@ -158,6 +162,15 @@ class MediaWikiRevision extends AbstractRevision
         throw new RuntimeException('Author not linked to Revision, please make sure you explicitly call setContributor()');
     }
 
+    public function getContributorName2()
+    {
+        if ($this->author instanceof Author) {
+            return $this->author->getName();
+        }
+
+        return $this->contributor_name;
+    }
+
     public function getContributorName()
     {
         if ($this->author instanceof Author) {
@@ -188,7 +201,13 @@ class MediaWikiRevision extends AbstractRevision
 
     public function setComment($comment)
     {
-        $this->comment = preg_replace("/\n/imu", ' ', $comment);
+        /**
+         * Because we’ll use double quotes to delimit commit message
+         * argument, that HTML is pointless in a comment, and that we’ll
+         * most likely issue a commit from a terminal.
+         * Let’s strip HTML tags, carriage returns and double quotes.
+         **/
+        $this->comment = preg_replace("/(\n|\")/imu", ' ', strip_tags($comment));
 
         return $this;
     }
@@ -196,5 +215,10 @@ class MediaWikiRevision extends AbstractRevision
     public function getContent()
     {
         return $this->content;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 }

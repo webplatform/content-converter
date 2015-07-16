@@ -52,7 +52,12 @@ $id_list = $dbr->select('user', array('user_email', 'user_id','user_name','user_
 
 $out = array();
 foreach ($id_list as $user_data) {
-    $out[] = (array) $user_data;
+    $data = (array) $user_data;
+    if (!in_array($data['user_id'], $out)) {
+        $out[$data['user_id']] = $data;
+    } else {
+        throw new Exception('Duplicate user id found, how unlikely!(?)');
+    }
 }
 
 echo json_encode($out);

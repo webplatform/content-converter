@@ -68,6 +68,14 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($latestTimestamp, $objTimestamp);
     }
 
+    public function testIsTranslation()
+    {
+        //       expected, location
+        $res[] =[true, 'Beginners/ja'];
+        $res[] =[false, 'html/attributes/is'];
+        $res[] =[true, 'html/elements/th'];
+    }
+
     /**
      * @covers ::latest
      */
@@ -173,12 +181,14 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
         $assertions[6][0] = 'tutorials/Raw_WebGL_101_-_Part_4_Textures';
         $assertions[6][1] = 'tutorials/Raw WebGL 101 - Part 4: Textures';
 
-        $assertions[7][0] = 'css/selectors/pseudo-classes/_optional';
+        $assertions[7][0] = 'css/selectors/pseudo-classes/optional';
         $assertions[7][1] = 'css/selectors/pseudo-classes/:optional';
 
-        // I should reconsider to make a distinction between characters
-        $assertions[8][0] = 'css/selectors/pseudo-classes/_nth-of-type_n_';
+        $assertions[8][0] = 'css/selectors/pseudo-classes/nth-of-type';
         $assertions[8][1] = 'css/selectors/pseudo-classes/:nth-of-type(n)';
+
+        $assertions[9][0] = 'css/selectors/pseudo-classes/lang';
+        $assertions[9][1] = 'css/selectors/pseudo-classes/:lang(c)';
 
         foreach ($assertions as $assertion) {
             $this->assertSame($assertion[0], MediaWikiDocument::toFileName($assertion[1]));

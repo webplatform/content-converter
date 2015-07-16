@@ -37,14 +37,13 @@ class FileGitCommit extends File
     {
         $author = $this->getRevision()->getAuthor();
 
-        $args = array(
-                'date' => $this->getRevision()->getTimestamp()->format(\DateTime::RFC2822),
-                'message' => $this->getRevision()->getComment(),
-        );
-
+        $args = array();
         if ($author instanceof Author) {
             $args['author'] = sprintf('%s <%s>', $author->getRealName(), $author->getEmail());
         }
+
+        $args['date'] = $this->getRevision()->getTimestamp()->format(\DateTime::RFC2822);
+        $args['message'] = (string) $this->getRevision()->getComment();
 
         return $args;
     }

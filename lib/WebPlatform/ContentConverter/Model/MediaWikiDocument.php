@@ -181,7 +181,7 @@ class MediaWikiDocument
      */
     public static function toFileName($wikiTitle)
     {
-        $fileName = $wikiTitle;
+        $fileName = trim($wikiTitle);
 
         //
         // In order to store files in a filesystem, we gotta make sure the file name can has a valid path and
@@ -208,7 +208,13 @@ class MediaWikiDocument
         $fileName = preg_replace('~[\?@\!\(\)\:]+~u', '', $fileName);
 
         // transliterate
-        $fileName = iconv('utf-8', 'us-ascii//TRANSLIT', $fileName);
+        try {
+            $fileNameCopy = $fileName;
+            $fileName = iconv('utf-8', 'us-ascii//TRANSLIT', $fileName);
+        } catch (\Exception $e) {
+            $message = sprintf('Error with file %s', $fileNameCopy);
+            throw new \Exception($message, null, $e);
+        }
 
         return $fileName;
     }
