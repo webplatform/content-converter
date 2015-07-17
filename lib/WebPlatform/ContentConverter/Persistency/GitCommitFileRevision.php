@@ -13,6 +13,7 @@ namespace WebPlatform\ContentConverter\Persistency;
  */
 class GitCommitFileRevision extends AbstractPersister
 {
+
     /**
      * What will be the persist arguments.
      *
@@ -31,7 +32,7 @@ class GitCommitFileRevision extends AbstractPersister
      *
      * @return array of values to send to git
      */
-    public function commitArgs()
+    public function getArgs()
     {
         $author = $this->getRevision()->getAuthor();
 
@@ -46,13 +47,16 @@ class GitCommitFileRevision extends AbstractPersister
         return $args;
     }
 
-    public function persist()
+    public function formatPersisterCommand()
     {
-        $out['name'] = $this->getName();
-        $out['args'] = $this->commitArgs();
+        $commands = array();
+        $commands[] = sprintf('git add %s', $this->getName());
+        $commit_args = array();
+        foreach ($this->getArgs() as $argName => $argVal) {
+            $commit_args[] = sprintf('--%s="%s"', $argName, (string) $argVal);
+        }
+        $commands[] = 'git commit '.join(' ', $commit_args);
 
-        var_dump($out);
-
-        // Stub
+        return $commands;
     }
 }

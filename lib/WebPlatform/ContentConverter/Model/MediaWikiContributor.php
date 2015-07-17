@@ -142,6 +142,9 @@ class MediaWikiContributor extends Author
                         $this->setEmail($v);
                         break;
                     case 'real_name':
+                        if (empty($v) && !empty($data['user_name'])) {
+                            $v = $data['user_name'];
+                        }
                         $this->setRealName($v);
                         break;
                     default:

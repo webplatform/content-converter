@@ -94,24 +94,24 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
     }
 
     /* This will be moved into Persistency soon
-    public function testCommitArgsWithoutContributor()
+    public function testGetArgsWithoutContributor()
     {
         $expectedValues = array(
                              'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
                             ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000',
                         );
-        $obj = $this->instance->commitArgs();
+        $obj = $this->instance->getArgs();
         $this->assertSame(asort($expectedValues), asort($obj));
     }
 
-    public function testCommitArgsContributor()
+    public function testGetArgsContributor()
     {
         $expectedValues = array(
                              'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
                             ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000'
                             ,'author' => 'John Doe <jdoe@example.org>',
                         );
-        $obj = $this->instance->commitArgs();
+        $obj = $this->instance->getArgs();
         $this->instance->setContributor(new MediaWikiContributor($this->cached_user_json));
         $this->assertSame(asort($expectedValues), asort($obj));
     }

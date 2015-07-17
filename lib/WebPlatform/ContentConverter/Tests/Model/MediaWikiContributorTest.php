@@ -81,35 +81,35 @@ class MediaWikiContributorTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorException()
     {
-        $obviouslyIncompleteArray = array('user_id' => 31337);
+        $obviouslyIncompleteArray = array("user_id"=>31337);
         $newed = new MediaWikiContributor($obviouslyIncompleteArray);
     }
 
     public function testReturnTypes()
     {
-        $this->assertSame($this->instance->getId(), 42, 'Should return integer value');
-        $this->assertSame($this->instance->isAuthenticated(), true, 'Should return boolean value');
-        $this->assertSame($this->instance->getEmail(), 'jdoe@example.org');
-        $this->assertSame($this->instance->getRealName(), 'John Doe');
-        $this->assertSame((string) $this->instance, 'John Doe <jdoe@example.org>', 'toString() should return both values as a string.');
+        $this->assertSame($this->instance->getId(), 42, "Should return integer value");
+        $this->assertSame($this->instance->isAuthenticated(), true, "Should return boolean value");
+        $this->assertSame($this->instance->getEmail(), "jdoe@example.org");
+        $this->assertSame($this->instance->getRealName(), "John Doe");
+        $this->assertSame((string) $this->instance, "John Doe <jdoe@example.org>", "toString() should return both values as a string.");
     }
 
     public function testIsValidDataObject()
     {
-        $obviouslyIncompleteArray = array('user_id' => 31337);
         $test1 = MediaWikiContributor::isValidDataObject($this->user_json_string);
         $test2 = MediaWikiContributor::isValidDataObject('{"foo":"bar","bazz":"3"}');
-        $test3 = MediaWikiContributor::isValidDataObject('{"user_email":"bar", "user_name":"3", "bogus": false}');
+        $test3 = MediaWikiContributor::isValidDataObject('{"user_email":"bar", "user_name":"3", "bogus": {}}');
 
-        $this->assertFalse(MediaWikiContributor::isValidDataObject($obviouslyIncompleteArray));
-        $this->assertTrue($test1, 'JSON string with expected key names and values should be true too');
-        $this->assertFalse($test2, 'JSON string with unexpected key names and values should be false');
-        $this->assertFalse($test3, 'JSON string with unexpected key names and values should be false');
+        $this->assertFalse(MediaWikiContributor::isValidDataObject(array("user_id"=>31337)));
+        $this->assertTrue($test1, "JSON string with expected key names and values should be true too");
+        $this->assertFalse($test2, "JSON string with unexpected key names and values should be false");
+        $this->assertFalse($test3, "JSON string with unexpected key names and values should be false");
     }
 
     public function testImportDataObject()
     {
         $array = MediaWikiContributor::importDataObject($this->user_json_string);
-        $this->assertTrue(is_array($array), 'Valid JSON string with expected keys should return an array');
+        $this->assertTrue(is_array($array), "Valid JSON string with expected keys should return an array");
+
     }
 }

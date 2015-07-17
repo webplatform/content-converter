@@ -74,6 +74,7 @@ class MediaWikiRevision extends AbstractRevision
     {
         if (self::isMediaWikiDumpRevisionNode($revisionNode) === true) {
             if (!empty($revisionNode->comment)) {
+                // See below for empty comment case
                 $this->setComment((string) $revisionNode->comment);
             }
 
@@ -95,6 +96,10 @@ class MediaWikiRevision extends AbstractRevision
             }
 
             $this->contributor_id = (int) $revisionNode->contributor[0]->id;
+
+            if (empty($revisionNode->comment)) {
+                $this->setComment(sprintf('Edited by %s without comment', $this->getContributorName()));
+            }
 
             return $this;
         }
@@ -196,7 +201,9 @@ class MediaWikiRevision extends AbstractRevision
          * most likely issue a commit from a terminal.
          * Let’s strip HTML tags, carriage returns and double quotes.
          **/
-        $this->comment = preg_replace("/(\n|\|\t\")/imu", ' ', strip_tags($comment));
+        $comment = preg_replace("/(\n|\||\t|\"|\'|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
+
+        $this->comment = trim(str_replace('  ', ' ', $comment));
 
         return $this;
     }
