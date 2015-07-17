@@ -20,13 +20,25 @@ abstract class AbstractPersister
     protected $revision;
 
     /** @var string File contents */
-    protected $content;
+    protected $content = '';
 
     /** @var string File name */
     protected $name = '';
 
     /** @var AbstractDocument [description] */
     protected $document;
+
+    protected $prefix = '';
+
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    public function getExtension()
+    {
+        return $this->extension;
+    }
 
     public function setName($name)
     {
@@ -40,9 +52,12 @@ abstract class AbstractPersister
         return $this->name;
     }
 
-    public function __construct(AbstractDocument $document = null)
+    public function __construct(AbstractDocument $document = null, $prefix = '', $extension = '')
     {
         $this->document = $document;
+
+        $this->prefix = $prefix;
+        $this->extension = $extension;
 
         if ($document !== null) {
             $this->setName($document->getName());
@@ -51,10 +66,17 @@ abstract class AbstractPersister
         return $this;
     }
 
+    public function __toString()
+    {
+        return $this->content;
+    }
+
     public function setRevision(AbstractRevision $revision)
     {
         $this->revision = $revision;
-        $this->content = $revision->getContent();
+
+        $content = $revision->getContent();
+        $this->content = (is_string($content))?$content:'';
 
         return $this;
     }

@@ -6,6 +6,8 @@
 
 namespace WebPlatform\ContentConverter\Persistency;
 
+use WebPlatform\ContentConverter\Model\AbstractDocument;
+
 /**
  * Save File Revision into a Git Commit.
  *
@@ -13,6 +15,18 @@ namespace WebPlatform\ContentConverter\Persistency;
  */
 class GitCommitFileRevision extends AbstractPersister
 {
+    public function __construct(AbstractDocument $document = null, $prefix = '', $extension = '')
+    {
+        parent::__construct($document, $prefix, $extension);
+
+        $file_path = $this->getPrefix();
+        $file_path .= $this->getName();
+        $file_path .= (($document->isTranslation()) ? null : '/index').$this->getExtension();
+
+        $this->setName($file_path);
+
+        return $this;
+    }
 
     /**
      * What will be the persist arguments.
@@ -55,7 +69,7 @@ class GitCommitFileRevision extends AbstractPersister
         foreach ($this->getArgs() as $argName => $argVal) {
             $commit_args[] = sprintf('--%s="%s"', $argName, (string) $argVal);
         }
-        $commands[] = 'git commit '.join(' ', $commit_args);
+        $commands[] = 'git commit '.implode(' ', $commit_args);
 
         return $commands;
     }

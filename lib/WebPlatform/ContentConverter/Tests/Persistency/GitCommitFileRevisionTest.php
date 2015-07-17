@@ -87,7 +87,7 @@ class GitCommitFileRevisionTest extends \PHPUnit_Framework_TestCase
     {
         $document = new MediaWikiDocument(new SimpleXMLElement($this->documentManyRevisionsXml));
         $contributor = new MediaWikiContributor(json_decode($this->documentManyRevisionsUserJson, true));
-        $this->instance = new GitCommitFileRevision($document);
+        $this->instance = new GitCommitFileRevision($document, 'foo/', '.html');
 
         $revisionsList = $document->getRevisions();
         for ($revisionsList->rewind(); $revisionsList->valid(); $revisionsList->next()) {
@@ -95,7 +95,6 @@ class GitCommitFileRevisionTest extends \PHPUnit_Framework_TestCase
             $rev->setContributor($contributor, false);
         }
         $this->instance->setRevision($document->getLatest());
-
     }
 
     public function testTypesOnGetters()
@@ -109,7 +108,7 @@ class GitCommitFileRevisionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('2012-09-23T13:53:43Z', $revision->getTimestamp()->format('Y-m-d\TH:i:sT'));
         $this->assertSame('John Doe', $revision->getAuthor()->getRealName());
         $this->assertSame('jdoe@example.org', $revision->getAuthor()->getEmail());
-        $this->assertSame('tutorials/Web_Education_Intro', $this->instance->getName());
-        $this->assertSame((string) $revision->getAuthor(), "John Doe <jdoe@example.org>");
+        $this->assertSame('foo/tutorials/Web_Education_Intro/index.html', $this->instance->getName());
+        $this->assertSame((string) $revision->getAuthor(), 'John Doe <jdoe@example.org>');
     }
 }
