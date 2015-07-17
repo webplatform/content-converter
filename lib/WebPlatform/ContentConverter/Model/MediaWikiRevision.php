@@ -203,8 +203,10 @@ class MediaWikiRevision extends AbstractRevision
          **/
         $comment = preg_replace("/(\n|\||\t|\"|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
 
-        $append_revision = sprintf('Revision %d: ', $this->id);
-        $this->comment = $append_revision . trim(str_replace('  ', ' ', $comment));
+        $append_revision = sprintf('Revision %d: ', $this->getId());
+        $comment = $append_revision . trim(str_replace('  ', ' ', $comment));
+
+        $this->comment = trim(str_replace('  ', ' ', $comment));
 
         return $this;
     }
