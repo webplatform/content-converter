@@ -146,10 +146,7 @@ class MediaWikiContributor extends Author
                     case 'real_name':
                         if (!empty($v)) {
                             $this->setRealName($v);
-                        }/* elseif (empty($v)) {// && !empty($data['user_name'])) {
-                            $v = $data['user_name'];
-                            $this->setRealName($v);
-                        }*/
+                        }
                         break;
                     case 'name':
                         if (!empty($v)) {
@@ -175,6 +172,13 @@ class MediaWikiContributor extends Author
         return ($this->email_authenticated === null) ? false : true;
     }
 
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function getName()
     {
         return $this->name;
@@ -183,5 +187,12 @@ class MediaWikiContributor extends Author
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 }

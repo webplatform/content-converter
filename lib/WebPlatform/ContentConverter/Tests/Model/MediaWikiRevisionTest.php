@@ -194,30 +194,33 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
             ,"user_email_authenticated": false
         },{
             "user_email": ""
-            ,"user_id": "0"
+            ,"user_id": "3"
             ,"user_name": ""
             ,"user_real_name": ""
+            ,"user_email_authenticated": false
+        },{
+            "user_email": "bar@foo.baz"
+            ,"user_id": "4"
+            ,"user_name": ""
+            ,"user_real_name": "Real Name No Username"
             ,"user_email_authenticated": false
         }]';
 
         $bogusUsers = json_decode($bogusUserJson, 1);
 
-        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[0]), false);
-        $this->assertEquals('John Doe with Missing Email', $this->instance->getAuthor()->getRealName());
-        $this->assertEquals('Jdoe', $this->instance->getAuthor()->getName());
-        $this->assertEquals('Jdoe', $this->instance->getContributorName());
-        $this->assertEquals('public-webplatform@w3.org', $this->instance->getAuthor()->getEmail());
+        $assertions[] = [new MediaWikiContributor($bogusUsers[0]), 1, 'Jdoe',               'John Doe with Missing Email', 'public-webplatform@w3.org'];
+        $assertions[] = [new MediaWikiContributor($bogusUsers[1]), 2, 'BarMissingRealName', 'BarMissingRealName',          'foo@bar.org'];
+        $assertions[] = [new MediaWikiContributor($bogusUsers[2]), 3, 'Anonymous',          'Anonymous',                   'public-webplatform@w3.org'];
+        $assertions[] = [new MediaWikiContributor($bogusUsers[3]), 4, 'Anonymous',          'Real Name No Username',       'bar@foo.baz'];
 
-        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[1]), false);
-        $this->assertEquals('Anonymous Author', $this->instance->getAuthor()->getRealName());
-        $this->assertEquals('BarMissingRealName', $this->instance->getAuthor()->getName());
-        $this->assertEquals('BarMissingRealName', $this->instance->getContributorName());
-        $this->assertEquals('foo@bar.org', $this->instance->getAuthor()->getEmail());
-
-        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[2]), false);
-        $this->assertEquals('Anonymous Author', $this->instance->getAuthor()->getRealName());
-        $this->assertEquals('Anonymous', $this->instance->getAuthor()->getName());
-        $this->assertEquals('Anonymous', $this->instance->getContributorName());
-        $this->assertEquals('public-webplatform@w3.org', $this->instance->getAuthor()->getEmail());
+        foreach ($assertions as $assertion) {
+            $this->instance->setContributor($assertion[0], false);
+            $this->assertEquals($assertion[1], $this->instance->getContributorId());
+            $this->assertEquals($assertion[1], $this->instance->getAuthor()->getId());
+            $this->assertEquals($assertion[2], $this->instance->getContributorName());
+            $this->assertEquals($assertion[2], $this->instance->getAuthor()->getName());
+            $this->assertEquals($assertion[3], $this->instance->getAuthor()->getRealName());
+            $this->assertEquals($assertion[4], $this->instance->getAuthor()->getEmail());
+        }
     }
 }

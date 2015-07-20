@@ -156,13 +156,16 @@ class MediaWikiRevision extends AbstractRevision
             throw new RuntimeException(sprintf('Contributor %s is not the same as %s', $u1, $u2));
         }
 
-        $this->setAuthor($author);
+        $this->author = $author;
 
-        if (!empty($author->getName())) {
-            $this->contributor_name = $author->getName();
+        $this->contributor_id = $this->author->getId();
+        $this->contributor_name = $this->author->getName();
+
+        if ($this->author->getName() === 'Anonymous' && !empty($this->contributor_name)) {
+            $this->author->setName($this->contributor_name);
         }
-        if (!empty($author->getId())) {
-            $this->contributor_id = $author->getId();
+        if ($this->author->getRealName() === 'Anonymous Author' && !empty($this->contributor_name)) {
+            $this->author->setRealName($this->contributor_name);
         }
 
         return $this;
@@ -205,13 +208,12 @@ class MediaWikiRevision extends AbstractRevision
          * most likely issue a commit from a terminal.
          * Let’s strip HTML tags, carriage returns and double quotes.
          **/
-        $comment = preg_replace("/(\n|\||\t|\"|\{|\}|\[|\]|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
+        $comment = preg_replace("/(\n|\||\t|\"|\{|\}|\[|\]|\=|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
         $id = (isset($this->id)) ? $this->id : 0;
 
         $append_revision = sprintf('Revision %d: ', $id);
-        $comment = $append_revision.trim(str_replace('  ', ' ', $comment));
 
-        $this->comment = trim(str_replace('  ', ' ', $comment));
+        $this->comment = $append_revision.trim(str_replace('  ', ' ', $comment));
 
         return $this;
     }

@@ -365,9 +365,14 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
         $assertions[10][2] = 'out/foo/bar/html/elements/tr/index.bazz';
 
         // True positive translated document (Turkish version of the tr HTML element)
-        $assertions[10][0] = 'html/elements/tr/tr';
-        $assertions[10][1] = 'html/elements/tr/tr';
-        $assertions[10][2] = 'out/foo/bar/html/elements/tr/tr.bazz';
+        $assertions[11][0] = 'html/elements/tr/tr';
+        $assertions[11][1] = 'html/elements/tr/tr';
+        $assertions[11][2] = 'out/foo/bar/html/elements/tr/tr.bazz';
+
+        // Please, lets fix those too!!
+        $assertions[12][0] = 'html/attributes/align (Table, iframe elements)';
+        $assertions[12][1] = 'html/attributes/align_Table_iframe_elements';
+        $assertions[12][2] = 'out/foo/bar/html/attributes/align_Table_iframe_elements/index.bazz';
 
         $mockDocument =
                 '<page>
