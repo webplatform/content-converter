@@ -153,7 +153,7 @@ class MediaWikiDocument extends AbstractDocument
                 $this->addRevision(new MediaWikiRevision($rev));
             }
 
-            $redirect = (string) $pageNode->redirect['title'];
+            $redirect = self::toFileName((string) $pageNode->redirect['title']);
             if (strlen($redirect) > 1) {
                 $this->redirect = $redirect;
             }

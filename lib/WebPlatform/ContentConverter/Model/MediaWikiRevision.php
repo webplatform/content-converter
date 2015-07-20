@@ -208,12 +208,12 @@ class MediaWikiRevision extends AbstractRevision
          * most likely issue a commit from a terminal.
          * Let’s strip HTML tags, carriage returns and double quotes.
          **/
-        $comment = preg_replace("/(\n|\||\t|\"|\{|\}|\[|\]|\=|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
+        $comment = preg_replace("/(\n|\||\t|\"|\{|\}|\[|\]|\(|\)|\=|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
         $id = (isset($this->id)) ? $this->id : 0;
 
         $append_revision = sprintf('Revision %d: ', $id);
 
-        $this->comment = $append_revision.trim(str_replace('  ', ' ', $comment));
+        $this->comment = $append_revision.trim(preg_replace("/\ {2,}/mu", ' ', $comment));
 
         return $this;
     }
