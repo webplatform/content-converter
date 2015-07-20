@@ -308,7 +308,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
         // lets expect we get a string similar to "WPD:Example Pages/CSS"
         $redirected = new MediaWikiDocument($this->dumpBackupXml->page[5]);
 
-        $this->assertSame($redirected->getRedirect(), 'WPD:Content/Topic Pages');
+        $this->assertSame($redirected->getRedirect(), 'WPD/Content/Topic_Pages');
     }
 
     /**
@@ -323,7 +323,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
         // What would be the file name to read/write from
         $assertions[0][2] = 'out/foo/bar/WPD/Infrastructure/proposals/Site_Map/index.bazz';
 
-        $assertions[1][0] = 'WPD:Doc  Sprints';
+        $assertions[1][0] = 'WPD:Doc Sprints';
         $assertions[1][1] = 'WPD/Doc_Sprints';
         $assertions[1][2] = 'out/foo/bar/WPD/Doc_Sprints/index.bazz';
 
