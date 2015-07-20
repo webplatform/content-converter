@@ -24,7 +24,7 @@ class Author
      *
      * @var string User email address
      */
-    protected $email = '';
+    protected $email = 'public-webplatform@w3.org';
 
     /**
      * User’s full name.

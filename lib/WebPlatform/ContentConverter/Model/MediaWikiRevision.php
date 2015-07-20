@@ -73,16 +73,13 @@ class MediaWikiRevision extends AbstractRevision
     public function __construct(SimpleXMLElement $revisionNode)
     {
         if (self::isMediaWikiDumpRevisionNode($revisionNode) === true) {
-            if (!empty($revisionNode->comment)) {
-                // See below for empty comment case
-                $this->setComment((string) $revisionNode->comment);
-            }
-
             if (!empty($revisionNode->text)) {
                 $this->setContent((string) $revisionNode->text);
             }
 
-            $this->id = (int) $revisionNode->id;
+            if (!empty($revisionNode->id)) {
+                $this->id = (int) $revisionNode->id;
+            }
 
             $this->format = (string) $revisionNode->format;
             $this->model = (string) $revisionNode->model;
@@ -97,8 +94,10 @@ class MediaWikiRevision extends AbstractRevision
 
             $this->contributor_id = (int) $revisionNode->contributor[0]->id;
 
-            if (empty($revisionNode->comment)) {
-                $this->setComment(sprintf('Edited by %s without comment', $this->getContributorName()));
+            if (!empty($revisionNode->comment)) {
+                $this->setComment((string) $revisionNode->comment);
+            } else {
+                $this->setComment(sprintf('Edited by %s', $this->getContributorName()));
             }
 
             return $this;
@@ -132,6 +131,7 @@ class MediaWikiRevision extends AbstractRevision
         $checks[] = count($revisionNode->contributor) >= 1;
         $checks[] = count($revisionNode->contributor->id) >= 1;
         $checks[] = count($revisionNode->text) == 1;
+        //$checks[] = count($revisionNode->id) == 1;
         if (in_array(false, $checks) === false) {
             // We have no failed tests, therefore we have all we need
             return true;
@@ -157,9 +157,13 @@ class MediaWikiRevision extends AbstractRevision
         }
 
         $this->setAuthor($author);
-        // Override our new author real_name and id values.
-        $this->contributor_name = $author->getRealName();
-        $this->contributor_id = $author->getId();
+
+        if (!empty($author->getName())) {
+            $this->contributor_name = $author->getName();
+        }
+        if (!empty($author->getId())) {
+            $this->contributor_id = $author->getId();
+        }
 
         return $this;
     }
@@ -201,10 +205,11 @@ class MediaWikiRevision extends AbstractRevision
          * most likely issue a commit from a terminal.
          * Let’s strip HTML tags, carriage returns and double quotes.
          **/
-        $comment = preg_replace("/(\n|\||\t|\"|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
+        $comment = preg_replace("/(\n|\||\t|\"|\{|\}|\[|\]|\/\*|\*\/|&)/imu", ' ', strip_tags($comment));
+        $id = (isset($this->id)) ? $this->id : 0;
 
-        $append_revision = sprintf('Revision %d: ', $this->getId());
-        $comment = $append_revision . trim(str_replace('  ', ' ', $comment));
+        $append_revision = sprintf('Revision %d: ', $id);
+        $comment = $append_revision.trim(str_replace('  ', ' ', $comment));
 
         $this->comment = trim(str_replace('  ', ' ', $comment));
 

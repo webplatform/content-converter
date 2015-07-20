@@ -76,7 +76,7 @@ abstract class AbstractPersister
         $this->revision = $revision;
 
         $content = $revision->getContent();
-        $this->content = (is_string($content))?$content:'';
+        $this->content = (is_string($content)) ? $content : '';
 
         return $this;
     }

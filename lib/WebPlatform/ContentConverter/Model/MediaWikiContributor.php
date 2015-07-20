@@ -29,7 +29,7 @@ use Exception;
 class MediaWikiContributor extends Author
 {
     /** @var string MediaWiki username value, username is Capitalized */
-    protected $name;
+    protected $name = 'Anonymous';
 
     /** @var bool Value MediaWiki had stored related to email authentication */
     protected $email_authenticated = false;
@@ -139,13 +139,22 @@ class MediaWikiContributor extends Author
                         $this->id = (int) $v;
                         break;
                     case 'email':
-                        $this->setEmail($v);
+                        if (!empty($v)) {
+                            $this->setEmail($v);
+                        }
                         break;
                     case 'real_name':
-                        if (empty($v) && !empty($data['user_name'])) {
+                        if (!empty($v)) {
+                            $this->setRealName($v);
+                        }/* elseif (empty($v)) {// && !empty($data['user_name'])) {
                             $v = $data['user_name'];
+                            $this->setRealName($v);
+                        }*/
+                        break;
+                    case 'name':
+                        if (!empty($v)) {
+                            $this->name = $v;
                         }
-                        $this->setRealName($v);
                         break;
                     default:
                         if (property_exists($this, $key)) {

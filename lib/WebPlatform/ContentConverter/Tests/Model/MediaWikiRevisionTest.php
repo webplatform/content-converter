@@ -47,40 +47,42 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->instance = new MediaWikiRevision(new SimpleXMLElement($this->revisionXml), 1);
+        $xmlRevisionElement = new SimpleXMLElement($this->revisionXml);
+        $this->instance = new MediaWikiRevision($xmlRevisionElement);
     }
 
     public function testIsMediaWikiDumpRevisionNode()
     {
-        $xmlElement = new SimpleXMLElement($this->revisionXml);
-
-        $this->assertTrue(MediaWikiRevision::isMediaWikiDumpRevisionNode($xmlElement));
+        $xmlRevisionElement = new SimpleXMLElement($this->revisionXml);
+        $this->assertTrue(MediaWikiRevision::isMediaWikiDumpRevisionNode($xmlRevisionElement));
 
         // Lets remove data we know require, make sure the Revision class tests it too
-        unset($xmlElement->timestamp, $xmlElement->contributor);
-        $this->assertFalse(MediaWikiRevision::isMediaWikiDumpRevisionNode($xmlElement));
+        unset($xmlRevisionElement->timestamp, $xmlRevisionElement->contributor);
+        $this->assertFalse(MediaWikiRevision::isMediaWikiDumpRevisionNode($xmlRevisionElement));
     }
 
     public function testRevisionContributorRelationship()
     {
-        $xmlElement = new SimpleXMLElement($this->revisionXml);
+        $xmlRevisionElement = new SimpleXMLElement($this->revisionXml);
 
         // Lets create two objects based on complemetary sample data
         // and bind them together. This should not throw any Exceptions.
-        $revision = new MediaWikiRevision($xmlElement);
+        $revision = new MediaWikiRevision($xmlRevisionElement);
         $contributor = new MediaWikiContributor($this->cached_user_json);
         $revision->setContributor($contributor);
 
         // Through getAuthor 1..1 getter
-        $this->assertSame($revision->getAuthor()->getEmail(), 'jdoe@example.org');
-        $this->assertSame($revision->getAuthor()->getName(), 'Jdoe');
+        $this->assertSame('jdoe@example.org', $revision->getAuthor()->getEmail());
+        $this->assertSame('Jdoe', $revision->getAuthor()->getName());
         $this->assertTrue($revision->getAuthor()->isAuthenticated());
 
         // Revision should have same same data about author too
-        $this->assertSame($revision->getContributorName(), 'John Doe');
-        $this->assertSame($revision->getAuthor()->getRealName(), 'John Doe');
-        $this->assertSame($revision->getContributorId(), 42);
-        $this->assertSame($revision->getAuthor()->getId(), 42);
+        $this->assertSame('Jdoe', $revision->getContributorName());
+        $this->assertSame('John Doe', $revision->getAuthor()->getRealName());
+        $this->assertSame(42, $revision->getContributorId());
+        $this->assertSame(42, $revision->getAuthor()->getId());
+
+        $this->assertEquals(69319, $revision->getId());
     }
 
     public function testTimestampIdempotencyFormat()
@@ -92,30 +94,6 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
         $expectRfc2822Format = 'Mon, 08 Sep 2014 19:05:23 +0000';
         $this->assertSame($expectRfc2822Format, $this->instance->getTimestamp()->format(\DateTime::RFC2822));
     }
-
-    /* This will be moved into Persistency soon
-    public function testGetArgsWithoutContributor()
-    {
-        $expectedValues = array(
-                             'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
-                            ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000',
-                        );
-        $obj = $this->instance->getArgs();
-        $this->assertSame(asort($expectedValues), asort($obj));
-    }
-
-    public function testGetArgsContributor()
-    {
-        $expectedValues = array(
-                             'message' => "そ\nれぞれの値には、配列内で付与されたインデックス値である、"
-                            ,'date' => 'Mon, 08 Sep 2014 19:05:23 +0000'
-                            ,'author' => 'John Doe <jdoe@example.org>',
-                        );
-        $obj = $this->instance->getArgs();
-        $this->instance->setContributor(new MediaWikiContributor($this->cached_user_json));
-        $this->assertSame(asort($expectedValues), asort($obj));
-    }
-    */
 
     /**
      * @expectedException \RuntimeException
@@ -149,18 +127,19 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
 
         // Ensure that getContributorName returns the same value as if we did $revision->getContributor()->getName()
         // ... because we asked to NOT validate
-        $this->assertSame($this->instance->getContributorName(), 'Marty McFly');
-        $this->assertSame($this->instance->getAuthor()->getRealName(), 'Marty McFly');
-        $this->assertSame($this->instance->getContributorId(), 11); // We want int!
-        $this->assertSame($this->instance->getAuthor()->getId(), 11); // We want int!
+        $this->assertSame('Mcfly', $this->instance->getContributorName());
+        $this->assertSame('Marty McFly', $this->instance->getAuthor()->getRealName());
+        $this->assertSame(11, $this->instance->getContributorId()); // We want int!
+        $this->assertSame(11, $this->instance->getAuthor()->getId()); // We want int!
+        $this->assertSame(69319, $this->instance->getId(), 'We should get an integer number for the revision id.');
     }
 
     public function testRevisionContributorProperty()
     {
         // Let’s say we dont want to use cached version of users, but we still
         // want to import a wiki, will the behavior be consistent too?
-        $this->assertSame($this->instance->getContributorId(), 42); // We want int!
-        $this->assertSame($this->instance->getContributorName(), 'Jdoe');
+        $this->assertSame(42, $this->instance->getContributorId()); // We want int!
+        $this->assertSame('Jdoe', $this->instance->getContributorName());
     }
 
     public function testToString()
@@ -168,22 +147,25 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
         // In the test fixture, we said that "Foo" was the content of the
         // contribution, let’s test that. Also, we may change the way the
         // content is generated, see MarkdownRevision for instance.
-        $this->assertSame('Foo', (string) $this->instance);
+        $this->assertEquals('Foo', (string) $this->instance);
     }
 
     public function testCommentRemovesNewlines()
     {
         // We added a \n char in the middle of this string (author don’t know what that says, BTW)
         // Making sure behavior is the same.
-        $this->assertSame('そ れぞれの値には、配列内で付与されたインデックス値である、', $this->instance->getComment());
+        $revision = $this->instance;
+        $this->assertEquals(69319, $revision->getId(), 'We should get an integer number for the revision id.');
+        $this->assertEquals('Revision 69319: そ れぞれの値には、配列内で付与されたインデックス値である、', $revision->getComment(), 'We should get same comment with "Revision $revNumber: " prepended.');
     }
 
     public function testSetComment()
     {
+        $revision = $this->instance;
         $someComment = "Roads? Where we're going we don't need... roads!";
-        $this->instance->setComment($someComment);
-
-        $this->assertSame($someComment, $this->instance->getComment(), 'We should be able to override comment');
+        $revision->setComment($someComment);
+        $this->assertEquals('Revision 69319: '.$someComment, $revision->getComment(), 'We should be able to override comment and keep revision id');
+        $this->assertEquals(69319, $revision->getId(), 'We should get an integer number for the revision id.');
     }
 
     public function testGetFormat()
@@ -194,5 +176,48 @@ class MediaWikiRevisionTest extends \PHPUnit_Framework_TestCase
     public function testGetModel()
     {
         $this->assertSame('wikitext', $this->instance->getModel());
+    }
+
+    public function testIncompleteUserData()
+    {
+        $bogusUserJson = '[{
+            "user_email": ""
+            ,"user_id": "1"
+            ,"user_name": "Jdoe"
+            ,"user_real_name": "John Doe with Missing Email"
+            ,"user_email_authenticated": true
+        },{
+            "user_email": "foo@bar.org"
+            ,"user_id": "2"
+            ,"user_name": "BarMissingRealName"
+            ,"user_real_name": ""
+            ,"user_email_authenticated": false
+        },{
+            "user_email": ""
+            ,"user_id": "0"
+            ,"user_name": ""
+            ,"user_real_name": ""
+            ,"user_email_authenticated": false
+        }]';
+
+        $bogusUsers = json_decode($bogusUserJson, 1);
+
+        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[0]), false);
+        $this->assertEquals('John Doe with Missing Email', $this->instance->getAuthor()->getRealName());
+        $this->assertEquals('Jdoe', $this->instance->getAuthor()->getName());
+        $this->assertEquals('Jdoe', $this->instance->getContributorName());
+        $this->assertEquals('public-webplatform@w3.org', $this->instance->getAuthor()->getEmail());
+
+        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[1]), false);
+        $this->assertEquals('Anonymous Author', $this->instance->getAuthor()->getRealName());
+        $this->assertEquals('BarMissingRealName', $this->instance->getAuthor()->getName());
+        $this->assertEquals('BarMissingRealName', $this->instance->getContributorName());
+        $this->assertEquals('foo@bar.org', $this->instance->getAuthor()->getEmail());
+
+        $this->instance->setContributor(new MediaWikiContributor($bogusUsers[2]), false);
+        $this->assertEquals('Anonymous Author', $this->instance->getAuthor()->getRealName());
+        $this->assertEquals('Anonymous', $this->instance->getAuthor()->getName());
+        $this->assertEquals('Anonymous', $this->instance->getContributorName());
+        $this->assertEquals('public-webplatform@w3.org', $this->instance->getAuthor()->getEmail());
     }
 }

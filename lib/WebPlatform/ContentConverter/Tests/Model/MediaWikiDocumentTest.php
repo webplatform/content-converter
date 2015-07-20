@@ -7,6 +7,7 @@
 namespace WebPlatform\ContentConverter\Tests\Model;
 
 use WebPlatform\ContentConverter\Model\MediaWikiDocument;
+use WebPlatform\ContentConverter\Persistency\GitCommitFileRevision;
 use WebPlatform\ContentConverter\Tests\PagesFixture;
 use SimpleXMLElement;
 
@@ -29,7 +30,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
             <ns>0</ns>
             <id>1</id>
             <revision>
-                <id>1</id>
+                <id>31356</id>
                 <timestamp>2012-05-29T17:37:32Z</timestamp>
                 <contributor>
                     <username>MediaWiki default</username>
@@ -74,6 +75,47 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
                 <sha1>9qgmpepx42kms1luo6rke03ip7eusd7</sha1>
             </revision>
         </page>";
+
+    /** @var string An hardcoded document with multiple revisions XML AND a redirect, to see if we effectively set for deletion at last revision */
+    protected $documentWithRedirectXml = '
+            <mediawiki>
+                <page>
+                    <ns>0</ns>
+                    <id>44</id>
+                    <title>html/elements/tr</title>
+                    <revision>
+                        <id>54</id>
+                        <timestamp>2015-08-24T14:44:44Z</timestamp>
+                        <contributor>
+                            <username>Jdoe</username>
+                            <id>42</id>
+                        </contributor>
+                        <text xml:space="preserve" bytes="12">HTML &lt;tr&gt; element page.</text>
+                    </revision>
+                </page>
+                <page>
+                    <title>html/tr</title>
+                    <redirect title="html/elements/tr" />
+                    <revision>
+                        <id>54</id>
+                        <timestamp>2015-08-24T14:44:44Z</timestamp>
+                        <contributor>
+                            <username>Jdoe</username>
+                            <id>42</id>
+                        </contributor>
+                        <text xml:space="preserve" bytes="12">Some initial content</text>
+                    </revision>
+                    <revision>
+                        <id>55</id>
+                        <timestamp>2015-09-24T14:44:44Z</timestamp>
+                        <contributor>
+                            <username>Jdoe</username>
+                            <id>42</id>
+                        </contributor>
+                        <text xml:space="preserve" bytes="12">#REDIRECT [[html/elements/tr]]</text>
+                    </revision>
+                </page>
+            </mediawiki>';
 
     protected $documentManyRevisionsUserJson = '{
             "user_email": "jdoe@example.org"
@@ -138,6 +180,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
                 <page>
                     <title>guides/html5 form features/ja</title>
                     <revision>
+                        <id>39</id>
                         <timestamp>2011-08-21T13:21:41Z</timestamp>
                         <contributor>
                             <username>Jdoe</username>
@@ -149,6 +192,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
                 <page>
                     <title>html/elements/tr</title>
                     <revision>
+                        <id>40</id>
                         <timestamp>2011-08-22T12:22:42Z</timestamp>
                         <contributor>
                             <username>Jdoe</username>
@@ -160,6 +204,7 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
                 <page>
                     <title>html/elements/th/tr</title>
                     <revision>
+                        <id>44</id>
                         <timestamp>2011-08-23T13:23:43Z</timestamp>
                         <contributor>
                             <username>Jdoe</username>
@@ -271,40 +316,100 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
      */
     public function testToFileName()
     {
-        // Desired
-        $assertions[0][0] = 'WPD/Infrastructure/proposals/Site_Map';
         // What the page URL
-        $assertions[0][1] = 'WPD:Infrastructure/proposals/Site Map';
+        $assertions[0][0] = 'WPD:Infrastructure/proposals/Site Map';
+        // Desired sanitized URL
+        $assertions[0][1] = 'WPD/Infrastructure/proposals/Site_Map';
+        // What would be the file name to read/write from
+        $assertions[0][2] = 'out/foo/bar/WPD/Infrastructure/proposals/Site_Map/index.bazz';
 
-        $assertions[1][0] = 'WPD/Doc_Sprints';
-        $assertions[1][1] = 'WPD:Doc  Sprints';
+        $assertions[1][0] = 'WPD:Doc  Sprints';
+        $assertions[1][1] = 'WPD/Doc_Sprints';
+        $assertions[1][2] = 'out/foo/bar/WPD/Doc_Sprints/index.bazz';
 
-        $assertions[2][0] = 'tutorials/What_is_CSS';
-        $assertions[2][1] = 'tutorials/What is CSS?';
+        $assertions[2][0] = 'tutorials/What is CSS?';
+        $assertions[2][1] = 'tutorials/What_is_CSS';
+        $assertions[2][2] = 'out/foo/bar/tutorials/What_is_CSS/index.bazz';
 
-        $assertions[3][0] = 'Tutorials/HTML_forms_-_the_basics';
-        $assertions[3][1] = 'Tutorials/HTML forms - the basics';
+        $assertions[3][0] = 'Tutorials/HTML forms - the basics';
+        $assertions[3][1] = 'Tutorials/HTML_forms_-_the_basics';
+        $assertions[3][2] = 'out/foo/bar/Tutorials/HTML_forms_-_the_basics/index.bazz';
 
-        $assertions[4][0] = 'ja/concepts/programming/programming_basics';
-        $assertions[4][1] = 'ja/concepts/programming/programming basics';
+        $assertions[4][0] = 'ja/concepts/programming/programming basics';
+        $assertions[4][1] = 'ja/concepts/programming/programming_basics';
+        $assertions[4][2] = 'out/foo/bar/ja/concepts/programming/programming_basics/index.bazz';
 
-        $assertions[5][0] = 'concepts/Internet_and_Web/the_history_of_the_web/tr';
-        $assertions[5][1] = 'concepts/Internet and Web/the history of the web/tr';
+        $assertions[5][0] = 'concepts/Internet and Web/the history of the web/tr';
+        $assertions[5][1] = 'concepts/Internet_and_Web/the_history_of_the_web/tr';
+        $assertions[5][2] = 'out/foo/bar/concepts/Internet_and_Web/the_history_of_the_web/tr.bazz';
 
-        $assertions[6][0] = 'tutorials/Raw_WebGL_101_-_Part_4_Textures';
-        $assertions[6][1] = 'tutorials/Raw WebGL 101 - Part 4: Textures';
+        $assertions[6][0] = 'tutorials/Raw WebGL 101 - Part 4: Textures';
+        $assertions[6][1] = 'tutorials/Raw_WebGL_101_-_Part_4_Textures';
+        $assertions[6][2] = 'out/foo/bar/tutorials/Raw_WebGL_101_-_Part_4_Textures/index.bazz';
 
-        $assertions[7][0] = 'css/selectors/pseudo-classes/optional';
-        $assertions[7][1] = 'css/selectors/pseudo-classes/:optional';
+        $assertions[7][0] = 'css/selectors/pseudo-classes/:optional';
+        $assertions[7][1] = 'css/selectors/pseudo-classes/optional';
+        $assertions[7][2] = 'out/foo/bar/css/selectors/pseudo-classes/optional/index.bazz';
 
-        $assertions[8][0] = 'css/selectors/pseudo-classes/nth-of-type';
-        $assertions[8][1] = 'css/selectors/pseudo-classes/:nth-of-type(n)';
+        $assertions[8][0] = 'css/selectors/pseudo-classes/:nth-of-type(n)';
+        $assertions[8][1] = 'css/selectors/pseudo-classes/nth-of-type';
+        $assertions[8][2] = 'out/foo/bar/css/selectors/pseudo-classes/nth-of-type/index.bazz';
 
-        $assertions[9][0] = 'css/selectors/pseudo-classes/lang';
-        $assertions[9][1] = 'css/selectors/pseudo-classes/:lang(c)';
+        $assertions[9][0] = 'css/selectors/pseudo-classes/:lang(c)';
+        $assertions[9][1] = 'css/selectors/pseudo-classes/lang';
+        $assertions[9][2] = 'out/foo/bar/css/selectors/pseudo-classes/lang/index.bazz';
+
+        // False positive translated (tr HTML element that happens to conflate with the Turkish language code)
+        $assertions[10][0] = 'html/elements/tr';
+        $assertions[10][1] = 'html/elements/tr';
+        $assertions[10][2] = 'out/foo/bar/html/elements/tr/index.bazz';
+
+        // True positive translated document (Turkish version of the tr HTML element)
+        $assertions[10][0] = 'html/elements/tr/tr';
+        $assertions[10][1] = 'html/elements/tr/tr';
+        $assertions[10][2] = 'out/foo/bar/html/elements/tr/tr.bazz';
+
+        $mockDocument =
+                '<page>
+                    <title>overload me</title>
+                    <revision>
+                        <id>44</id>
+                        <timestamp>2011-08-21T13:21:41Z</timestamp>
+                        <contributor>
+                            <username>Jdoe</username>
+                            <id>42</id>
+                        </contributor>
+                        <text xml:space="preserve" bytes="20">Use me to overload title element!</text>
+                    </revision>
+                </page>';
 
         foreach ($assertions as $assertion) {
-            $this->assertSame($assertion[0], MediaWikiDocument::toFileName($assertion[1]));
+            $mock = new SimpleXMLElement($mockDocument);
+            $mock->title = $assertion[0]; // Let’s overload the title for what we want
+            $document = new MediaWikiDocument($mock);
+            $this->assertSame($assertion[0], $document->getTitle());
+            $this->assertSame($assertion[1], $document->getName());
+            $file = new GitCommitFileRevision($document, 'out/foo/bar/', '.bazz');
+            $this->assertSame($assertion[2], $file->getName());
+        }
+    }
+
+    public function testApplyRevisionsThenDeleteAtRedirect()
+    {
+        $multipleDocuments = new SimpleXMLElement($this->documentWithRedirectXml);
+
+        //              AbstractDocument instance,                          has redirect?, redirect_to,        nbr revisions
+        $documents[] = [new MediaWikiDocument($multipleDocuments->page[0]), false,         false,              1];
+        $documents[] = [new MediaWikiDocument($multipleDocuments->page[1]), true,          'html/elements/tr', 2];
+
+        foreach ($documents as $wikiDocument) {
+            $revs = $wikiDocument[0]->getRevisions()->count();
+            $has_redirect = $wikiDocument[0]->hasRedirect();
+            $redirect = $wikiDocument[0]->getRedirect();
+
+            $this->assertEquals($wikiDocument[1], $has_redirect, sprintf('Has redirect value should match %s', print_r($has_redirect, 1)));
+            $this->assertEquals($wikiDocument[2], $redirect, sprintf('Redirect value shoule either be false, or string. Got %s', print_r($redirect, 1)));
+            $this->assertEquals($wikiDocument[3], $revs, 'Hardcoded number of revisions should match %d', $revs);
         }
     }
 }

@@ -256,7 +256,7 @@ class MediaWikiDocument extends AbstractDocument
     {
         $knownPageListings = ['elements','attributes'];
 
-        $needles = explode('/', $this->getTitle());
+        $needles = explode('/', $this->getName());
         $size = (int) count($needles);
 
         if ($size < 2) {
