@@ -86,7 +86,5 @@ abstract class AbstractPersister
         return $this->revision;
     }
 
-    abstract public function formatPersisterCommand();
-
     abstract public function getArgs();
 }

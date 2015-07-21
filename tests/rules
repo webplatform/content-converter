@@ -14,9 +14,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use \WebPlatform\ContentConverter\Tests\PagesFixture;
 use \WebPlatform\ContentConverter\Converter\MediaWikiToMarkdown;
 use \WebPlatform\ContentConverter\Model\MediaWikiDocument;
-use \WebPlatform\ContentConverter\Persistency\FileGitCommit;
+use \WebPlatform\ContentConverter\Persistency\GitCommitFileRevision;
 
-$converter = new MediaWikiToMarkdown;
 $fixture = new PagesFixture;
 
 
@@ -28,11 +27,20 @@ $wikiPageXmlElement = $xml->page[3];
 
 $wikiDocument = new MediaWikiDocument($wikiPageXmlElement);
 $wikiRevision = $wikiDocument->getLatest();
+
+$persistable = new GitCommitFileRevision($wikiDocument);
+$persistable->setRevision($wikiRevision);
+
+$converter = new MediaWikiToMarkdown;
 $markdownRevision = $converter->apply($wikiRevision);
 
-$file = new FileGitCommit($markdownRevision);
-$file->setFileName(MediaWikiDocument::toFileName($wikiDocument->getTitle()));
+$title = $wikiDocument->getTitle();
+$normalized_location = $wikiDocument->getName();
+$file_path  = $persistable->getName();
 
-$file->persist();
+echo(sprintf('"%s":', $title).PHP_EOL);
+echo(sprintf('  - normalized: %s', $normalized_location).PHP_EOL);
+echo(sprintf('  - file: %s', $file_path).PHP_EOL);
+echo PHP_EOL.'Document contents'.PHP_EOL;
 
-var_dump($markdownRevision->getContent());
+echo($markdownRevision->getContent());

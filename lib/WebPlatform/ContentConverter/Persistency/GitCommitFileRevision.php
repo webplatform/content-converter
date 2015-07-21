@@ -7,6 +7,9 @@
 namespace WebPlatform\ContentConverter\Persistency;
 
 use WebPlatform\ContentConverter\Model\AbstractDocument;
+use WebPlatform\ContentConverter\Model\Author;
+
+use RuntimeException;
 
 /**
  * Save File Revision into a Git Commit.
@@ -44,33 +47,26 @@ class GitCommitFileRevision extends AbstractPersister
      *
      * To get the author details, we’ll have to get it from a Contributor instance.
      *
-     * @return array of values to send to git
+     * @param bool $forceAuthor Whether or not we should get an author object
+     *
+     * @return array of string values to send to git
      */
-    public function getArgs()
+    public function getArgs($forceAuthor = true)
     {
         $author = $this->getRevision()->getAuthor();
 
         $args = array();
         if ($author instanceof Author) {
-            $args['author'] = sprintf('%s <%s>', $author->getRealName(), $author->getEmail());
+            $args['author'] = (string) $author;
+        } elseif ((bool) $forceAuthor === false) {
+            // Do nothing, its been requested to not force author, let’s not throw an exception
+        } else {
+            throw new RuntimeException('Make sure you make the current revision to specify explicityly an Author object through setAuthor. e.g. $revision->setAuthor($authorObject);');
         }
 
         $args['date'] = $this->getRevision()->getTimestamp()->format(\DateTime::RFC2822);
         $args['message'] = (string) $this->getRevision()->getComment();
 
         return $args;
-    }
-
-    public function formatPersisterCommand()
-    {
-        $commands = array();
-        $commands[] = sprintf('git add %s', $this->getName());
-        $commit_args = array();
-        foreach ($this->getArgs() as $argName => $argVal) {
-            $commit_args[] = sprintf('--%s="%s"', $argName, (string) $argVal);
-        }
-        $commands[] = 'git commit '.implode(' ', $commit_args);
-
-        return $commands;
     }
 }

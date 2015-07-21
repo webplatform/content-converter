@@ -6,10 +6,10 @@
 
 namespace WebPlatform\ContentConverter\Converter;
 
-use WebPlatform\ContentConverter\Entity\AbstractRevision;
-use WebPlatform\ContentConverter\Entity\MediaWikiRevision;
-use WebPlatform\ContentConverter\Entity\MarkdownRevision;
-use WebPlatform\ContentConverter\Entity\MediaWikiContributor;
+use WebPlatform\ContentConverter\Model\AbstractRevision;
+use WebPlatform\ContentConverter\Model\MediaWikiRevision;
+use WebPlatform\ContentConverter\Model\MarkdownRevision;
+use WebPlatform\ContentConverter\Model\MediaWikiContributor;
 
 /**
  * MediaWiki Wikitext to Markdown Converter.

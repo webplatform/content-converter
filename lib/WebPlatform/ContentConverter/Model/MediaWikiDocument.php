@@ -146,14 +146,14 @@ class MediaWikiDocument extends AbstractDocument
     {
         if (self::isMediaWikiDumpPageNode($pageNode) === true) {
             $title = (string) $pageNode->title;
-            $this->setName(self::toFileName($title));
+            $this->setName(self::normalize($title));
             $this->title = $title;
 
             foreach ($pageNode->revision as $rev) {
                 $this->addRevision(new MediaWikiRevision($rev));
             }
 
-            $redirect = self::toFileName((string) $pageNode->redirect['title']);
+            $redirect = self::normalize((string) $pageNode->redirect['title']);
             if (strlen($redirect) > 1) {
                 $this->redirect = $redirect;
             }
@@ -173,7 +173,7 @@ class MediaWikiDocument extends AbstractDocument
      *
      * @return [type] [description]
      */
-    public static function toFileName($wikiTitle)
+    public static function normalize($wikiTitle)
     {
         $fileName = trim($wikiTitle);
 
@@ -283,6 +283,20 @@ class MediaWikiDocument extends AbstractDocument
         } else {
             return 'en'; // Must match w/ self::$translationCodes['en']
         }
+    }
+
+    public function getLanguageNativeName()
+    {
+        $code = $this->getLanguageCode();
+
+        return self::$translationCodes[$code][1];
+    }
+
+    public function getLanguageName()
+    {
+        $code = $this->getLanguageCode();
+
+        return self::$translationCodes[$code][0];
     }
 
     public function getTitle()

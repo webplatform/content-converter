@@ -6,7 +6,7 @@
 
 namespace WebPlatform\ContentConverter\Converter;
 
-use WebPlatform\ContentConverter\Entity\AbstractRevision;
+use WebPlatform\ContentConverter\Model\AbstractRevision;
 
 /**
  * Converter Interface.

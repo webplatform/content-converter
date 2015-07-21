@@ -85,7 +85,7 @@ class MediaWikiRevision extends AbstractRevision
             $this->model = (string) $revisionNode->model;
 
             // Format is: 2014-09-08T19:05:22Z so we know its in the Zulu Time Zone.
-            $this->setTimestamp(new \DateTime($revisionNode->timestamp, new \DateTimeZone('Z')));
+            $this->setTimestamp(new \DateTime($revisionNode->timestamp, new \DateTimeZone('Etc/UTC')));
 
             // XML uses username node
             if (!empty($revisionNode->contributor[0]->username)) {

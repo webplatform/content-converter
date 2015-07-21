@@ -312,9 +312,9 @@ class MediaWikiDocumentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::testToFileName
+     * @covers ::normalize
      */
-    public function testToFileName()
+    public function testNormalize()
     {
         // What the page URL
         $assertions[0][0] = 'WPD:Infrastructure/proposals/Site Map';
