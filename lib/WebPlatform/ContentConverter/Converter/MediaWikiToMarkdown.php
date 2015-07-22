@@ -472,19 +472,17 @@ class MediaWikiToMarkdown implements ConverterInterface
          * This block would remove ALL '}}' elements, breaking that
          * proposed pass.
          */
+        /* THIS ONE IS BOGUS, LETS FIX LATER
         $this->patterns[] = array(
           "/^\}\}\n/m",
           "/^\}\}$/m",
-          "/^\}\}$/m",
-          "/\ $/m"
         );
 
         $this->replacements[] = array(
           '',
           '',
-          '',
-          '',
         );
+        */
 
         for ($pass = 0; $pass < count($this->patterns); ++$pass) {
             foreach ($this->patterns[$pass] as $k => $v) {
@@ -525,6 +523,11 @@ class MediaWikiToMarkdown implements ConverterInterface
             $content = preg_replace_callback('/\[?\[([^\[\]\|\n\' ]+)[\| ]([^\]\']+)\]\]?/', 'self::helperExternlinks', $content);
 
             $front_matter = self::toFrontMatter($this->transclusionCache);
+
+            if (empty(trim($content))) {
+                $front_matter['is_stub'] = 'true';
+                $content = PHP_EOL;
+            }
 
             $newRev = new MarkdownRevision($content, $front_matter);
 

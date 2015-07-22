@@ -39,7 +39,13 @@ abstract class AbstractDocument
             $this->revisions = new SplDoublyLinkedList();
         }
 
-        $revision->setTitle($this->getTitle());
+        if ($revision instanceof MediaWikiRevision) {
+            $title = $this->getLastTitleFragment();
+        } else {
+            $title = $this->getTitle();
+        }
+
+        $revision->setTitle($title);
 
         $this->revisions->push($revision);
 
