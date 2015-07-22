@@ -27,6 +27,9 @@ abstract class AbstractRevision
     /** @var string The text content */
     protected $content;
 
+    /** @var string The title */
+    protected $title;
+
     /** @var mixed If we defined a timestamp, it will be a \DateTime, otherwise it will be null */
     protected $timestamp = null;
 
@@ -57,6 +60,18 @@ abstract class AbstractRevision
     public function getComment()
     {
         return $this->comment;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     public function setContent($content)

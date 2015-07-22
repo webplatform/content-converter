@@ -526,7 +526,9 @@ class MediaWikiToMarkdown implements ConverterInterface
 
             $front_matter = self::toFrontMatter($this->transclusionCache);
 
-            return new MarkdownRevision($content, $front_matter);
+            $newRev = new MarkdownRevision($content, $front_matter);
+
+            return $newRev->setTitle($revision->getTitle());
         }
 
         return $revision;

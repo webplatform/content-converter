@@ -39,6 +39,8 @@ abstract class AbstractDocument
             $this->revisions = new SplDoublyLinkedList();
         }
 
+        $revision->setTitle($this->getTitle());
+
         $this->revisions->push($revision);
 
         return $this;
