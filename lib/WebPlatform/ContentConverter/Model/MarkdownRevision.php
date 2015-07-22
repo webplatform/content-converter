@@ -20,8 +20,6 @@ use DateTimeZone;
  */
 class MarkdownRevision extends AbstractRevision
 {
-    /** @var array Markdown document Headers */
-    protected $front_matter = array();
 
     public function __construct($content = '', $front_matter = array())
     {

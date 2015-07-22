@@ -40,9 +40,7 @@ abstract class AbstractDocument
         }
 
         if ($revision instanceof MediaWikiRevision) {
-            $title = $this->getLastTitleFragment();
-        } else {
-            $title = $this->getTitle();
+            $title = $this->getName();
         }
 
         $revision->setTitle($title);

@@ -501,7 +501,7 @@ class MediaWikiToMarkdown implements ConverterInterface
      */
     public function apply(AbstractRevision $revision)
     {
-        // ...stateless
+        // ...stateless (NOT! Gotta fix #TODO)
         $this->transclusionCache = array();
 
         if ($revision instanceof MediaWikiRevision) {
@@ -529,7 +529,8 @@ class MediaWikiToMarkdown implements ConverterInterface
                 $content = PHP_EOL;
             }
 
-            $newRev = new MarkdownRevision($content, $front_matter);
+            $rev_matter = $revision->getFrontMatterData();
+            $newRev = new MarkdownRevision($content, array_merge($rev_matter, $front_matter));
 
             return $newRev->setTitle($revision->getTitle());
         }

@@ -30,6 +30,8 @@ abstract class AbstractRevision
     /** @var string The title */
     protected $title;
 
+    protected $front_matter = array();
+
     /** @var mixed If we defined a timestamp, it will be a \DateTime, otherwise it will be null */
     protected $timestamp = null;
 
@@ -94,4 +96,17 @@ abstract class AbstractRevision
     {
         return $this->timestamp;
     }
+
+    public function setFrontMatter($front_matter)
+    {
+        $this->front_matter = $front_matter;
+
+        return $this;
+    }
+
+    public function getFrontMatterData()
+    {
+        return (array) $this->front_matter;
+    }
+
 }
