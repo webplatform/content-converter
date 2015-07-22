@@ -9,7 +9,8 @@ namespace WebPlatform\ContentConverter\Converter;
 use WebPlatform\ContentConverter\Model\AbstractRevision;
 use WebPlatform\ContentConverter\Model\MediaWikiRevision;
 use WebPlatform\ContentConverter\Model\MarkdownRevision;
-use WebPlatform\ContentConverter\Model\MediaWikiContributor;
+
+use RuntimeException;
 
 /**
  * MediaWiki Wikitext to Markdown Converter.
@@ -33,6 +34,7 @@ class MediaWikiToMarkdown implements ConverterInterface
 {
     protected $patterns = array();
     protected $replacements = array();
+    protected $leave_template_note = false;
 
     // Make stateless #TODO
     protected $transclusionCache = array();
@@ -137,26 +139,45 @@ class MediaWikiToMarkdown implements ConverterInterface
         $this->transclusionCache[] = array('type' => $type, 'members' => $members);
 
         //fwrite(STDERR, print_r(array('type' => $type, 'members'=> $members, 'args'=>$args), 1));
-        return "<!-- we had a template call of type \"$type\" here -->";
+        return ($this->leave_template_note === true)?"<!-- we had a template call of type \"$type\" here -->":'';
     }
 
     public function __construct()
     {
 
         /*
-         * MediaWiki markup caveats that has to be fixed first
+         * PASS 1: MediaWiki markup caveats that has to be fixed first
          */
         $this->patterns[] = array(
-
           // Has to match something like; "|Manual_sections==== 練習問題 ==="
           // in a case where key-value is mingled with a section title, containing a one-too-many equal sign
-          "/^\|([a-z_]+)\=(\=\=)\ (.*)\ (\=\=)/im",
-          "/^\|([a-z_]+)\=(\=\=\=)\ (.*)\ (\=\=\=)/im",
-          "/^\|([a-z_]+)\=(\=\=\=\=)\ (.*)\ (\=\=\=\=)/im",
+          "/^\|([a-z_]+)\=(\=)\ ?(.*)\ ?(\=)\s+?/im",
+          "/^\|([a-z_]+)\=(\=\=)\ ?(.*)\ ?(\=\=)\s+?/im",
+          "/^\|([a-z_]+)\=(\=\=\=)\ ?(.*)\ ?(\=\=\=)\s+?/im",
+          "/^\|([a-z_]+)\=(\=\=\=\=)\ ?(.*)\ ?(\=\=\=\=)\s+?/im",
+          "/^\|([a-z_]+)\=(\=\=\=\=\=)\ ?(.*)\ ?(\=\=\=\=\=)\s+?/im",
+          "/^\|([a-z_]+)\=(\=\=\=\=\=\=)\ ?(.*)\ ?(\=\=\=\=\=\=)\s+?/im",
+        );
 
+        $this->replacements[] = array(
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+          "|$1=\n$2 $3 $4",
+        );
+
+        /**
+         * PASS 2
+         */
+        $this->patterns[] = array(
           "/^\=[^\s](.*)[^\s]\=/im",
           "/^\=\=[^\s](.*)[^\s]\=\=/im",
           "/^\=\=\=[^\s](.*)[^\s]\=\=\=/im",
+          "/^\=\=\=\=[^\s](.*)[^\s]\=\=\=\=/im",
+          "/^\=\=\=\=\=[^\s](.*)[^\s]\=\=\=\=\=/im",
+          "/^\=\=\=\=\=\=[^\s](.*)[^\s]\=\=\=\=\=\=/im",
 
           // Explicit delete of empty stuff
           "/^\|("
@@ -174,34 +195,35 @@ class MediaWikiToMarkdown implements ConverterInterface
           .")\n\}\}/im",
 
           "/^<syntaxhighlight(?:\ lang=\"?(\w)\"?)?>/im",
-
         );
 
         $this->replacements[] = array(
-
-          "|$1=\n$2 $3 $4",
-          "|$1=\n$2 $3 $4",
-          "|$1=\n$2 $3 $4",
-
           '= $1 =',
           '== $1 ==',
           '=== $1 ===',
+          '==== $1 ====',
+          '===== $1 =====',
+          '====== $1 ======',
 
           '',
           '',
 
           "```$1\n",
-
         );
 
+        /**
+         * PASS 3
+         */
         $this->patterns[] = array(
           "/\r\n/",
 
           // Headings
-          '/^==== (.+?) ====$/m',
-          '/^=== (.+?) ===$/m',
-          '/^== (.+?) ==$/m',
-          '/^= (.+?) =$/m',
+          '/^=\ (.+?)\ =$/m',
+          '/^==\ (.+?)\ ==$/m',
+          '/^===\ (.+?)\ ===$/m',
+          '/^====\ (.+?)\ ====$/m',
+          '/^=====\ (.+?)\ =====$/m',
+          '/^======\ (.+?)\ ======$/m',
           "/^\{\{Page_Title\}\}.*$/im",
           "/^\{\{Compatibility_Section/im",
           "/^\{\{Notes_Section\n\|Notes\=/im",
@@ -342,10 +364,12 @@ class MediaWikiToMarkdown implements ConverterInterface
           "\n",
 
           // Headings
-          '#### $1',
-          '### $1',
-          '## $1',
-          '# $1',
+          '#$1',
+          '##$1',
+          '###$1',
+          '####$1',
+          '#####$1',
+          '######$1',
           '',
           "\n\n## Compatibility",
           "\n\n## Notes\n",
@@ -379,7 +403,6 @@ class MediaWikiToMarkdown implements ConverterInterface
           // Explicit delete
           '',
           '',
-          '',
 
           // Explicit rewrites
           "\n## See Also",
@@ -389,8 +412,10 @@ class MediaWikiToMarkdown implements ConverterInterface
           '',
         );
 
+        /**
+         * PASS 4
+         */
         $this->patterns[] = array(
-
           "/\'\'\'\'\'(.+?)\'\'\'\'\'/s",
           "/\'\'\'(.+?)\'\'\'/s",
           "/\'\'(.+?)\'\'/s",
@@ -400,11 +425,9 @@ class MediaWikiToMarkdown implements ConverterInterface
           "/<\/strong>/",
           '/<pre>/',
           "/<\/pre>/",
-
         );
 
         $this->replacements[] = array(
-
           '**$1**',
           '**$1**',
           '*$1*',
@@ -414,7 +437,6 @@ class MediaWikiToMarkdown implements ConverterInterface
           '**',
           "```\n",
           "\n```",
-
         );
 
         /*
@@ -449,21 +471,20 @@ class MediaWikiToMarkdown implements ConverterInterface
          *
          * This block would remove ALL '}}' elements, breaking that
          * proposed pass.
-         *
+         */
         $this->patterns[] = array(
-
           "/^\}\}\n/m",
           "/^\}\}$/m",
-
+          "/^\}\}$/m",
+          "/\ $/m"
         );
 
         $this->replacements[] = array(
-
-          "",
-          "",
-
+          '',
+          '',
+          '',
+          '',
         );
-        */
 
         for ($pass = 0; $pass < count($this->patterns); ++$pass) {
             foreach ($this->patterns[$pass] as $k => $v) {
@@ -489,6 +510,12 @@ class MediaWikiToMarkdown implements ConverterInterface
             $content = $revision->getContent();
 
             for ($pass = 0; $pass < count($this->patterns); ++$pass) {
+                $patternCount = count($this->patterns[$pass]);
+                $replacementCount = count($this->replacements[$pass]);
+                if ($patternCount !== $replacementCount) {
+                    $message = 'The number of pattern matchers (%d) isn’t equal to the number of replacements (%d) at pass %s!';
+                    throw new RuntimeException(sprintf($message, $patternCount, $replacementCount, $pass + 1));
+                }
                 $content = preg_replace($this->patterns[$pass], $this->replacements[$pass], $content);
             }
 
@@ -499,11 +526,7 @@ class MediaWikiToMarkdown implements ConverterInterface
 
             $front_matter = self::toFrontMatter($this->transclusionCache);
 
-            $mdRevObj = new MarkdownRevision($content, $front_matter);
-            // TODO!
-            //$mdRevObj->setAuthor(MediaWikiContributor::authorFactory($revision, 'public-webplatform@w3.org'));
-            //$mdRevObj->setTimestamp($revision->getTimestamp());
-            return $mdRevObj;
+            return new MarkdownRevision($content, $front_matter);
         }
 
         return $revision;

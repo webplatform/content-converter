@@ -30,7 +30,7 @@ class MarkdownRevision extends AbstractRevision
         $datetime = new DateTime;
         $datetime->setTimezone(new DateTimeZone('Etc/UTC'));
         $this->setTimestamp($datetime);
-        $this->setComment('Conversion into Markdown');
+        $this->setComment('Conversion pass: Reformatted into Markdown');
 
         return $this;
     }
