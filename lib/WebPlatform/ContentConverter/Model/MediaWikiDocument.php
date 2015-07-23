@@ -40,8 +40,8 @@ use DomainException;
  */
 class MediaWikiDocument extends AbstractDocument
 {
-    // List namespaces
-    public static $NAMESPACE_PREFIXES = array('10' => 'Template:','102' => 'Property:','15' => 'Category:','3000' => 'WPD:','3020' => 'Meta:');
+    // List namespaces. You might have to redefine your own though.
+    public static $NAMESPACE_PREFIXES = array('10' => 'Template:', '15' => 'Category:', '3020' => 'Meta:', '3333' => 'WPD:');
 
     /** @var string page Title, but in MW it ends up being an URL too */
     protected $title = null;
@@ -162,6 +162,11 @@ class MediaWikiDocument extends AbstractDocument
         }
 
         throw new DomainException('Constructor argument did not pass MediaWikiDocument::isMediaWikiDumpPageNode() test.');
+    }
+
+    public function setRedirect($newRedirect)
+    {
+        $this->redirect = $newRedirect;
     }
 
     /**

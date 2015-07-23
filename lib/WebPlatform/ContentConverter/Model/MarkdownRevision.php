@@ -51,7 +51,9 @@ class MarkdownRevision extends AbstractRevision
         $yaml->setIndentation(2);
 
         $out[] = '---';
-        $out[] = 'title: '.$this->getTitle();
+        if (!empty($this->getTitle())) {
+            $out[] = 'title: '.$this->getTitle();
+        }
         if (!empty($this->front_matter)) {
             $out[] = $yaml->dump($this->front_matter, 3, 0, false, false);
         }
