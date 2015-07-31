@@ -1,4 +1,7 @@
+# Run webplatform/content-converter on Travis!
+
 language: php
+
 php:
   - 5.4
   - 5.5
@@ -8,4 +11,5 @@ php:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
+
 
