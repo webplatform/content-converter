@@ -40,10 +40,10 @@ abstract class AbstractDocument
         }
 
         if ($revision instanceof MediaWikiRevision) {
-            $title = $this->getName();
+            $title = $this->getTitle();
         }
 
-        $revision->setTitle($title);
+        $revision->setTitle($title); // HAS to be TITLE!
 
         $this->revisions->push($revision);
 
