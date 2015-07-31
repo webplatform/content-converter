@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Converter;
 
 use WebPlatform\ContentConverter\Model\AbstractRevision;

@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Converter;
 
 use WebPlatform\ContentConverter\Model\AbstractRevision;
@@ -44,7 +43,7 @@ class MediaWikiToMarkdown extends AbstractFilter implements ConverterInterface
 
     public function __construct()
     {
-        throw new \Exception('This is a Stub class. Please adapt before using');
+        throw new \Exception('This is a Stub class. Please adapt before using.');
 
         /*
          * PASS 1: MediaWiki markup caveats that has to be fixed first
@@ -69,7 +68,7 @@ class MediaWikiToMarkdown extends AbstractFilter implements ConverterInterface
           "|$1=\n$2 $3 $4",
         );
 
-        /**
+        /*
          * PASS 2
          */
         $patterns[] = array(

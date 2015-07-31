@@ -5,6 +5,9 @@ if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
 
+// Set to your own, or use https://github.com/wikimedia/mediawiki-vagrant
+define('MEDIAWIKI_API_ORIGIN', 'http://127.0.0.1:8080');
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
@@ -12,7 +15,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 
 use \WebPlatform\ContentConverter\Tests\PagesFixture;
-use \WebPlatform\ContentConverter\Converter\MediaWikiToMarkdown;
+use \WebPlatform\ContentConverter\Converter\MediaWikiToHtml;
 use \WebPlatform\ContentConverter\Model\MediaWikiDocument;
 use \WebPlatform\ContentConverter\Persistency\GitCommitFileRevision;
 
@@ -31,7 +34,15 @@ $wikiRevision = $wikiDocument->getLatest();
 $persistable = new GitCommitFileRevision($wikiDocument);
 $persistable->setRevision($wikiRevision);
 
-$converter = new MediaWikiToMarkdown;
+/*
+  * Your MediaWiki API URL
+  */
+$apiUrl  = MEDIAWIKI_API_ORIGIN.'/w/api.php?format=json&action=parse&prop=text|links|templates|';
+$apiUrl .= 'images|externallinks|categories|sections|headitems|displaytitle|iwlinks|properties&pst=1';
+$apiUrl .= '&disabletoc=true&disablepp=true&disableeditsection=true&preview=true&page=';
+
+$converter = new MediaWikiToHtml;
+$converter->setApiUrl($apiUrl);
 $markdownRevision = $converter->apply($wikiRevision);
 
 $title = $wikiDocument->getTitle();

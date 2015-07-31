@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Tests\Model;
 
 use WebPlatform\ContentConverter\Model\MediaWikiRevision;

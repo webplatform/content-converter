@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Persistency;
 
 use WebPlatform\ContentConverter\Model\AbstractDocument;

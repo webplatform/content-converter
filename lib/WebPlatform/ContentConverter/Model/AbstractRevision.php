@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Model;
 
 /**
@@ -108,5 +107,4 @@ abstract class AbstractRevision
     {
         return (array) $this->front_matter;
     }
-
 }

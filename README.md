@@ -1,10 +1,13 @@
 # Content Converter
 
+[![Build Status](https://travis-ci.org/webplatform/content-converter.svg?branch=master)](https://travis-ci.org/webplatform/content-converter)
+
 Transform CMS content from a format into another.
 
 Initial implementation is about converting a [MediaWiki XML dumpBackup][mw-dumpbackup] `<page/>` backup into static files. Each MediaWiki revision (i.e. "save") becomes a Git Commit. Library should support to handle content conversion from MediaWiki Wikitext we were using on WebPlatform.org into plain Markdown.
 
-See [webplatform/mediawiki-conversion](https://github.com/webplatform/mediawiki-conversion.git)
+See [webplatform/mediawiki-conversion](https://github.com/webplatform/mediawiki-conversion.git) for a runner implementation of this package.
+
 
 ## Library features
 
@@ -12,12 +15,41 @@ See [webplatform/mediawiki-conversion](https://github.com/webplatform/mediawiki-
 * Provide way to describe sequence of edits to achieve desired output
 * Expose an interface to handle conversion
 
+
 ## Usage overview
 
-See **tests/rules** to review how to use.
+This library original objective was to convert Wikitext only using Regular Expressions but is not limited to it.
 
-Notice that this example explicitly converts from MediaWiki dumpBackup XML
-but has bee thought out to allow other types of conversions.
+It was designed to read XML, run set of passes and get something else out of it.
+
+
+### MediaWiki
+
+Converting MediaWiki’s Wikitext is a very hard problem to solve.
+
+Even folks at Wikimedia Foundation finds it hard to solve that way.
+
+That’s why they created [Parsoid](https://www.mediawiki.org/wiki/Parsoid).
+Parsoid is a NodeJS system that acts as a MediaWiki parser but outside of PHP.
+
+That being said, this library is still useful if you want to do conversion with Regular Expressions,
+the class described in [Convert content using Regular Expressions](#convert-content-using-regular-expressions) can be used.
+
+But if you really need to convert MediaWiki, you can still use this library too, but differently from its original "local only" design goal.
+
+You´ll have to use your own MediaWiki installation and leverage its built-in parser system to give you the HTML it generates.
+
+To try it for yourself you can see with `test/rules` script in this project.
+
+For a full import run, take a look at [webplatform/mediawiki-conversion](https://github.com/webplatform/mediawiki-conversion.git)
+and the result code repository published at [webplatform/docs](https://github.com/webplatform/docs.git)
+
+
+### Convert content using Regular Expressions
+
+Notice that this example uses MediaWiki syntax but could work with other languages.
+
+We’re keeping this as a use case example and left behind a minimal `MediaWikiToMarkdown` converter class in case you are feeling courageous.
 
 1. Let’s start with Wikitext of a MediaWiki page
 

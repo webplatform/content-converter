@@ -3,7 +3,6 @@
 /**
  * WebPlatform Content Converter.
  */
-
 namespace WebPlatform\ContentConverter\Filter;
 
 use Exception;
@@ -25,9 +24,10 @@ abstract class AbstractFilter
     protected $replacements = array();
 
     /**
-     * Apply filters configured for this instance
+     * Apply filters configured for this instance.
      *
-     * @param  string $input The input text content
+     * @param string $input The input text content
+     *
      * @return string The filtered text content
      */
     public function filter($input)
