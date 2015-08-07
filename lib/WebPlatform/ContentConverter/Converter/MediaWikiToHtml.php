@@ -41,20 +41,37 @@ class MediaWikiToHtml implements ConverterInterface
         return $this;
     }
 
+    /**
+     * Make a (forgiving) HTTP request to an origin
+     *
+     * I’m aware that its a bad idea to set `CURLOPT_SSL_VERIFYPEER` to
+     * false. But the use-case here is about supporting requests to origins
+     * potentially behind a Varnish server with a self-signed certificate and
+     * to allow run import on them, we got to prevent check.
+     *
+     * We have to remember that the point of this library is to export content
+     * into static files, not to make financial transactions and bypass things that
+     * should be taken care of.
+     **/
     protected function makeRequest($title)
     {
-        $opts = array(
-          'http' => array(
-            'method' => 'GET',
-            'header' => "Accept-language: en\r\n".
-                      "Cookie: foo=bar\r\n",
-          ),
-        );
 
-        $context = stream_context_create($opts);
+        $url = $this->apiUrl.urlencode($title);
+
+        $ch = curl_init();
+        // http://php.net/manual/en/function.curl-setopt.php
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_REFERER, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TCP_NODELAY, true);
 
         try {
-            $content = file_get_contents($this->apiUrl.urlencode($title), false, $context);
+            $content = curl_exec($ch);
+            curl_close($ch);
         } catch (Exception $e) {
             throw new Exception('Could not retrieve data from remote service', null, $e);
         }

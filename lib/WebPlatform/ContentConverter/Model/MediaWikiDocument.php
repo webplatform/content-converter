@@ -203,7 +203,7 @@ class MediaWikiDocument extends AbstractDocument
 
         // Remove punctuation
         $fileName = preg_replace('~\([n|c]\)~u', '', $fileName);
-        $fileName = preg_replace('~[\?@\!\(\)\:\,]+~u', '', $fileName);
+        $fileName = preg_replace('~[\?@\!&\(\)\:\,]+~u', '', $fileName);
 
         // transliterate
         try {
