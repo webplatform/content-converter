@@ -8,7 +8,6 @@ namespace WebPlatform\ContentConverter\Converter;
 use WebPlatform\ContentConverter\Model\AbstractRevision;
 use WebPlatform\ContentConverter\Model\MediaWikiRevision;
 use WebPlatform\ContentConverter\Model\MarkdownRevision;
-use WebPlatform\ContentConverter\Converter\ConverterInterface;
 use Exception;
 
 /**
@@ -53,7 +52,7 @@ class MediaWikiToHtml implements ConverterInterface
      * into static files, not to make financial transactions and bypass things that
      * should be taken care of.
      **/
-    protected function makeRequest($title)
+    public function makeRequest($title, $cookieString = null)
     {
 
         $url = $this->apiUrl.urlencode($title);
@@ -68,6 +67,10 @@ class MediaWikiToHtml implements ConverterInterface
         curl_setopt($ch, CURLOPT_REFERER, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TCP_NODELAY, true);
+
+        if (!empty($cookieString)) {
+            curl_setopt($ch, CURLOPT_COOKIE, $cookieString);
+        }
 
         try {
             $content = curl_exec($ch);
