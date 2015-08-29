@@ -35,7 +35,7 @@ class YamlHelper
     }
 
     /**
-     * Creates a YAML string out of a PHP array
+     * Creates a YAML string out of a PHP array.
      *
      * @param Array $array An array to serialize
      *
@@ -74,5 +74,4 @@ class YamlHelper
 
         return $this->reader->parse($string);
     }
-
 }

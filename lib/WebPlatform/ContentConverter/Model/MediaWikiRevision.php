@@ -64,6 +64,9 @@ class MediaWikiRevision extends AbstractRevision
 
     protected $id;
 
+    /** @var WebPlatform\ContentConverter\Model\MediaWikiApiResponseArray or null */
+    protected $apiValueObject;
+
     /**
      * Constructs a WikiPage Revision object.
      *
