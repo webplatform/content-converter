@@ -5,7 +5,6 @@
  */
 namespace WebPlatform\ContentConverter\Converter;
 
-use WebPlatform\ContentConverter\Model\MediaWikiApiResponseArray;
 use WebPlatform\ContentConverter\Model\AbstractRevision;
 use WebPlatform\ContentConverter\Model\MediaWikiRevision;
 use WebPlatform\ContentConverter\Model\HtmlRevision;
@@ -22,11 +21,6 @@ use WebPlatform\ContentConverter\Model\HtmlRevision;
  */
 class MediaWikiToHtml implements ConverterInterface
 {
-    public function prepare(MediaWikiApiResponseArray $dto)
-    {
-        return new HtmlRevision($dto);
-    }
-
     /**
      * Apply Wikitext rewrites.
      *

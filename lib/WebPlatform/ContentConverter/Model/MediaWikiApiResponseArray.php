@@ -58,7 +58,7 @@ class MediaWikiApiResponseArray implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $this->dto;
+        return $this->dto;
     }
 
     public function unpack()

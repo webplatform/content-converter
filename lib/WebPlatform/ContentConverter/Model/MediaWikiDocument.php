@@ -48,6 +48,8 @@ class MediaWikiDocument extends AbstractDocument
     /** @var mixed string representation of the possible path or false if no redirect was specified */
     protected $redirect = false;
 
+    protected $id;
+
     const LANG_ENGLISH = 0;
 
     const LANG_JAPANESE = 'ja';
@@ -147,6 +149,10 @@ class MediaWikiDocument extends AbstractDocument
             $title = (string) $pageNode->title;
             $this->setName(self::normalize($title));
             $this->title = $title;
+
+            if (isset($pageNode->id)) {
+                $this->id = (int) $pageNode->id;
+            }
 
             foreach ($pageNode->revision as $rev) {
                 $this->addRevision(new MediaWikiRevision($rev));
@@ -301,6 +307,11 @@ class MediaWikiDocument extends AbstractDocument
         $code = $this->getLanguageCode();
 
         return self::$translationCodes[$code][0];
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getTitle()
