@@ -6,8 +6,6 @@
 namespace WebPlatform\ContentConverter\Model;
 
 use Symfony\Component\Yaml\Dumper;
-use DateTime;
-use DateTimeZone;
 
 /**
  * Markdown Revision.
@@ -20,12 +18,10 @@ class MarkdownRevision extends AbstractRevision
 {
     public function __construct($content = '', $front_matter = array())
     {
-        $this->setContent($content);
+        parent::constructorDefaults();
+
         $this->front_matter = $front_matter;
-        $datetime = new DateTime();
-        $datetime->setTimezone(new DateTimeZone('Etc/UTC'));
-        $this->setTimestamp($datetime);
-        $this->setComment('Conversion pass: Reformatted into Markdown');
+        $this->setContent($content);
 
         return $this;
     }

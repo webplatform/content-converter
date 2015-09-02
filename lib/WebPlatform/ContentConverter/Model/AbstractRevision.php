@@ -5,13 +5,15 @@
  */
 namespace WebPlatform\ContentConverter\Model;
 
+use DateTimeZone;
+use DateTime;
+
 /**
  * Defines state of the content of a document at a given time.
  *
- * A revision represent the state of the content
- * of a document. This is suitable when you have
- * access to the full content of the document at
- * the time the change was saved.
+ * A revision represent the state of the content of a document.
+ * This is suitable when you have access to the full content
+ * of the document at the time the change was saved.
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
@@ -33,6 +35,15 @@ abstract class AbstractRevision
 
     /** @var mixed If we defined a timestamp, it will be a \DateTime, otherwise it will be null */
     protected $timestamp = null;
+
+    protected function constructorDefaults()
+    {
+        $this->setComment(sprintf('Conversion into %s', get_called_class()));
+
+        $datetime = new DateTime();
+        $datetime->setTimezone(new DateTimeZone('Etc/UTC'));
+        $this->setTimestamp($datetime);
+    }
 
     public function __toString()
     {

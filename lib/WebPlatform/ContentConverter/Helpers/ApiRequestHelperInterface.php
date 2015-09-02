@@ -5,7 +5,7 @@
  */
 namespace WebPlatform\ContentConverter\Helpers;
 
-use WebPlatform\ContentConverter\Model\MediaWikiApiResponseArray;
+use WebPlatform\ContentConverter\Model\MediaWikiApiParseActionResponse;
 use Exception;
 
 /**
@@ -39,14 +39,14 @@ interface ApiRequestHelperInterface
     /**
      * Make an API call to MediaWiki.
      *
-     * A MediaWikiApiResponseArray factory based on response body from self::makeRequest
+     * A MediaWikiApiParseActionResponse factory based on response body from self::makeRequest
      *
      * @param string $title        MediaWiki page title (e.g. /w/index.php?title=Main_Page)
      * @param string $cookieString A string representation of a cookie, if desired
      *
      * @throws Exception When could not make API request OR use received data from API
      *
-     * @return MediaWikiApiResponseArray
+     * @return MediaWikiApiParseActionResponse
      */
     public function retrieve($title, $cookieString = null);
 

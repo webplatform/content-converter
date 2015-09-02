@@ -5,9 +5,6 @@
  */
 namespace WebPlatform\ContentConverter\Model;
 
-use DateTime;
-use DateTimeZone;
-
 /**
  * HTML Revision.
  *
@@ -19,11 +16,9 @@ class HtmlRevision extends AbstractRevision
 {
     public function __construct($content = '')
     {
+        parent::constructorDefaults();
+
         $this->setContent($content);
-        $datetime = new DateTime();
-        $datetime->setTimezone(new DateTimeZone('Etc/UTC'));
-        $this->setTimestamp($datetime);
-        $this->setComment('Conversion pass: Reformatted into HTML');
 
         return $this;
     }

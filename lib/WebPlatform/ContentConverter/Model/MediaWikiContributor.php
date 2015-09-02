@@ -5,6 +5,7 @@
  */
 namespace WebPlatform\ContentConverter\Model;
 
+use JsonSerializable;
 use InvalidArgumentException;
 use UnexpectedValueException;
 use RuntimeException;
@@ -25,8 +26,11 @@ use Exception;
  *
  * @author Renoir Boulanger <hello@renoirboulanger.com>
  */
-class MediaWikiContributor extends Author
+class MediaWikiContributor extends Author implements JsonSerializable
 {
+    /** @var array Internal representation */
+    protected $data = array();
+
     /** @var string MediaWiki username value, username is Capitalized */
     protected $name = 'Anonymous';
 
@@ -112,18 +116,27 @@ class MediaWikiContributor extends Author
      *
      * @throws RuntimeException When could not import data OR had invalid input
      **/
-    public function __construct($json_or_array)
+    public function __construct($json_or_array = null)
     {
+        if ($json_or_array === null) {
+            $this->data['user_email'] = $this->getEmail();
+            $this->data['user_real_name'] = $this->getRealName();
+            $this->data['user_name'] = $this->getName();
+            $this->data['user_email_authenticated'] = false;
+
+            return $this;
+        }
+
         $testInput = self::isValidDataObject($json_or_array);
 
         try {
-            $data = self::importDataObject($json_or_array);
+            $this->data = self::importDataObject($json_or_array);
         } catch (Exception $e) {
             throw new RuntimeException('Error importing data', null, $e);
         }
 
         if ($testInput === true) {
-            foreach ($data as $k => $v) {
+            foreach ($this->data as $k => $v) {
                 $key = str_replace('user_', '', $k);
                 //
                 // This case is that if we have "id", "real_name", or "email",
@@ -162,7 +175,7 @@ class MediaWikiContributor extends Author
 
             return $this;
         }
-        $message = sprintf('Could not create a MediaWikiContributor instance with input %s', json_encode($data));
+        $message = sprintf('Could not create a MediaWikiContributor instance with input %s', json_encode($this->data));
         throw new RuntimeException($message);
     }
 
@@ -193,5 +206,10 @@ class MediaWikiContributor extends Author
         $this->id = $id;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 }
