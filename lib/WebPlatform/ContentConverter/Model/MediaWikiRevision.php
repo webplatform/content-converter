@@ -64,7 +64,7 @@ class MediaWikiRevision extends AbstractRevision
 
     protected $id;
 
-    /** @var WebPlatform\ContentConverter\Model\MediaWikiApiResponseArray or null */
+    /** @var WebPlatform\ContentConverter\Model\MediaWikiApiParseActionResponse or null */
     protected $apiValueObject;
 
     /**

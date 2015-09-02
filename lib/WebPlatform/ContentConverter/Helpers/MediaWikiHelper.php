@@ -5,7 +5,7 @@
  */
 namespace WebPlatform\ContentConverter\Helpers;
 
-use WebPlatform\ContentConverter\Model\MediaWikiApiResponseArray;
+use WebPlatform\ContentConverter\Model\MediaWikiApiParseActionResponse;
 use Exception;
 
 /**
@@ -89,9 +89,17 @@ class MediaWikiHelper implements ApiRequestHelperInterface
     {
         try {
             $recv = $this->makeRequest($title, $cookieString);
-            $dto = new MediaWikiApiResponseArray($recv);
+            $dto = new MediaWikiApiParseActionResponse($recv);
+
+            // Since MediaWiki API "page deleted" error
+            // doesn’t give title, we’ll set one.
+            if ($dto->isDeleted() === true) {
+                $dto->setTitle($title);
+            }
         } catch (Exception $e) {
-            throw new Exception('We could not retrieve or handle received data', 0, $e);
+            $url = $this->apiUrl.urlencode($title);
+            $message = 'We could not retrieve or handle received data requesting %s';
+            throw new Exception(sprintf($message, $url), 0, $e);
         }
 
         return $dto;

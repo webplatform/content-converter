@@ -59,7 +59,8 @@ class GitCommitFileRevision extends AbstractPersister
         } elseif ((bool) $forceAuthor === false) {
             // Do nothing, its been requested to not force author, let’s not throw an exception
         } else {
-            throw new RuntimeException('Make sure you make the current revision to specify explicityly an Author object through setAuthor. e.g. $revision->setAuthor($authorObject);');
+            $message = 'Make sure you specifically set current revision author through setAuthor method. i.e. `$revision->setAuthor($authorObject);`';
+            throw new RuntimeException($message);
         }
 
         $args['date'] = $this->getRevision()->getTimestamp()->format(\DateTime::RFC2822);
