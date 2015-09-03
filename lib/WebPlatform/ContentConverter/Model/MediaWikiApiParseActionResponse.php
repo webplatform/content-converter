@@ -27,6 +27,9 @@ class MediaWikiApiParseActionResponse implements JsonSerializable
     /** @var boolean Toggle to true if MediaWiki Parse API returns a "missingtitle" error */
     protected $isDeleted = false;
 
+    /** @var boolean Toggle to true if the received text contents is empty */
+    protected $isEmpty = false;
+
     /** @var array List of broken links as per MediaWiki API Parse action */
     protected $brokenLinks = [];
 
@@ -63,9 +66,30 @@ class MediaWikiApiParseActionResponse implements JsonSerializable
         if (isset($this->data['error']) && isset($this->data['error']['code']) && $this->data['error']['code'] === 'missingtitle') {
             $this->data['parse']['text']['*'] = null;
             $this->isDeleted = true;
+        }
+
+        /**
+         * Handle empty documents (i.e. `parse.text['*']` with an empty string) such as:
+         * 
+         * {
+         *     "parse": {
+         *         "title":"guides/JavaScript",
+         *         "text":{"*":""},
+         *         "categories":[{"sortkey":"","*":"Guides"}],
+         *         "links":[],
+         *         "templates":[],
+         *         "displaytitle":"guides/JavaScript"
+         *     }
+         * }
+         */
+        if (isset($this->data['parse']['text']['*']) && empty($this->data['parse']['text']['*'])) {
+            $this->isEmpty = true;
 
             // Return right away, otherwise it
             // would throw an exception!
+            //
+            // Notice that an empty document or a deleted document
+            // should match in both cases.
             return $this;
         }
 
@@ -134,6 +158,11 @@ class MediaWikiApiParseActionResponse implements JsonSerializable
     public function getHtml()
     {
         return $this->data['parse']['text']['*'];
+    }
+
+    public function isEmpty()
+    {
+        return $this->isEmpty;
     }
 
     public function isDeleted()
