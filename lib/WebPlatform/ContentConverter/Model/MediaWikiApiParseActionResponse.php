@@ -104,7 +104,7 @@ class MediaWikiApiParseActionResponse implements JsonSerializable
         if (isset($this->data['parse']['links'])) {
             foreach ($this->data['parse']['links'] as $link) {
                 if (!isset($link['exists'])) {
-                    $this->brokenLinks[] = $link['*'];
+                    $this->brokenLinks[] = str_replace(' ', '_', $link['*']);
                 }
             }
             $this->data['broken_links'] = $this->brokenLinks;
